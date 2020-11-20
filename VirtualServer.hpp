@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 14:54:53 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/19 13:21:09 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/20 21:04:10 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include <string>
 # include <map>
+# include <vector>
+# include <list>
 
 # include "Route.hpp"
 
@@ -26,11 +28,11 @@ private:
 	typedef		std::string					_route_path;
 	typedef std::map<_route_path, Route>	_route_list_type;
 
-	int						_port;
-	int 					_host;
+	int						_host;
+	std::vector<int> 		_ports;
 	int 					_vs_socket;
 	int 					_limit_client_body_size;
-	std::string				_server_name;
+	std::list<std::string>	_server_name;
 	std::string				_error_pages;
 	_route_list_type		_routes;
 

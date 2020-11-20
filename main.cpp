@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/19 14:10:56 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/20 19:57:53 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,25 +46,23 @@ int main() {
 	listen(fd_socket, 10);
 
 	while (true) {
-		select(fd_socket + 1, &sockets_set, &accepts_set, NULL, NULL);
+		select(fd_socket + 1, &sockets_set, NULL, NULL, NULL);
 
 		fd_accept = accept(fd_socket, 0, 0);
 		if (fd_accept > 0) {
-			FD_SET(fd_accept, &accepts_set);
+			while (true) {
+				ft_memset(buf, 0, 128);
+				bytes = recv(fd_accept, buf, 128, 0);
+				if (strncmp(buf, "\r\n", 2) == 0)
+					break ;
 
-			bytes = recv(fd_accept, buf, 128, 0);
-			if (buf[0] == '\n')
-				break ;
-
-			request += buf;
-			if (bytes > 0)
-				ft_memset(buf, 0, bytes);
-
+				request += buf;
+			}
+			send(fd_accept, request.c_str(), request.size(), 0);
 			close(fd_accept);
+//			break ;
 		}
 	}
-	send(fd_accept, request.c_str(), request.size(), 0);
-	close(fd_socket);
 	exit(0);
 //	return (0);
 }

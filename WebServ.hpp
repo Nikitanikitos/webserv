@@ -29,8 +29,11 @@ private:
 	fd_set			_set_vs_sockets;
 	lvs_type		list_virtual_servers;
 
+
 	std::map<std::string, std::string>		_check_request_header();
 	/* Метод парсит заголовок из request, сохраняет их в словарь и возвращает */
+
+	void			_execute_cgi_client();
 
 	void			_parse_request_body(); // TODO что метод возращает и возвращает ли вообще?
 	/* Метод парсит тело запроса */

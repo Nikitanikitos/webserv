@@ -22,8 +22,8 @@ private:
 	std::set<std::string>	accepted_methods;
 	std::string				root_directory;
 	bool					autoindex;
+	std::string				cgi_path; /* Путь к cgi клиенту, если указан в route, в противном случае NULL */
 
-	/* CGI - ?? */
 public:
 	std::string				get_root_directory();
 	bool					get_autoindex_value();
