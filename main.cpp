@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/20 19:57:53 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/21 02:54:11 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include <netinet/in.h>
 #include <zconf.h>
 #include <fcntl.h>
+#include <cstring>
 #include "includes/libft.hpp"
 
 int main() {
@@ -26,12 +27,11 @@ int main() {
 	int					bytes;
 	std::string			request;
 
-
-	memset(buf, 0, 512);
-	memset(&sock_addr, 0, sizeof(sock_addr));
+	ft_memset(buf, 0, 512);
+	ft_memset(&sock_addr, 0, sizeof(sock_addr));
 	sock_addr.sin_family = PF_INET;
-	sock_addr.sin_port = htons(80);
-	sock_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+	sock_addr.sin_port = ft_htons(80);
+	sock_addr.sin_addr.s_addr = ft_htonl(INADDR_ANY);
 
 	fd_socket = socket(PF_INET,  SOCK_STREAM, IPPROTO_TCP);
 	int one = 1;
@@ -60,9 +60,9 @@ int main() {
 			}
 			send(fd_accept, request.c_str(), request.size(), 0);
 			close(fd_accept);
-//			break ;
+			break ;
 		}
 	}
-	exit(0);
-//	return (0);
+//	exit(0);
+	return (0);
 }

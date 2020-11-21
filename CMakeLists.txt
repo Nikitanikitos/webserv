@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.17)
+cmake_minimum_required(VERSION 3.16.5)
 project(webserv)
 
 set(CMAKE_CXX_STANDARD 98)
@@ -10,4 +10,7 @@ add_executable(webserv
         Request.hpp
         WebServ.hpp
         ParseConfigFile.hpp
-        libft/ft_memset.cpp)
+
+        libft/ft_memset.cpp
+		libft/ft_hton.cpp
+		)

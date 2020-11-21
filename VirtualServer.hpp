@@ -17,6 +17,7 @@
 # include <map>
 # include <vector>
 # include <list>
+# include <stdint.h>
 
 # include "Route.hpp"
 
@@ -25,8 +26,8 @@
 class	VirtualServer
 {
 private:
-	typedef		std::string					_route_path;
-	typedef std::map<_route_path, Route>	_route_list_type;
+	typedef		std::string						_route_path;
+	typedef		std::map<_route_path, Route>	_route_list_type;
 
 	int						_host;
 	std::vector<int> 		_ports;

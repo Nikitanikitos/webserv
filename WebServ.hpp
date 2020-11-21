@@ -29,7 +29,6 @@ private:
 	fd_set			_set_vs_sockets;
 	lvs_type		list_virtual_servers;
 
-
 	std::map<std::string, std::string>		_check_request_header();
 	/* Метод парсит заголовок из request, сохраняет их в словарь и возвращает */
 
@@ -60,8 +59,6 @@ public:
 	/* Метод вызывает функцию accept() на сокет из объекта VirtualServer и вызывает метод _get_request(),
 	 * который возвращает объект Request,
 	 * вызов метода _give_response() */
-
-
 };
 
 #endif //WEBSERV_WEBSERV_HPP

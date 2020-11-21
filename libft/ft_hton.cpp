@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   ft_hton.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 12:41:33 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/19 12:47:54 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/21 02:51:15 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cstdint>
+#include <stdint.h>
 
-int		ft_htons(int x) { return ((__uint16_t)((((__uint16_t)(x) & 0xff00) >> 8) | (((__uint16_t)(x) & 0x00ff) << 8))); }
+uint16_t		ft_htons(uint16_t x) { return ((uint16_t)((((uint16_t)(x) & 0xff00) >> 8) | (((uint16_t)(x) & 0x00ff) << 8))); }
 
-int 	ft_htonl(int x) {
-	return ((__uint32_t)((((__uint32_t)(x) & 0xff000000) >> 24) | (((__uint32_t)(x) & 0x00ff0000) >>  8) | \
-									(((__uint32_t)(x) & 0x0000ff00) <<  8) | (((__uint32_t)(x) & 0x000000ff) << 24)));
+uint32_t 		ft_htonl(uint32_t x) {
+	return ((uint32_t)((((uint32_t)(x) & 0xff000000) >> 24) | (((uint32_t)(x) & 0x00ff0000) >>  8) | \
+									(((uint32_t)(x) & 0x0000ff00) <<  8) | (((uint32_t)(x) & 0x000000ff) << 24)));
 }

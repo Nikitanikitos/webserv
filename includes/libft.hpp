@@ -13,12 +13,12 @@
 #ifndef WEBSERV_LIBFT_HPP
 # define WEBSERV_LIBFT_HPP
 
-# include <stddef.h>
+# include <cstddef>
 
 void*	ft_memset(void*, int, size_t);
 
-int		ft_htons(int);
-int 	ft_htonl(int x);
+int		ft_htons(uint16_t);
+int 	ft_htonl(uint32_t);
 
 
 #endif //WEBSERV_LIBFT_HPP
