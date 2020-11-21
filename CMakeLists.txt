@@ -13,4 +13,4 @@ add_executable(webserv
 
         libft/ft_memset.cpp
 		libft/ft_hton.cpp
-		)
+		WebServ.cpp WebServ.hpp)
