@@ -23,6 +23,8 @@ private:
 
 	std::string				_method;
 	std::string				_target;
+	std::string				_host;
+	int 					_port;
 	_headline_struct		_headlines;
 };
 

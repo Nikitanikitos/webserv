@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/21 20:21:24 by nikita           ###   ########.fr       */
+/*   Updated: 2020/11/22 01:39:03 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,30 +15,33 @@
 
 # include <map>
 # include "Route.hpp"
-# include <list>
 # include <netinet/in.h>
 
 class VirtualServer {
 private:
-	typedef		std::string						_route_path;
-	typedef		std::map<_route_path, Route>	_route_list_type;
+	typedef		std::vector<Route>				_route_list_type;
 
-	in_addr_t				_host;
-	std::vector<in_port_t>	_ports;
-	std::vector<int> 		_vs_socket;
-	int 					_limit_client_body_size;
-	std::list<std::string>	_server_name;
-	std::string				_error_pages;
-	_route_list_type		_routes;
+	std::string					_host; /* конвертировать в число через функцию inet_addr */
+	std::vector<std::string>	_ports; /* по умолчанию 80 */
+	std::vector<int>			_vs_sockets;
+	int							_limit_client_body_size;
+	std::vector<std::string>	_server_name; /* если sever_name в конфиг файле нет, server_name = _host */
+	std::string					_error_pages;
+	_route_list_type			_list_routers;
 
 public:
 	VirtualServer();
-	virtual ~VirtualServer();
+	/* Инициализирует путь к _error_page, _host по дефолту = "0.0.0.0", _port по дефолту = 80 */
 
-	void	set_server_name(const std::list<std::string>&);
-	void	add_port(in_port_t port);
-	void	set_host(in_addr_t);
+	virtual ~VirtualServer();
+	/* закрытие сокетов */
+
+	void	add_server_name(const std::string&);
+	void	add_port(const std::string&);
 	void	add_route(const Route&);
+
+	void	set_limit_client_body_size(int limit_client_body_size);
+	void	set_host(const std::string&);
 
 	void	initialize_sockets();
 };

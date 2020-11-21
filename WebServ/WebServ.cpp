@@ -6,13 +6,13 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/21 19:48:56 by nikita           ###   ########.fr       */
+/*   Updated: 2020/11/22 00:47:49 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-WebServ::WebServ(const WebServ::lvs_type &listVirtualServers) : list_virtual_servers(listVirtualServers) { }
+WebServ::WebServ(const WebServ::lvs_type &listVirtualServers) : _list_virtual_servers(listVirtualServers) { }
 
 WebServ::~WebServ() {
 
@@ -42,6 +42,6 @@ void WebServ::run_server() {
 
 }
 
-void WebServ::serve_client(VirtualServer&) {
+void WebServ::serve_client(int client_socket) {
 
 }

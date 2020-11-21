@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/21 17:18:41 by nikita           ###   ########.fr       */
+/*   Updated: 2020/11/22 02:04:56 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,23 +15,28 @@
 #include <zconf.h>
 #include <fcntl.h>
 #include <cstring>
-#include "includes/libft.hpp"
+#include <arpa/inet.h>
+#include "libft.hpp"
 
 int main() {
-	fd_set             sockets_set;
-	fd_set             accepts_set;
-	int                fd_socket;
-	int                fd_accept;
-	struct sockaddr_in sock_addr;
-	char               buf[128];
-	int                bytes;
-	std::string        request;
+	fd_set				sockets_set;
+	fd_set				accepts_set;
+	int					fd_socket;
+	int					fd_accept;
+	struct sockaddr_in	sock_addr;
+	char				buf[128];
+	int					bytes;
+	std::string			request;
+	struct in_addr		ip;
 
 	ft_memset(buf, 0, 512);
 	ft_memset(&sock_addr, 0, sizeof(sock_addr));
 	sock_addr.sin_family = PF_INET;
 	sock_addr.sin_port = ft_htons(80);
 	sock_addr.sin_addr.s_addr = ft_htonl(INADDR_ANY);
+
+	ip.s_addr = INADDR_ANY;
+	char *q = inet_ntoa(ip);
 
 	fd_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	int one = 1;

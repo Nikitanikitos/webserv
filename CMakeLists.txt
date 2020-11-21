@@ -5,11 +5,19 @@ set(CMAKE_CXX_STANDARD 98)
 
 add_executable(webserv
         main.cpp
-		Route.hpp
-        Request.hpp
-        WebServ.hpp
-        ParseConfigFile.hpp
 
-        libft/ft_memset.cpp
+		libft/ft_memset.cpp
 		libft/ft_hton.cpp
-		WebServ.cpp WebServ.hpp VirtualServer.cpp VirtualServer.hpp)
+
+		Request.hpp
+        ParseConfigFile.hpp
+		WebServ/WebServ.cpp
+		VirtualServer/VirtualServer.cpp
+		Route/Route.cpp
+		)
+
+include_directories(includes
+		Route
+		VirtualServer
+		WebServ
+		)

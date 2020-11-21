@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/21 19:52:52 by nikita           ###   ########.fr       */
+/*   Updated: 2020/11/22 00:47:49 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,10 @@
 
 class WebServ {
 private:
-	typedef std::string								server_name;
-	typedef std::map<server_name, VirtualServer>	lvs_type;
+	typedef std::vector<VirtualServer>		lvs_type;
 
 	fd_set		_set_vs_sockets;
-	lvs_type	list_virtual_servers;
+	lvs_type	_list_virtual_servers;
 
 	std::map<std::string, std::string>	_check_request_header();
 	/* Метод парсит заголовок из request, сохраняет их в словарь и возвращает */
@@ -52,11 +51,11 @@ public:
 
 	void	run_server();
 	/* Метод запускает сервер. Вызывает select() на серверные сокеты с бесконечным тайм-аутом,
-	 * Проверяет в какой сокет поступило соединение и вызывает метод serve_client(), передавая туда объект virtual_server */
+	 * Проверяет в какой сокет поступило соединение и вызывает метод serve_client(), передавая туда сокет клиента */
 
-	void	serve_client(VirtualServer&);
-	/* Метод вызывает функцию accept() на сокет из объекта VirtualServer и вызывает метод _get_request(),
-	 * который возвращает объект Request,
+	void	serve_client(int);
+	/* Метод вызывает функцию accept() на сокет и вызывает метод _get_request(),
+	 * который возвращает объект Request.
 	 * вызов метода _give_response() */
 };
 
