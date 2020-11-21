@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   ParseConfigFile.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 19:50:51 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/18 20:04:20 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/21 19:49:37 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WEBSERV_PARSECONFIGFILE_HPP
 # define WEBSERV_PARSECONFIGFILE_HPP
 
-#include <string>
-#include "VirtualServer.hpp"
+# include <string>
+# include "VirtualServer.hpp"
 
 /* lvs - list virtual servers */
 
@@ -25,9 +25,9 @@ private:
 
 	std::string		_filename;
 
-	VirtualServer&								_parse_virtual_server_directive();
+	VirtualServer&	_parse_virtual_server_directive();
 	/* Метод будет возвращать объект класса VirtualServer со всеми инициализированными полями */
-	Route&										_parse_route_directive();
+	Route&			_parse_route_directive();
 	/* Метод будет возвращать объект класса Route со всеми инициализированными полями */
 
 public:

@@ -3,50 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualServer.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/18 14:54:53 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/20 21:04:10 by imicah           ###   ########.fr       */
+/*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
+/*   Updated: 2020/11/21 20:21:24 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WEBSERV_VIRTUALSERVER_HPP
 # define WEBSERV_VIRTUALSERVER_HPP
 
-# include <string>
 # include <map>
-# include <vector>
-# include <list>
-# include <stdint.h>
-
 # include "Route.hpp"
+# include <list>
+# include <netinet/in.h>
 
-/* vs - virtual_server */
-
-class	VirtualServer
-{
+class VirtualServer {
 private:
 	typedef		std::string						_route_path;
 	typedef		std::map<_route_path, Route>	_route_list_type;
 
-	int						_host;
-	std::vector<int> 		_ports;
-	int 					_vs_socket;
+	in_addr_t				_host;
+	std::vector<in_port_t>	_ports;
+	std::vector<int> 		_vs_socket;
 	int 					_limit_client_body_size;
 	std::list<std::string>	_server_name;
 	std::string				_error_pages;
 	_route_list_type		_routes;
 
 public:
-	VirtualServer(int port, int host, std::string& server_name, std::map<std::string, Route>& routes);
-	/* Инициализирует атрибуты класса, получает _vs_socket, вызывая socket,
-	 * делает bind к проту и хосту, вызывает listen,
-	 * делает _vs_socket неблокируемым */
+	VirtualServer();
+	virtual ~VirtualServer();
 
-	~VirtualServer();
-	/* закрывает _vs_socket */
+	void	set_server_name(const std::list<std::string>&);
+	void	add_port(in_port_t port);
+	void	set_host(in_addr_t);
+	void	add_route(const Route&);
 
-	int		get_socket() const;
+	void	initialize_sockets();
 };
 
 #endif //WEBSERV_VIRTUALSERVER_HPP

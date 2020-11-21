@@ -1,23 +1,30 @@
-//
-// Created by nikita on 21.11.2020.
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   WebServ.hpp                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
+/*   Updated: 2020/11/21 19:52:52 by nikita           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef WEBSERV_WEBSERV_HPP
 # define WEBSERV_WEBSERV_HPP
 
-
-#include <string>
-#include <map>
-#include <zconf.h>
-#include "VirtualServer.hpp"
+# include <string>
+# include <map>
+# include <zconf.h>
+# include "VirtualServer.hpp"
 
 class WebServ {
 private:
-	typedef std::string                          server_name;
-	typedef std::map<server_name, VirtualServer> lvs_type;
+	typedef std::string								server_name;
+	typedef std::map<server_name, VirtualServer>	lvs_type;
 
-	fd_set   _set_vs_sockets;
-	lvs_type list_virtual_servers;
+	fd_set		_set_vs_sockets;
+	lvs_type	list_virtual_servers;
 
 	std::map<std::string, std::string>	_check_request_header();
 	/* Метод парсит заголовок из request, сохраняет их в словарь и возвращает */

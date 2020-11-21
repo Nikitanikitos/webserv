@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/21 02:54:11 by nikita           ###   ########.fr       */
+/*   Updated: 2020/11/21 17:18:41 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ int main() {
 
 	ft_memset(buf, 0, 512);
 	ft_memset(&sock_addr, 0, sizeof(sock_addr));
-	sock_addr.sin_family      = PF_INET;
-	sock_addr.sin_port        = ft_htons(80);
+	sock_addr.sin_family = PF_INET;
+	sock_addr.sin_port = ft_htons(80);
 	sock_addr.sin_addr.s_addr = ft_htonl(INADDR_ANY);
 
 	fd_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
