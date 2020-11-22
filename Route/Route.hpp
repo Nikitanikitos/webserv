@@ -43,7 +43,7 @@ private:
 
 public:
 	Route();
-	virtual ~Route();
+	~Route() = default;
 
 	void set_root(const std::string&);
 	void set_cgi_path(const std::string&);

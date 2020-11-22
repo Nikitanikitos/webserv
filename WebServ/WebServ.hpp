@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/22 00:47:49 by nikita           ###   ########.fr       */
+/*   Updated: 2020/11/22 14:20:45 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,8 @@
 
 class WebServ {
 private:
-	typedef std::vector<VirtualServer>		lvs_type;
-
-	fd_set		_set_vs_sockets;
-	lvs_type	_list_virtual_servers;
+	fd_set							_set_vs_sockets;
+	std::vector<VirtualServer>		_list_virtual_servers;
 
 	std::map<std::string, std::string>	_check_request_header();
 	/* Метод парсит заголовок из request, сохраняет их в словарь и возвращает */
@@ -44,7 +42,7 @@ private:
 	/* Принимает объект Request(), создает объект Response(), составляет тело ответа и отсылает его через send() */
 
 public:
-	explicit WebServ(const lvs_type& listVirtualServers);
+	explicit WebServ(const std::vector<VirtualServer>&);
 	/* Инициализируем _set_vs_sockets, добавляем все сокеты виртуальных серверов в _set_vs_sockets, */
 
 	virtual ~WebServ();

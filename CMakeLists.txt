@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16.5)
 project(webserv)
 
-set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 20)
 
 add_executable(webserv
         main.cpp
@@ -14,7 +14,7 @@ add_executable(webserv
 		WebServ/WebServ.cpp
 		VirtualServer/VirtualServer.cpp
 		Route/Route.cpp
-		)
+		ParseConfigFile.cpp)
 
 include_directories(includes
 		Route

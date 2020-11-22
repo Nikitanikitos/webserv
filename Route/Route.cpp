@@ -6,13 +6,13 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 20:30:05 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/21 20:35:52 by nikita           ###   ########.fr       */
+/*   Updated: 2020/11/22 14:13:46 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Route.hpp"
 
-Route::Route() {
+Route::Route() : _autoindex(non_accepted), _cgi_path("") {
 	_accepted_methods.assign(5, non_accepted);
 }
 
@@ -30,8 +30,4 @@ void Route::set_cgi_path(const std::string& cgi_path) {
 
 void Route::add_accepted_method(uint8_t method_index) {
 	_accepted_methods[method_index] = accepted;
-}
-
-Route::~Route() {
-
 }

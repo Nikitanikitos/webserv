@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/22 02:04:56 by nikita           ###   ########.fr       */
+/*   Updated: 2020/11/22 13:36:50 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ int main() {
 	listen(fd_socket, 10);
 
 	while (true) {
-		select(fd_socket + 1, &sockets_set, NULL, NULL, NULL);
+		select(fd_socket + 1, &sockets_set, nullptr, nullptr, nullptr);
 
-		fd_accept = accept(fd_socket, 0, 0);
+		fd_accept = accept(fd_socket, nullptr, nullptr);
 		if (fd_accept > 0) {
 			while (true) {
 				ft_memset(buf, 0, 128);

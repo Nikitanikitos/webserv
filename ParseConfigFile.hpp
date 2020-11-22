@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 19:50:51 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/22 00:13:00 by nikita           ###   ########.fr       */
+/*   Updated: 2020/11/22 14:20:45 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,19 @@
 class	ParseConfigFile
 {
 private:
-	typedef		std::map<std::string, VirtualServer>	lvs_type;
-
 	std::string		_filename;
 
-	VirtualServer&	_parse_vs_directive();
+	VirtualServer	_parse_vs_directive();
 	/* Метод будет возвращать объект класса VirtualServer со всеми инициализированными полями */
-	Route&			_parse_route_directive();
+
+	Route			_parse_route_directive();
 	/* Метод будет возвращать объект класса Route со всеми инициализированными полями */
 
 public:
-	ParseConfigFile(std::string& filename);
-	~ParseConfigFile();
+	explicit ParseConfigFile(std::string& filename);
+	~ParseConfigFile() = default;
 
-	lvs_type		parse_file();
+	std::vector<VirtualServer>		parse_file();
 	/* метод будет возвращать список виртуальных серверов, в которых есть список роутеров */
 };
 
