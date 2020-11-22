@@ -14,7 +14,7 @@
 
 void*	ft_memset(void* dest, int symb, size_t byte_sizes)
 {
-	for (char* temp_dest = (char *)dest; byte_sizes--; temp_dest++)
+	for (char* temp_dest = (char*)dest; byte_sizes--; temp_dest++)
 		*temp_dest = symb;
 	return (dest);
 }
