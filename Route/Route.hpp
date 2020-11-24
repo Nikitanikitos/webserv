@@ -36,16 +36,18 @@ enum {
 
 class Route {
 private:
-	std::vector<bool> _accepted_methods;
-	std::string       _root;
-	bool              _autoindex;
-	std::string       _cgi_path; /* Путь к cgi клиенту, если указан в route, в противном случае NULL */
+	std::vector<bool>	_accepted_methods;
+	std::string			_root;
+	bool				_autoindex;
+	std::string			_cgi_path; /* Путь к cgi клиенту, если указан в route, в противном случае NULL */
+	std::string			_if_request_is_directory;
 
 public:
 	Route();
 	~Route() = default;
 
 	void set_root(const std::string&);
+	void set_if_request_is_directory(const std::string&);
 	void set_cgi_path(const std::string&);
 	void set_autoindex(bool);
 
