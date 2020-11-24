@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/22 16:09:39 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/22 16:15:04 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,20 +16,24 @@
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <zconf.h>
+# include <fcntl.h>
 # include "Route.hpp"
 # include "libft.hpp"
 
 class VirtualServer {
+public:
+	std::vector<int>			vs_sockets;
+
 private:
 	std::string					_host; /* конвертировать в число через функцию inet_addr */
 	std::vector<std::string>	_ports;
-	std::vector<int>			_vs_sockets;
 	int							_limit_client_body_size;
-	std::vector<std::string>	_server_name; /* если sever_name в конфиг файле нет, server_name = _host */
+	std::vector<std::string>	_server_names; /* если sever_names в конфиг файле нет, server_name = _host */
 	std::string					_error_pages;
 	std::vector<Route>			_list_routers;
 
 	void	_init_sock_addr(struct sockaddr_in&, const std::string&);
+
 	int		_create_socket(struct sockaddr_in&);
 
 public:
@@ -47,6 +51,7 @@ public:
 	void	set_host(const std::string&);
 
 	void	init_sockets();
+	/* инициализирует сокеты по хосту и портам */
 };
 
 #endif //WEBSERV_VIRTUALSERVER_HPP

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/22 16:06:40 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/22 16:12:25 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void VirtualServer::add_port(const std::string& port) {
 }
 
 void VirtualServer::add_server_name(const std::string& server_name) {
-	_server_name.push_back(server_name);
+	_server_names.push_back(server_name);
 }
 
 void VirtualServer::add_route(const Route& route) {
@@ -36,12 +36,12 @@ void VirtualServer::init_sockets() {
 
 		ft_memset(&sock_addr, 0, sizeof(sock_addr));
 		_init_sock_addr(sock_addr, item);
-		_vs_sockets.push_back(_create_socket(sock_addr));
+		vs_sockets.push_back(_create_socket(sock_addr));
 	}
 }
 
 VirtualServer::~VirtualServer() {
-	for (int vsSocket : _vs_sockets)
+	for (int vsSocket : vs_sockets)
 		close(vsSocket);
 }
 
@@ -60,5 +60,7 @@ int VirtualServer::_create_socket(sockaddr_in& sock_addr) {
 
 	if (bind(fd_socket, (struct sockaddr*) &sock_addr, sizeof(sock_addr)) < 0)
 		throw std::exception();
+	fcntl(fd_socket, F_SETFL, O_NONBLOCK);
+	listen(fd_socket, 10);
 	return (fd_socket);
 }
