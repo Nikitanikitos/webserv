@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 18:03:37 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/22 15:25:48 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/22 15:26:54 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,17 +25,18 @@ private:
 	std::string				_target;
 	std::string				_host;
 	std::string				_port;
-	_headline_struct		_headlines;
+	_headline_struct		_headers;
 
 public:
 	Request();
+	virtual ~Request();
 
-	void set_host(const std::string& host);
+	void add_header(const std::pair<std::string, std::string>&);
 
-	void set_target(const std::string& target);
-
-	void set_method(const std::string& method);
-
+	void set_port(const std::string&);
+	void set_host(const std::string&);
+	void set_target(const std::string&);
+	void set_method(const std::string&);
 };
 
 #endif //WEBSERV_REQUEST_HPP
