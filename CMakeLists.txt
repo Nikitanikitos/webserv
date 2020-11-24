@@ -8,16 +8,20 @@ add_executable(webserv
 
 		libft/ft_memset.cpp
 		libft/ft_hton.cpp
+		libft/ft_atoi.cpp
 
-		Request.hpp
-        ParseConfigFile.hpp
 		WebServ/WebServ.cpp
 		VirtualServer/VirtualServer.cpp
 		Route/Route.cpp
-		ParseConfigFile.cpp)
+		ParseConfigFile/ParseConfigFile.cpp
+		Request/Request.cpp
+		)
 
-include_directories(includes
+include_directories(
+		includes
 		Route
 		VirtualServer
 		WebServ
+		ParseConfigFile
+		Request
 		)
