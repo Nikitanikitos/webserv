@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/24 05:41:03 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/25 04:54:54 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,16 @@ void		WebServ::_give_response() {
 }
 
 void		WebServ::_serve_client(int client_socket) {
-	VirtualServer	virtual_server = _get_request(client_socket);
+	typedef		void (WebServ::*handler_t)(Request&);
+
+	handler_t	handlers[3] = {&WebServ::_default_handler, &WebServ::_cgi_handler, &WebServ::_proxy_handler};
+	Request		request = _get_request(client_socket);
+	Location	location = _get_location(request);
+
+	for (int i = 0; i < 2; ++i) {
+		if (location.location_type == i)
+			(this->*handlers[i])(request);
+	}
 }
 
 void		WebServ::_create_workers() {
@@ -103,12 +112,12 @@ void		WebServ::_pointer_file_to_start(int& fd, int& file_position) {
 	lseek(fd, 0, SEEK_SET);
 }
 
-VirtualServer			WebServ::_get_request(int client_socket) {
-	return (VirtualServer());
+Request		WebServ::_get_request(int client_socket) {
+	return (Request());
 }
 
 void		WebServ::_get_accept_from_ready_sockets() {
-	int					 	client_socket;
+	int						client_socket;
 	std::pair<int, int>		worker;
 
 	for (int socket : _vs_sockets) {

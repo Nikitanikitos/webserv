@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Route.hpp                                          :+:      :+:    :+:   */
+/*   Location.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 20:29:23 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/21 20:38:35 by nikita           ###   ########.fr       */
+/*   Updated: 2020/11/25 04:49:17 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_ROUTE_HPP
-#define WEBSERV_ROUTE_HPP
+#ifndef WEBSERV_LOCATION_HPP
+#define WEBSERV_LOCATION_HPP
 
 # include <vector>
 # include <string>
@@ -34,17 +34,28 @@ enum {
 	PATCH
 };
 
-class Route {
+enum {
+	_default,
+	cgi,
+	proxy
+};
+
+class Location {
 private:
 	std::vector<bool>	_accepted_methods;
 	std::string			_root;
+	std::string			_cgi_pass;
+	std::string			_proxy_pass;
 	bool				_autoindex;
-	std::string			_cgi_path; /* Путь к cgi клиенту, если указан в route, в противном случае NULL */
 	std::string			_if_request_is_directory;
 
 public:
-	Route();
-	~Route() = default;
+	int 				location_type;
+
+	Location();
+	~Location() = default;
+
+	void set_location_type(int location_type);
 
 	void set_root(const std::string&);
 	void set_if_request_is_directory(const std::string&);
@@ -54,4 +65,4 @@ public:
 	void add_accepted_method(uint8_t);
 };
 
-#endif //WEBSERV_ROUTE_HPP
+#endif //WEBSERV_LOCATION_HPP

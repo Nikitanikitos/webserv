@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParseConfigFile.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 14:17:15 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/22 14:20:45 by nikita           ###   ########.fr       */
+/*   Updated: 2020/11/25 04:21:46 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 	return (VirtualServer());
 }
 
-Route			ParseConfigFile::_parse_route_directive() {
-	return (Route());
+Location			ParseConfigFile::_parse_location_directive() {
+	return (Location());
 }
 
 std::vector<VirtualServer> ParseConfigFile::parse_file() {

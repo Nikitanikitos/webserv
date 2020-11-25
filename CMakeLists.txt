@@ -12,14 +12,14 @@ add_executable(webserv
 
 		WebServ/WebServ.cpp
 		VirtualServer/VirtualServer.cpp
-		Route/Route.cpp
+		Location/Location.cpp
 		ParseConfigFile/ParseConfigFile.cpp
 		Request/Request.cpp
-		)
+        Response/Response.cpp Response/Response.hpp libft/ft_localtime.cpp)
 
 include_directories(
 		includes
-		Route
+        Location
 		VirtualServer
 		WebServ
 		ParseConfigFile

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParseConfigFile.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 19:50:51 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/22 14:20:45 by nikita           ###   ########.fr       */
+/*   Updated: 2020/11/25 04:21:46 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include <string>
 # include "VirtualServer.hpp"
-# include "Route.hpp"
+# include "Location.hpp"
 
 /* lvs - list virtual servers */
 
@@ -27,7 +27,7 @@ private:
 	VirtualServer	_parse_vs_directive();
 	/* Метод будет возвращать объект класса VirtualServer со всеми инициализированными полями */
 
-	Route			_parse_route_directive();
+	Location			_parse_location_directive();
 	/* Метод будет возвращать объект класса Route со всеми инициализированными полями */
 
 public:

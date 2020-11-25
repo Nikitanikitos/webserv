@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/22 16:12:25 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/25 04:21:46 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ void VirtualServer::add_server_name(const std::string& server_name) {
 	_server_names.push_back(server_name);
 }
 
-void VirtualServer::add_route(const Route& route) {
-	_list_routers.push_back(route);
+void VirtualServer::add_route(const Location& route) {
+	_list_locations.push_back(route);
 }
 
 void VirtualServer::init_sockets() {

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/24 05:41:03 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/25 04:53:38 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <map>
 # include <queue>
 # include <zconf.h>
+#include <Request.hpp>
 # include "VirtualServer.hpp"
 
 # define PIPE_BUFFER_SIZE	64000
@@ -30,10 +31,16 @@ private:
 	std::queue<std::pair<int, int> >		_worker_queue;
 	int 									_number_workers;
 
+	void	_default_handler(Request&);
+	void 	_cgi_handler(Request&);
+	void	_proxy_handler(Request&);
+
+	void	_get_handler(Location&);
+
 	std::map<std::string, std::string>	_check_request_header();
 	/* Метод парсит заголовок из request, сохраняет их в словарь и возвращает */
 
-	void _get_accept_from_ready_sockets();
+	void				_get_accept_from_ready_sockets();
 
 	void				_execute_cgi_client();
 
@@ -45,12 +52,13 @@ private:
 	std::pair<int, int>		_pop_worker();
 	void					_pointer_file_to_start(int&, int&);
 
-	VirtualServer			_get_request(int);
+	Request					_get_request(int);
 	/* Метод получает данные запроса через функцию recv().
 	 * Из первой строки получает метод, путь и заносит в объект Request.
 	 * Далее парсит заголовки, заносит их в словарь и проверяет корректность заголовка через _check_request_header().
 	 * Далее парсит тело запроса через _parse_request_body() (если тело запроса есть).
 	 * Возвращает объект Request() */
+	Location				_get_location(Request&);
 
 	void					_give_response();
 	/* Принимает объект Request(), создает объект Response(), составляет тело ответа и отсылает его через send() */

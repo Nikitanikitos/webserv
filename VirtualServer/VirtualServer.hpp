@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/22 16:15:04 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/25 04:21:46 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <arpa/inet.h>
 # include <zconf.h>
 # include <fcntl.h>
-# include "Route.hpp"
+# include "Location.hpp"
 # include "libft.hpp"
 
 class VirtualServer {
@@ -30,7 +30,7 @@ private:
 	int							_limit_client_body_size;
 	std::vector<std::string>	_server_names; /* если sever_names в конфиг файле нет, server_name = _host */
 	std::string					_error_pages;
-	std::vector<Route>			_list_routers;
+	std::vector<Location>		_list_locations;
 
 	void	_init_sock_addr(struct sockaddr_in&, const std::string&);
 
@@ -45,7 +45,7 @@ public:
 
 	void	add_server_name(const std::string&);
 	void	add_port(const std::string&);
-	void	add_route(const Route&);
+	void	add_route(const Location&);
 
 	void	set_limit_client_body_size(int);
 	void	set_host(const std::string&);

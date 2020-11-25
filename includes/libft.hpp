@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 12:50:34 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/22 15:49:23 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/25 02:04:29 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,16 @@
 
 # include <cstddef>
 
+# define CRLF	"\r\n"
+# define SP		" "
+
 void*		ft_memset(void*, int, size_t);
 
 uint16_t	ft_htons(uint16_t);
 uint32_t	ft_htonl(uint32_t);
 
 int			ft_atoi(const char* nptr);
+
+void		ft_localtime(tm&, time_t);
 
 #endif //WEBSERV_LIBFT_HPP
