@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/25 04:54:54 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/27 17:26:22 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,35 +32,6 @@ WebServ::~WebServ() {
 	}
 }
 
-std::map<std::string, std::string>		WebServ::_check_request_header() {
-	return (std::map<std::string, std::string>());
-}
-
-void		WebServ::_execute_cgi_client() {
-
-}
-
-void		WebServ::_parse_request_body() {
-
-}
-
-void		WebServ::_give_response() {
-
-}
-
-void		WebServ::_serve_client(int client_socket) {
-	typedef		void (WebServ::*handler_t)(Request&);
-
-	handler_t	handlers[3] = {&WebServ::_default_handler, &WebServ::_cgi_handler, &WebServ::_proxy_handler};
-	Request		request = _get_request(client_socket);
-	Location	location = _get_location(request);
-
-	for (int i = 0; i < 2; ++i) {
-		if (location.location_type == i)
-			(this->*handlers[i])(request);
-	}
-}
-
 void		WebServ::_create_workers() {
 	int 	pipe_fd[2];
 
@@ -79,24 +50,6 @@ void		WebServ::_create_workers() {
 	}
 }
 
-void		WebServ::_worker(int pipe_fd) {
-	fd_set	pipe_set;
-	int		file_position;
-	int 	client_socket;
-
-	file_position = 0;
-	FD_ZERO(&pipe_set);
-	FD_SET(pipe_fd, &pipe_set);
-	while (true) {
-		select(pipe_fd + 1, &pipe_set, nullptr, nullptr, nullptr);
-		read(pipe_fd, (char*)&client_socket, 4);
-		file_position += 4;
-		if (file_position >= PIPE_BUFFER_SIZE)
-			_pointer_file_to_start(pipe_fd, file_position);
-		_serve_client(client_socket);
-	}
-}
-
 void		WebServ::run_server() {
 	int					 	client_socket;
 	std::pair<int, int>		worker;
@@ -106,16 +59,6 @@ void		WebServ::run_server() {
 		_get_accept_from_ready_sockets();
 	}
 }
-
-void		WebServ::_pointer_file_to_start(int& fd, int& file_position) {
-	file_position = 0;
-	lseek(fd, 0, SEEK_SET);
-}
-
-Request		WebServ::_get_request(int client_socket) {
-	return (Request());
-}
-
 void		WebServ::_get_accept_from_ready_sockets() {
 	int						client_socket;
 	std::pair<int, int>		worker;
@@ -134,9 +77,113 @@ void		WebServ::_get_accept_from_ready_sockets() {
 	}
 }
 
+void		WebServ::_worker(int pipe_fd) {
+	int		file_position;
+	int 	client_socket;
+
+	file_position = 0;
+	while (true) {
+		read(pipe_fd, (char*)&client_socket, 4);
+		file_position += 4;
+		if (file_position >= PIPE_BUFFER_SIZE)
+			_pointer_file_to_start(pipe_fd, file_position);
+		_serve_client(client_socket);
+	}
+}
+
+void		WebServ::_parse_request_body() {
+
+}
+
+void		WebServ::_give_response() {
+
+}
+
+void		WebServ::_serve_client(int client_socket) {
+	try {
+		Request			request = _get_request(client_socket);
+		VirtualServer	server = _get_virtual_server(request);
+		Location		location = server._get_location(request);
+
+		switch (location.get_location_type()) {
+			case _default:
+				_default_handler(request, client_socket, location);
+			case cgi:
+				_cgi_handler(request, client_socket, location);
+			case proxy:
+				_proxy_handler(request, client_socket, location);
+		}
+	}
+	catch (Request400Error& request_400_error) {
+		request_400_error.send_response(client_socket);
+	}
+	catch (Request405Error& request_405_error) {
+		request_405_error.send_response(client_socket);
+	}
+	catch (Request505Error& request_505_error) {
+		request_505_error.send_response(client_socket);
+	}
+	catch (Request404Error& request_404_error) {
+		request_404_error.send_response(client_socket);
+	}
+}
+
+Request		WebServ::_get_request(int client_socket) {
+	return (Request());
+}
+
+void	WebServ::_default_handler(Request& request, int client_socket, Location& location) {
+	Response	response;
+
+	if (!_is_allow_method(request.get_method(), location.get_allow_methods()))
+		response.set_status_code("405");
+	else if (!_is_file_found(request.get_target(), location.get_root()))
+		response.set_status_code("404");
+}
+
+bool	WebServ::_is_allow_method(const std::string& method, const std::vector<bool>& allow_methods) {
+	static std::string	methods[NUMBER_METHODS] = {"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"};
+
+	for (int i = 0; i < NUMBER_METHODS; ++i) {
+		if (method == methods[i])
+			return (allow_methods[i]);
+	}
+	return (false);
+}
+
+bool	WebServ::_is_file_found(const std::string& target, const std::string& root) {
+	return (false);
+}
+
+void					WebServ::_pointer_file_to_start(int& fd, int& file_position) {
+	file_position = 0;
+	lseek(fd, 0, SEEK_SET);
+}
+
 std::pair<int, int>		WebServ::_pop_worker() {
 	std::pair<int, int>		worker = _worker_queue.front();
 
 	_worker_queue.pop();
 	return (worker);
+}
+
+VirtualServer		WebServ::_get_virtual_server(const Request& request) const {
+	bool					default_vs_flag;
+	const VirtualServer		*default_vs;
+
+	default_vs_flag = false;
+	for (const auto & server : _list_virtual_servers) {
+		for (const auto& port : server.get_ports()) {
+			if (request.get_port() == port) {
+				if (!default_vs_flag) {
+					default_vs = &server;
+					default_vs_flag = true;
+				}
+				for (const auto& server_name : server.get_server_names())
+					if (request.get_header(HOST) == server_name)
+						return (server);
+			}
+		}
+	}
+	return (*default_vs);
 }
