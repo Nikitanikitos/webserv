@@ -6,16 +6,18 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 20:29:23 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/25 04:49:17 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/26 12:39:53 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WEBSERV_LOCATION_HPP
-#define WEBSERV_LOCATION_HPP
+# define WEBSERV_LOCATION_HPP
+
+# define NUMBER_METHODS		6
 
 # include <vector>
 # include <string>
-# include <stdint.h>
+# include <cstdint>
 
 enum {
 	accepted = true,
@@ -28,10 +30,7 @@ enum {
 	POST,
 	PUT,
 	DELETE,
-	CONNECT,
 	OPTIONS,
-	TRACE,
-	PATCH
 };
 
 enum {
@@ -40,18 +39,17 @@ enum {
 	proxy
 };
 
-class Location {
+class	Location {
 private:
-	std::vector<bool>	_accepted_methods;
+	std::vector<bool>	_allow_methods;
 	std::string			_root;
 	std::string			_cgi_pass;
 	std::string			_proxy_pass;
 	bool				_autoindex;
 	std::string			_if_request_is_directory;
+	int 				_location_type;
 
 public:
-	int 				location_type;
-
 	Location();
 	~Location() = default;
 
@@ -62,7 +60,11 @@ public:
 	void set_cgi_path(const std::string&);
 	void set_autoindex(bool);
 
-	void add_accepted_method(uint8_t);
+	void									add_accepted_method(uint8_t);
+
+	[[nodiscard]] const	std::vector<bool>&	get_allow_methods() const;
+	[[nodiscard]] int						get_location_type() const;
+	[[nodiscard]] const	std::string&		get_root() const;
 };
 
 #endif //WEBSERV_LOCATION_HPP
