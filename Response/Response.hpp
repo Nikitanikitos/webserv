@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:14:03 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/25 02:03:43 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/26 13:41:04 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ private:
 
 public:
 	Response();
+	explicit Response(std::string&);
 	virtual ~Response();
 
 	void add_header(const std::pair<std::string, std::string>&);
