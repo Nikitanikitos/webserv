@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/25 04:21:46 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/26 22:28:00 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <arpa/inet.h>
 # include <zconf.h>
 # include <fcntl.h>
+# include "Request.hpp"
 # include "Location.hpp"
 # include "libft.hpp"
 
@@ -43,15 +44,22 @@ public:
 	virtual ~VirtualServer();
 	/* закрытие сокетов */
 
-	void	add_server_name(const std::string&);
-	void	add_port(const std::string&);
-	void	add_route(const Location&);
-
-	void	set_limit_client_body_size(int);
-	void	set_host(const std::string&);
-
-	void	init_sockets();
+	void												init_sockets();
 	/* инициализирует сокеты по хосту и портам */
+
+	void												add_server_name(const std::string&);
+	void												add_port(const std::string&);
+	void												add_route(const Location&);
+
+	Location											_get_location(Request&);
+
+	[[nodiscard]] const std::vector<std::string>&		get_server_names() const;
+	[[nodiscard]] const std::vector<std::string>&		get_ports() const;
+	[[nodiscard]] const std::string&					get_host() const;
+
+	void												set_limit_client_body_size(int);
+	void												set_host(const std::string&);
+
 };
 
 #endif //WEBSERV_VIRTUALSERVER_HPP

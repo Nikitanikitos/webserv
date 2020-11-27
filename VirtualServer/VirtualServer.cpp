@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/25 04:21:46 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/26 22:22:24 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,4 +63,16 @@ int VirtualServer::_create_socket(sockaddr_in& sock_addr) {
 	fcntl(fd_socket, F_SETFL, O_NONBLOCK);
 	listen(fd_socket, 10);
 	return (fd_socket);
+}
+
+const std::string& VirtualServer::get_host() const {
+	return (_host);
+}
+
+const std::vector<std::string>& VirtualServer::get_ports() const {
+	return (_ports);
+}
+
+const std::vector<std::string>& VirtualServer::get_server_names() const {
+	return (_server_names);
 }
