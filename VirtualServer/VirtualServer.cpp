@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/26 22:22:24 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/30 17:32:30 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,33 @@ const std::vector<std::string>& VirtualServer::get_ports() const {
 
 const std::vector<std::string>& VirtualServer::get_server_names() const {
 	return (_server_names);
+}
+
+int 		priority_compare(const std::string &string1, const std::string& string2) {
+	int 	result;
+
+	result = 0;
+	if (string1.length() > string2.length())
+		return (result);
+	for (size_t	i = 0; i < string1.length() && i < string2.length(); ++i) {
+		if (string1[i] != string2[i])
+			return (0);
+		result++;
+	}
+	return (result);
+}
+
+Location	VirtualServer::_get_location(Request& request) {
+	int 			match_priority;
+	const Location* current_location = nullptr;
+
+	match_priority = 0;
+	for (const auto& location : _list_locations) {
+		int 	compare = priority_compare(location.get_path(), request.get_target());
+		if (compare > match_priority) {
+			match_priority = compare;
+			current_location =  &location;
+		}
+	}
+	return (*current_location);
 }
