@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 18:03:37 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/26 12:49:09 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/30 19:18:57 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,8 @@
 
 # include <string>
 # include <map>
+# include "Location.hpp"
+# include "VirtualServer.hpp"
 
 class	Request {
 private:
@@ -46,25 +48,32 @@ private:
 	std::string				_port;
 	std::string				_body;
 	_headers_t				_headers;
+	VirtualServer			_virtual_server;
+	Location				_location;
 
 public:
 	Request();
 	virtual ~Request();
 
-	void				add_header(const std::pair<std::string, std::string>&);
+	void								add_header(const std::pair<std::string, std::string>&);
 
-	void				set_port(const std::string&);
-	void			 	set_host(const std::string&);
-	void				set_target(const std::string&);
-	void				set_method(const std::string&);
+	void								set_port(const std::string&);
+	void							 	set_host(const std::string&);
+	void								set_target(const std::string&);
+	void								set_method(const std::string&);
 
-	[[nodiscard]] const std::string& get_host() const;
-	[[nodiscard]] const std::string& get_method() const;
-	[[nodiscard]] const std::string& get_target() const;
-	[[nodiscard]] const std::string& get_port() const;
-	[[nodiscard]] const std::string& get_body() const;
+	void								set_virtual_server(const std::vector<VirtualServer>& virtual_server);
+	void								set_location();
 
-	[[nodiscard]] const	std::string& get_header(const std::string&) const;
+	[[nodiscard]] const std::string&	get_host() const;
+	[[nodiscard]] const std::string&	get_method() const;
+	[[nodiscard]] const std::string&	get_target() const;
+	[[nodiscard]] const std::string&	get_port() const;
+	[[nodiscard]] const std::string&	get_body() const;
+
+	[[nodiscard]] const	std::string&	get_header(const std::string&) const;
+
+	const Location& get_location() const;
 };
 
 #endif //WEBSERV_REQUEST_HPP
