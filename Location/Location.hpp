@@ -42,6 +42,7 @@ enum {
 class	Location {
 private:
 	std::vector<bool>	_allow_methods;
+	std::string			_path;
 	std::string			_root;
 	std::string			_cgi_pass;
 	std::string			_proxy_pass;
@@ -53,17 +54,18 @@ public:
 	Location();
 	~Location() = default;
 
-	void set_location_type(int location_type);
+	void									set_location_type(int location_type);
 
-	void set_root(const std::string&);
-	void set_if_request_is_directory(const std::string&);
-	void set_cgi_path(const std::string&);
-	void set_autoindex(bool);
+	void									set_root(const std::string&);
+	void									set_if_request_is_directory(const std::string&);
+	void									set_cgi_path(const std::string&);
+	void									set_autoindex(bool);
 
 	void									add_accepted_method(uint8_t);
 
 	[[nodiscard]] const	std::vector<bool>&	get_allow_methods() const;
 	[[nodiscard]] int						get_location_type() const;
+	[[nodiscard]] const std::string&		get_path() const;
 	[[nodiscard]] const	std::string&		get_root() const;
 };
 
