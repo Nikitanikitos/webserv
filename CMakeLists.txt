@@ -9,19 +9,25 @@ add_executable(webserv
 		libft/ft_memset.cpp
 		libft/ft_hton.cpp
 		libft/ft_atoi.cpp
+		libft/ft_localtime.cpp
 
 		WebServ/WebServ.cpp
 		VirtualServer/VirtualServer.cpp
 		Location/Location.cpp
 		ParseConfigFile/ParseConfigFile.cpp
 		Request/Request.cpp
-        Response/Response.cpp Response/Response.hpp libft/ft_localtime.cpp)
+        Response/Response.cpp
+
+		exceptions/exceptions.cpp
+		)
 
 include_directories(
 		includes
+		exceptions
         Location
 		VirtualServer
 		WebServ
 		ParseConfigFile
 		Request
+		Response
 		)
