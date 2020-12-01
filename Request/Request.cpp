@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:25:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/30 19:18:57 by imicah           ###   ########.fr       */
+/*   Updated: 2020/11/30 19:22:51 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,4 +60,5 @@ void Request::set_location() {
 	_location = _virtual_server._get_location(*this);
 }
 
-const Location& Request::get_location() const { return (_location); }
+const Location&			Request::get_location() const { return (_location); }
+const VirtualServer&	Request::get_virtual_server() const { return (_virtual_server); }

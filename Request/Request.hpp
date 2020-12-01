@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 18:03:37 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/30 19:18:57 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/01 17:02:33 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,15 +65,15 @@ public:
 	void								set_virtual_server(const std::vector<VirtualServer>& virtual_server);
 	void								set_location();
 
+
 	[[nodiscard]] const std::string&	get_host() const;
 	[[nodiscard]] const std::string&	get_method() const;
 	[[nodiscard]] const std::string&	get_target() const;
 	[[nodiscard]] const std::string&	get_port() const;
 	[[nodiscard]] const std::string&	get_body() const;
-
 	[[nodiscard]] const	std::string&	get_header(const std::string&) const;
-
-	const Location& get_location() const;
+	[[nodiscard]] const Location&		get_location() const;
+	[[nodiscard]] const VirtualServer&	get_virtual_server() const;
 };
 
 #endif //WEBSERV_REQUEST_HPP
