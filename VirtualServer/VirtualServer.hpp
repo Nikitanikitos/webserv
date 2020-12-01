@@ -26,12 +26,12 @@ public:
 	std::vector<int>			vs_sockets;
 
 private:
-	std::string					_host; /* конвертировать в число через функцию inet_addr */
-	std::vector<std::string>	_ports;
-	int							_limit_client_body_size;
-	std::vector<std::string>	_server_names; /* если sever_names в конфиг файле нет, server_name = _host */
-	std::string					_error_pages;
-	std::vector<Location>		_list_locations;
+	std::string								_host; /* конвертировать в число через функцию inet_addr */
+	std::vector<std::string>				_ports;
+	int										_limit_client_body_size;
+	std::vector<std::string>				_server_names; /* если sever_names в конфиг файле нет, server_name = _host */
+	std::map<std::string, std::string>		_error_pages;
+	std::vector<Location>					_list_locations;
 
 	void	_init_sock_addr(struct sockaddr_in&, const std::string&);
 
