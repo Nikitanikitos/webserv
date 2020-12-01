@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/27 17:26:22 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/01 17:58:55 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include "VirtualServer.hpp"
 # include "Response.hpp"
 # include "exceptions.hpp"
+#include <fcntl.h>
 
 # define PIPE_BUFFER_SIZE	64000
 
@@ -33,18 +34,15 @@ private:
 	std::queue<std::pair<int, int> >		_worker_queue;
 	int 									_number_workers;
 
-	static bool			_is_allow_method(const std::string&, const std::vector<bool>&);
-	static bool			_is_file_found(const std::string&, const std::string&);
+	static void			_default_handler(Request&, int);
+	void 				_cgi_handler(Request&, int);
+	void				_proxy_handler(Request&, int);
 
-	void				_default_handler(Request&, int, Location&);
-	void 				_cgi_handler(Request&, int, Location&);
-	void				_proxy_handler(Request&, int, Location&);
+	static void 		_post_method_handler(Request&, struct stat*);
+	static void			_get_head_methods_handler(Request&, struct stat*, int);
 
-	void					_get_accept_from_ready_sockets();
-	static void				_pointer_file_to_start(int&, int&);
-
-	void				_parse_request_body(); // TODO что метод возращает и возвращает ли вообще?
-	/* Метод парсит тело запроса */
+	void				_get_accept_from_ready_sockets();
+	static void			_pointer_file_to_start(int&, int&);
 
 	void					_create_workers();
 	[[noreturn]] void		_worker(int);
@@ -56,15 +54,11 @@ private:
 	 * Далее парсит заголовки, заносит их в словарь и проверяет корректность заголовка через _check_request_header().
 	 * Далее парсит тело запроса через _parse_request_body() (если тело запроса есть).
 	 * Возвращает объект Request() */
-	VirtualServer			_get_virtual_server(const Request&) const;
 
 	void					_give_response();
 	/* Принимает объект Request(), создает объект Response(), составляет тело ответа и отсылает его через send() */
 
 	void				_serve_client(int);
-	/* Метод вызывает функцию accept() на сокет и вызывает метод _get_request(),
-	 * который возвращает объект Request.
-	 * вызов метода _give_response() */
 
 public:
 	explicit WebServ(const std::vector<VirtualServer>&);

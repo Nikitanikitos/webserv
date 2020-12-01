@@ -6,10 +6,11 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/27 17:26:22 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/01 18:02:06 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <sys/stat.h>
 #include "WebServ.hpp"
 
 WebServ::WebServ(const std::vector<VirtualServer>& list_virtual_servers) : _list_virtual_servers(list_virtual_servers) {
@@ -100,22 +101,30 @@ void		WebServ::_give_response() {
 }
 
 void		WebServ::_serve_client(int client_socket) {
+		Request			request;
+		Location		location;
 	try {
-		Request			request = _get_request(client_socket);
-		VirtualServer	server = _get_virtual_server(request);
-		Location		location = server._get_location(request);
-
+		request = _get_request(client_socket);
+		request.set_virtual_server(_list_virtual_servers);
+		request.set_location();
+		location = request.get_location();
 		switch (location.get_location_type()) {
 			case _default:
-				_default_handler(request, client_socket, location);
+				_default_handler(request, client_socket);
 			case cgi:
-				_cgi_handler(request, client_socket, location);
+				_cgi_handler(request, client_socket);
 			case proxy:
-				_proxy_handler(request, client_socket, location);
+				_proxy_handler(request, client_socket);
 		}
+	}
+	catch (Request301Redirect& redirect_301) {
+		redirect_301.send_response(client_socket);
 	}
 	catch (Request400Error& request_400_error) {
 		request_400_error.send_response(client_socket);
+	}
+	catch (Request403Error& request_403_error) {
+		request_403_error.send_response(client_socket);
 	}
 	catch (Request405Error& request_405_error) {
 		request_405_error.send_response(client_socket);
@@ -132,27 +141,39 @@ Request		WebServ::_get_request(int client_socket) {
 	return (Request());
 }
 
-void	WebServ::_default_handler(Request& request, int client_socket, Location& location) {
-	Response	response;
+void		WebServ::_default_handler(Request& request, int client_socket) {
+	const Location&		location = request.get_location();
+	const std::string&	path_to_file = location.get_root() + request.get_target().substr(location.get_path().length());
+	struct stat			buff;
 
-	if (!_is_allow_method(request.get_method(), location.get_allow_methods()))
-		response.set_status_code("405");
-	else if (!_is_file_found(request.get_target(), location.get_root()))
-		response.set_status_code("404");
+	if (stat(path_to_file.c_str(), &buff) == -1)
+		throw Request404Error();
+	else if (S_ISDIR(buff.st_mode) && path_to_file.back() != '/') // если это директория, но на конце без / - 301
+		throw Request301Redirect("http://" + request.get_host() + ":" + request.get_port() + "/" + request.get_target() + "/");
+	else if (request.get_location().is_allow_method(request.get_method()))
+		throw Request405Error();
+
+	if (request.get_method() == "POST")
+		_post_method_handler(request, &buff);
+	else
+		_get_head_methods_handler(request, &buff, client_socket);
 }
 
-bool	WebServ::_is_allow_method(const std::string& method, const std::vector<bool>& allow_methods) {
-	static std::string	methods[NUMBER_METHODS] = {"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"};
+void WebServ::_get_head_methods_handler(Request& request, struct stat* buff, int) {
+	const Location&		location = request.get_location();
+	const std::string&	path_to_file = location.get_root() + request.get_target().substr(location.get_path().length());
 
-	for (int i = 0; i < NUMBER_METHODS; ++i) {
-		if (method == methods[i])
-			return (allow_methods[i]);
-	}
-	return (false);
+	if (S_ISREG(buff->st_mode) || S_ISLNK(buff->st_mode))
+		"send file";
+	else if (S_ISDIR(buff->st_mode) && location.is_autoindex())
+		"send autoindex page";
 }
 
-bool	WebServ::_is_file_found(const std::string& target, const std::string& root) {
-	return (false);
+void WebServ::_post_method_handler(Request& request, struct stat* buff) {
+	if (S_ISDIR(buff->st_mode))
+		throw Request403Error();
+	else
+		throw Request405Error();
 }
 
 void					WebServ::_pointer_file_to_start(int& fd, int& file_position) {
@@ -187,3 +208,4 @@ VirtualServer		WebServ::_get_virtual_server(const Request& request) const {
 	}
 	return (*default_vs);
 }
+
