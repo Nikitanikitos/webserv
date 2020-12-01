@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 16:04:10 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/01 17:09:16 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/01 20:00:04 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,32 +20,39 @@ class	ARequestException : public std::exception {
 protected:
 	const std::string	_message_phrase;
 	const std::string	_status_code;
+	const std::string	_error_page;
 
-	ARequestException(std::string& status_code, std::string& message_phrase)
-													: _message_phrase(message_phrase), _status_code(status_code) { };
+	ARequestException(const std::string& status_code, const std::string& message_phrase, const std::string &error_page)
+												: _message_phrase(message_phrase), _status_code(status_code),
+																							_error_page(error_page) { };
 
 	~ARequestException() override = 0;
 
 	virtual void						send_response(int) = 0;
 };
 
-class	Request301Redirect : public ARequestException {
+class	Request301Redirect : public std::exception  {
 private:
-	std::string		_location;
+	const std::string	_message_phrase;
+	const std::string	_status_code;
+	std::string			_location;
 
 public:
-	explicit Request301Redirect(std::string location)
-			: ARequestException((std::string&) "301", (std::string&) "Moved Permanently"), _location(location) { }
+	explicit Request301Redirect(std::string location) : _location(location) {
 
-	~Request301Redirect() override = default;
+	}
 
-	[[nodiscard]] const char*	what() const _NOEXCEPT override  { return ("301 Moved Permanently"); }
-	virtual void				send_response(int);
+	~Request301Redirect() = default;
+
+	[[nodiscard]] const char*	what() const _NOEXCEPT { return ("301 Moved Permanently"); }
+	void						send_response(int);
 };
 
 class	Request400Error : public ARequestException {
 public:
-	Request400Error() : ARequestException((std::string&) "400", (std::string&) "Bad Request") { }
+	explicit Request400Error(const std::string& error_pages) : ARequestException(
+							(std::string&) "400", (std::string&) "Bad Request", error_pages) { }
+
 	~Request400Error() override = default;
 
 	[[nodiscard]] const char*	what() const _NOEXCEPT override  { return ("400 Bad request"); }
@@ -54,7 +61,8 @@ public:
 
 class	Request404Error : public ARequestException {
 public:
-	Request404Error() : ARequestException((std::string&) "404", (std::string&) "Not found") { }
+	Request404Error(const std::string& error_pages) : ARequestException(
+								(std::string&) "404", (std::string&) "Not found", error_pages) { }
 	~Request404Error() override = default;
 
 	[[nodiscard]] const char*	what() const _NOEXCEPT override  { return ("404 Not found"); }
@@ -63,7 +71,8 @@ public:
 
 class	Request403Error : public ARequestException {
 public:
-	Request403Error() : ARequestException((std::string&) "403", (std::string&) "Forbidden") { }
+	Request403Error(const std::string& error_pages) : ARequestException(
+							(std::string&) "403", (std::string&) "Forbidden", error_pages) { }
 	~Request403Error() override = default;
 
 	[[nodiscard]] const char*	what() const _NOEXCEPT override  { return ("403 Forbidden"); }
@@ -72,7 +81,8 @@ public:
 
 class	Request405Error : public ARequestException {
 public:
-	Request405Error() : ARequestException((std::string&) "405", (std::string&) "Method Not Allowed") { }
+	Request405Error(const std::string& error_pages) : ARequestException(
+					(std::string&) "405", (std::string&) "Method Not Allowed", error_pages) { }
 	~Request405Error() override = default;
 
 	[[nodiscard]] const char*	what() const _NOEXCEPT override  { return ("405 Method Not Allowed"); }
@@ -81,7 +91,8 @@ public:
 
 class	Request505Error : public ARequestException {
 public:
-	Request505Error() : ARequestException((std::string&) "505", (std::string&) "HTTP Version Not Supported") { }
+	Request505Error(const std::string& error_pages) : ARequestException(
+			(std::string&) "505", (std::string&) "HTTP Version Not Supported", error_pages) { }
 	~Request505Error() override = default;
 
 	[[nodiscard]] const char*	what() const _NOEXCEPT override { return ("505 HTTP Version Not Supported"); }

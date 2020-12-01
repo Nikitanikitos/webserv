@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/01 17:58:55 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/01 19:27:50 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ private:
 	/* Принимает объект Request(), создает объект Response(), составляет тело ответа и отсылает его через send() */
 
 	void				_serve_client(int);
+	[[nodiscard]] VirtualServer		_get_virtual_server(const Request& request) const;
 
 public:
 	explicit WebServ(const std::vector<VirtualServer>&);

@@ -147,11 +147,11 @@ void		WebServ::_default_handler(Request& request, int client_socket) {
 	struct stat			buff;
 
 	if (stat(path_to_file.c_str(), &buff) == -1)
-		throw Request404Error();
-	else if (S_ISDIR(buff.st_mode) && path_to_file.back() != '/') // если это директория, но на конце без / - 301
+		throw Request404Error(request.get_virtual_server().get_error_page("404"));
+	else if (S_ISDIR(buff.st_mode) && path_to_file.back() != '/')
 		throw Request301Redirect("http://" + request.get_host() + ":" + request.get_port() + "/" + request.get_target() + "/");
 	else if (request.get_location().is_allow_method(request.get_method()))
-		throw Request405Error();
+		throw Request405Error(request.get_virtual_server().get_error_page("405"));
 
 	if (request.get_method() == "POST")
 		_post_method_handler(request, &buff);
@@ -171,9 +171,9 @@ void WebServ::_get_head_methods_handler(Request& request, struct stat* buff, int
 
 void WebServ::_post_method_handler(Request& request, struct stat* buff) {
 	if (S_ISDIR(buff->st_mode))
-		throw Request403Error();
+		throw Request403Error(request.get_virtual_server().get_error_page("403"));
 	else
-		throw Request405Error();
+		throw Request405Error(request.get_virtual_server().get_error_page("405"));
 }
 
 void					WebServ::_pointer_file_to_start(int& fd, int& file_position) {
