@@ -58,6 +58,8 @@ public:
 
 	void									set_root(const std::string&);
 	void									set_if_request_is_directory(const std::string&);
+
+
 	void									set_cgi_path(const std::string&);
 	void									set_autoindex(bool);
 
@@ -67,6 +69,9 @@ public:
 	[[nodiscard]] int						get_location_type() const;
 	[[nodiscard]] const std::string&		get_path() const;
 	[[nodiscard]] const	std::string&		get_root() const;
+
+	[[nodiscard]] bool						is_allow_method(const std::string&) const;
+	[[nodiscard]] bool						is_autoindex() const;
 };
 
 #endif //WEBSERV_LOCATION_HPP

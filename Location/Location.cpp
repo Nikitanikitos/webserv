@@ -30,3 +30,15 @@ int						Location::get_location_type() const { return (_location_type); }
 
 const std::string&		Location::get_path() const { return (_path); }
 const std::string&		Location::get_root() const { return (_root); }
+
+bool Location::is_allow_method(const std::string& method) const {
+		static std::string	methods[NUMBER_METHODS] = {"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"};
+
+		for (int i = 0; i < NUMBER_METHODS; ++i) {
+			if (method == methods[i])
+				return (_allow_methods[i]);
+		}
+		return (false);
+	}
+
+bool Location::is_autoindex() const { return (_autoindex); }
