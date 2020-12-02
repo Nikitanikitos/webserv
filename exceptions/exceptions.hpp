@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 16:04:10 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/01 20:57:49 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/02 17:07:34 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,6 @@
 # include <string>
 # include <fstream>
 # include "libft.hpp"
-
-# define HTTP_V			"HTTP/1.1"
-# define SERVER_NAME	"WebServ/0.1"
-# define CONTENT_TYPE	"text/html"
 
 class	RequestException : public std::exception {
 private:
@@ -39,16 +35,16 @@ public:
 		std::ifstream		file(_error_page);
 		std::string			body_response;
 		std::string			response;
-		char				date[80];
 
 		getline(file, body_response, '\0');
-		response = std::string(HTTP_V) + SP + _status_code + SP + _message_phrase + CRLF
-				   "Server:" + SP + SERVER_NAME + CRLF
-				   "Date:" + SP + date + CRLF
-				   "Content-type: text/html" + CRLF
-				   "Content-length:" + SP + std::to_string(body_response.length()) + CRLF
-				   "Connection: keep-alive" + CRLF CRLF +
-				   body_response;
+		response =
+			HTTP_VERSION + SP + _status_code + SP + _message_phrase + CRLF
+			"Server:" + SP + SERVER_VERSION + CRLF
+			"Date:" + SP + ft_getdate() + CRLF
+			"Content-type: text/html" + CRLF
+			"Content-length:" + SP + std::to_string(body_response.length()) + CRLF
+			"Connection: keep-alive" + CRLF CRLF +
+			body_response;
 
 		send(client_socket, response.c_str(), response.length(), 0);
 	}
@@ -61,9 +57,7 @@ private:
 	std::string			_location;
 
 public:
-	explicit Request301Redirect(std::string location) : _location(location) {
-
-	}
+	explicit Request301Redirect(std::string location) : _location(location) { }
 
 	~Request301Redirect() = default;
 
