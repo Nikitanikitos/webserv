@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/01 19:27:50 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/01 20:05:28 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,8 @@ private:
 	 * Далее парсит заголовки, заносит их в словарь и проверяет корректность заголовка через _check_request_header().
 	 * Далее парсит тело запроса через _parse_request_body() (если тело запроса есть).
 	 * Возвращает объект Request() */
+
+	static void _static_file_send(Request& request, const std::string& path_to_file, int client_socket);
 
 	void					_give_response();
 	/* Принимает объект Request(), создает объект Response(), составляет тело ответа и отсылает его через send() */

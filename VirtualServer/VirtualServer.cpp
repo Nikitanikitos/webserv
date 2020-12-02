@@ -105,3 +105,7 @@ Location	VirtualServer::_get_location(Request& request) {
 	}
 	return (*current_location);
 }
+
+const std::string&	VirtualServer::get_error_page(const std::string& status_code) const {
+	return _error_pages.at(status_code);
+}

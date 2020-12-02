@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/26 22:28:00 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/01 20:03:41 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,9 @@ public:
 	/* закрытие сокетов */
 
 	void												init_sockets();
+
+	const std::string&									get_error_page(const std::string& status_code) const;
+
 	/* инициализирует сокеты по хосту и портам */
 
 	void												add_server_name(const std::string&);

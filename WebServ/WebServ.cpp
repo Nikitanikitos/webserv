@@ -6,11 +6,12 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/01 18:02:06 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/01 20:34:22 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <sys/stat.h>
+#include <fstream>
 #include "WebServ.hpp"
 
 WebServ::WebServ(const std::vector<VirtualServer>& list_virtual_servers) : _list_virtual_servers(list_virtual_servers) {
@@ -89,11 +90,8 @@ void		WebServ::_worker(int pipe_fd) {
 		if (file_position >= PIPE_BUFFER_SIZE)
 			_pointer_file_to_start(pipe_fd, file_position);
 		_serve_client(client_socket);
+		close(client_socket);
 	}
-}
-
-void		WebServ::_parse_request_body() {
-
 }
 
 void		WebServ::_give_response() {
@@ -120,20 +118,8 @@ void		WebServ::_serve_client(int client_socket) {
 	catch (Request301Redirect& redirect_301) {
 		redirect_301.send_response(client_socket);
 	}
-	catch (Request400Error& request_400_error) {
-		request_400_error.send_response(client_socket);
-	}
-	catch (Request403Error& request_403_error) {
-		request_403_error.send_response(client_socket);
-	}
-	catch (Request405Error& request_405_error) {
-		request_405_error.send_response(client_socket);
-	}
-	catch (Request505Error& request_505_error) {
-		request_505_error.send_response(client_socket);
-	}
-	catch (Request404Error& request_404_error) {
-		request_404_error.send_response(client_socket);
+	catch (RequestException& request_error) {
+		request_error.send_response(client_socket);
 	}
 }
 
@@ -147,11 +133,11 @@ void		WebServ::_default_handler(Request& request, int client_socket) {
 	struct stat			buff;
 
 	if (stat(path_to_file.c_str(), &buff) == -1)
-		throw Request404Error(request.get_virtual_server().get_error_page("404"));
+		throw RequestException("404", "Not Found", request.get_virtual_server().get_error_page("404"));
 	else if (S_ISDIR(buff.st_mode) && path_to_file.back() != '/')
 		throw Request301Redirect("http://" + request.get_host() + ":" + request.get_port() + "/" + request.get_target() + "/");
 	else if (request.get_location().is_allow_method(request.get_method()))
-		throw Request405Error(request.get_virtual_server().get_error_page("405"));
+		throw RequestException("405", "Method Not Allowed", request.get_virtual_server().get_error_page("405"));
 
 	if (request.get_method() == "POST")
 		_post_method_handler(request, &buff);
@@ -159,21 +145,39 @@ void		WebServ::_default_handler(Request& request, int client_socket) {
 		_get_head_methods_handler(request, &buff, client_socket);
 }
 
-void WebServ::_get_head_methods_handler(Request& request, struct stat* buff, int) {
+void	WebServ::_get_head_methods_handler(Request& request, struct stat* buff, int client_socket) {
 	const Location&		location = request.get_location();
 	const std::string&	path_to_file = location.get_root() + request.get_target().substr(location.get_path().length());
 
-	if (S_ISREG(buff->st_mode) || S_ISLNK(buff->st_mode))
-		"send file";
+	if (S_ISREG(buff->st_mode) || S_ISLNK(buff->st_mode)) {
+		_static_file_send(request, path_to_file, client_socket);
+	}
 	else if (S_ISDIR(buff->st_mode) && location.is_autoindex())
 		"send autoindex page";
 }
 
+void WebServ::_static_file_send(Request& request, const std::string& path_to_file, int client_socket) {
+	std::ifstream		file(path_to_file);
+	std::string			body_response;
+	std::string			response;
+	char				date[80];
+
+	getline(file, body_response, '\0');
+	response = "HTTP/1.1 200 OK\r\n"
+			"Server: WebServ/0.1\r\n"
+   			"Date: " + std::string(date) + "\r\n"
+			"Content-Length: " + std::to_string(body_response.length()) + "\r\n"
+			"Last-Modified: " + "\r\n"
+			"\r\n" +
+			body_response;
+	send(client_socket, response.c_str(), response.length(), 0);
+}
+
 void WebServ::_post_method_handler(Request& request, struct stat* buff) {
 	if (S_ISDIR(buff->st_mode))
-		throw Request403Error(request.get_virtual_server().get_error_page("403"));
+		throw RequestException("403", "Forbidden", request.get_virtual_server().get_error_page("403"));
 	else
-		throw Request405Error(request.get_virtual_server().get_error_page("405"));
+		throw RequestException("405", "Method Not Allowed", request.get_virtual_server().get_error_page("405"));
 }
 
 void					WebServ::_pointer_file_to_start(int& fd, int& file_position) {
