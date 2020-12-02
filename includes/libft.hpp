@@ -14,6 +14,7 @@
 # define WEBSERV_LIBFT_HPP
 
 # include <cstddef>
+# include <sys/socket.h>
 
 # define CRLF	"\r\n"
 # define SP		" "
