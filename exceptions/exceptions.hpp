@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 16:04:10 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/01 20:00:04 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/01 20:57:49 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,20 +15,43 @@
 
 # include <exception>
 # include <string>
+# include <fstream>
+# include "libft.hpp"
 
-class	ARequestException : public std::exception {
-protected:
+# define HTTP_V			"HTTP/1.1"
+# define SERVER_NAME	"WebServ/0.1"
+# define CONTENT_TYPE	"text/html"
+
+class	RequestException : public std::exception {
+private:
 	const std::string	_message_phrase;
 	const std::string	_status_code;
 	const std::string	_error_page;
 
-	ARequestException(const std::string& status_code, const std::string& message_phrase, const std::string &error_page)
-												: _message_phrase(message_phrase), _status_code(status_code),
-																							_error_page(error_page) { };
+public:
+	RequestException(const std::string& status_code, const std::string& message_phrase, const std::string &error_page)
+			: _message_phrase(message_phrase), _status_code(status_code),
+			  _error_page(error_page) { };
 
-	~ARequestException() override = 0;
+	~RequestException() override = default;;
 
-	virtual void						send_response(int) = 0;
+	void	send_response(int client_socket) {
+		std::ifstream		file(_error_page);
+		std::string			body_response;
+		std::string			response;
+		char				date[80];
+
+		getline(file, body_response, '\0');
+		response = std::string(HTTP_V) + SP + _status_code + SP + _message_phrase + CRLF
+				   "Server:" + SP + SERVER_NAME + CRLF
+				   "Date:" + SP + date + CRLF
+				   "Content-type: text/html" + CRLF
+				   "Content-length:" + SP + std::to_string(body_response.length()) + CRLF
+				   "Connection: keep-alive" + CRLF CRLF +
+				   body_response;
+
+		send(client_socket, response.c_str(), response.length(), 0);
+	}
 };
 
 class	Request301Redirect : public std::exception  {
@@ -45,57 +68,6 @@ public:
 	~Request301Redirect() = default;
 
 	[[nodiscard]] const char*	what() const _NOEXCEPT { return ("301 Moved Permanently"); }
-	void						send_response(int);
-};
-
-class	Request400Error : public ARequestException {
-public:
-	explicit Request400Error(const std::string& error_pages) : ARequestException(
-							(std::string&) "400", (std::string&) "Bad Request", error_pages) { }
-
-	~Request400Error() override = default;
-
-	[[nodiscard]] const char*	what() const _NOEXCEPT override  { return ("400 Bad request"); }
-	virtual void				send_response(int);
-};
-
-class	Request404Error : public ARequestException {
-public:
-	Request404Error(const std::string& error_pages) : ARequestException(
-								(std::string&) "404", (std::string&) "Not found", error_pages) { }
-	~Request404Error() override = default;
-
-	[[nodiscard]] const char*	what() const _NOEXCEPT override  { return ("404 Not found"); }
-	virtual void				send_response(int);
-};
-
-class	Request403Error : public ARequestException {
-public:
-	Request403Error(const std::string& error_pages) : ARequestException(
-							(std::string&) "403", (std::string&) "Forbidden", error_pages) { }
-	~Request403Error() override = default;
-
-	[[nodiscard]] const char*	what() const _NOEXCEPT override  { return ("403 Forbidden"); }
-	virtual void				send_response(int);
-};
-
-class	Request405Error : public ARequestException {
-public:
-	Request405Error(const std::string& error_pages) : ARequestException(
-					(std::string&) "405", (std::string&) "Method Not Allowed", error_pages) { }
-	~Request405Error() override = default;
-
-	[[nodiscard]] const char*	what() const _NOEXCEPT override  { return ("405 Method Not Allowed"); }
-	virtual void				send_response(int);
-};
-
-class	Request505Error : public ARequestException {
-public:
-	Request505Error(const std::string& error_pages) : ARequestException(
-			(std::string&) "505", (std::string&) "HTTP Version Not Supported", error_pages) { }
-	~Request505Error() override = default;
-
-	[[nodiscard]] const char*	what() const _NOEXCEPT override { return ("505 HTTP Version Not Supported"); }
 	void						send_response(int);
 };
 
