@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/01 20:34:22 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/02 16:18:15 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,24 +34,6 @@ WebServ::~WebServ() {
 	}
 }
 
-void		WebServ::_create_workers() {
-	int 	pipe_fd[2];
-
-	FD_ZERO(&_set_of_pipes);
-	for (int i = 0; i < _number_workers; ++i) {
-		pipe(pipe_fd);
-		if (fork() == 0) {
-			close(pipe_fd[STDOUT_FILENO]);
-			_worker(pipe_fd[STDIN_FILENO]);
-		}
-		else {
-			close(pipe_fd[STDIN_FILENO]);
-			FD_SET(pipe_fd[STDOUT_FILENO], &_set_of_pipes);
-			_worker_queue.push(std::make_pair(pipe_fd[STDOUT_FILENO], 0));
-		}
-	}
-}
-
 void		WebServ::run_server() {
 	int					 	client_socket;
 	std::pair<int, int>		worker;
@@ -61,46 +43,15 @@ void		WebServ::run_server() {
 		_get_accept_from_ready_sockets();
 	}
 }
-void		WebServ::_get_accept_from_ready_sockets() {
-	int						client_socket;
-	std::pair<int, int>		worker;
-
-	for (int socket : _vs_sockets) {
-		if (FD_ISSET(socket, &_set_of_vs_sockets)) {
-			while ((client_socket = accept(socket, nullptr, nullptr)) != -1) {
-				worker = _pop_worker();
-				write(worker.first, (char*)&client_socket, 4);
-				worker.second += 4;
-				if (worker.second >= PIPE_BUFFER_SIZE)
-					_pointer_file_to_start(worker.first, worker.second);
-				_worker_queue.push(worker);
-			}
-		}
-	}
-}
-
-void		WebServ::_worker(int pipe_fd) {
-	int		file_position;
-	int 	client_socket;
-
-	file_position = 0;
-	while (true) {
-		read(pipe_fd, (char*)&client_socket, 4);
-		file_position += 4;
-		if (file_position >= PIPE_BUFFER_SIZE)
-			_pointer_file_to_start(pipe_fd, file_position);
-		_serve_client(client_socket);
-		close(client_socket);
-	}
-}
 
 void		WebServ::_give_response() {
 
 }
 
 void		WebServ::_serve_client(int client_socket) {
-		Request			request;
-		Location		location;
+	Request			request;
+	Location		location;
+
 	try {
 		request = _get_request(client_socket);
 		request.set_virtual_server(_list_virtual_servers);
@@ -157,20 +108,20 @@ void	WebServ::_get_head_methods_handler(Request& request, struct stat* buff, int
 }
 
 void WebServ::_static_file_send(Request& request, const std::string& path_to_file, int client_socket) {
+	Response			response;
 	std::ifstream		file(path_to_file);
 	std::string			body_response;
-	std::string			response;
-	char				date[80];
+	char				last_modified[80];
 
+	ft_memset(&last_modified, 0, 80);
+	response.set_status_code("200");
 	getline(file, body_response, '\0');
-	response = "HTTP/1.1 200 OK\r\n"
-			"Server: WebServ/0.1\r\n"
-   			"Date: " + std::string(date) + "\r\n"
-			"Content-Length: " + std::to_string(body_response.length()) + "\r\n"
-			"Last-Modified: " + "\r\n"
-			"\r\n" +
-			body_response;
-	send(client_socket, response.c_str(), response.length(), 0);
+	response.add_header("Content-Length", std::to_string(body_response.length()));
+	response.add_header("Last-modified", last_modified);
+	if (request.get_method() == "GET")
+		response.set_body(body_response);
+
+	response.send_response(client_socket);
 }
 
 void WebServ::_post_method_handler(Request& request, struct stat* buff) {
@@ -178,18 +129,6 @@ void WebServ::_post_method_handler(Request& request, struct stat* buff) {
 		throw RequestException("403", "Forbidden", request.get_virtual_server().get_error_page("403"));
 	else
 		throw RequestException("405", "Method Not Allowed", request.get_virtual_server().get_error_page("405"));
-}
-
-void					WebServ::_pointer_file_to_start(int& fd, int& file_position) {
-	file_position = 0;
-	lseek(fd, 0, SEEK_SET);
-}
-
-std::pair<int, int>		WebServ::_pop_worker() {
-	std::pair<int, int>		worker = _worker_queue.front();
-
-	_worker_queue.pop();
-	return (worker);
 }
 
 VirtualServer		WebServ::_get_virtual_server(const Request& request) const {
@@ -212,4 +151,3 @@ VirtualServer		WebServ::_get_virtual_server(const Request& request) const {
 	}
 	return (*default_vs);
 }
-
