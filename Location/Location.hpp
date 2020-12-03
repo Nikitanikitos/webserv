@@ -47,7 +47,7 @@ private:
 	std::string			_cgi_pass;
 	std::string			_proxy_pass;
 	bool				_autoindex;
-	std::string			_if_request_is_directory;
+	std::string			_index;
 	int 				_location_type;
 
 public:
@@ -55,20 +55,18 @@ public:
 	~Location() = default;
 
 	void									set_location_type(int location_type);
-
 	void									set_root(const std::string&);
-	void									set_if_request_is_directory(const std::string&);
-
-
+	void									set_index(const std::string&);
 	void									set_cgi_path(const std::string&);
 	void									set_autoindex(bool);
 
 	void									add_accepted_method(uint8_t);
 
-	[[nodiscard]] const	std::vector<bool>&	get_allow_methods() const;
-	[[nodiscard]] int						get_location_type() const;
+	[[nodiscard]] const std::string&		get_index() const;
 	[[nodiscard]] const std::string&		get_path() const;
 	[[nodiscard]] const	std::string&		get_root() const;
+	[[nodiscard]] const	std::vector<bool>&	get_allow_methods() const;
+	[[nodiscard]] int						get_location_type() const;
 
 	[[nodiscard]] bool						is_allow_method(const std::string&) const;
 	[[nodiscard]] bool						is_autoindex() const;

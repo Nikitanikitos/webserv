@@ -13,7 +13,7 @@
 #include "Location.hpp"
 
 Location::Location() : _autoindex(non_accepted), _root(""), _cgi_pass(""), _proxy_pass(""),
-																		_if_request_is_directory("error_page.html") {
+					   _index("error_page.html") {
 	_allow_methods.assign(5, non_accepted);
 }
 
@@ -21,7 +21,7 @@ void	Location::add_accepted_method(uint8_t method_index) { _allow_methods[method
 void	Location::set_root(const std::string& root) { _root = root; }
 void	Location::set_autoindex(bool autoindex) { _autoindex = autoindex; }
 void	Location::set_cgi_path(const std::string& cgi_path) { _cgi_pass = cgi_path; }
-void	Location::set_if_request_is_directory(const std::string& if_request_is_directory) { _if_request_is_directory = if_request_is_directory; }
+void	Location::set_index(const std::string& index) { _index = index; }
 void	Location::set_location_type(int location_type) { _location_type = location_type; }
 
 const std::vector<bool>&	Location::get_allow_methods() const { return (_allow_methods); }
@@ -42,3 +42,5 @@ bool Location::is_allow_method(const std::string& method) const {
 	}
 
 bool Location::is_autoindex() const { return (_autoindex); }
+
+const std::string&	Location::get_index() const { return (_index); }
