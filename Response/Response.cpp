@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/02 17:01:41 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/04 00:47:44 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,17 @@ void				Response::add_header(const std::string& key, const std::string& value) {
 const std::string&	Response::get_header(const std::string& key) const { return _headers.at(key); }
 
 void				Response::send_response(int client_socket) {
-	std::string			body_response;
 	std::string			response;
 
 	response =
 		HTTP_VERSION + SP + _status_code + SP + _message_phrase + CRLF
 		"Server:" + SP + SERVER_VERSION + CRLF
-		"Date:" + SP + ft_getdate() + CRLF
-		"Last-Modified:" + SP + get_header("Last-modified") + CRLF
-		"Content-length:" + SP + get_header("Content-length") + CRLF
-		"Connection: close" + CRLF CRLF +
-		_body;
+		"Date:" + SP + ft_getdate() + CRLF;
+
+	for (const auto& header : _headers)
+		response.append(header.first + ":" + SP + header.second + CRLF);
+	response.append(CRLF);
+	response.append(_body);
 
 	send(client_socket, response.c_str(), response.length(), 0);
 }
