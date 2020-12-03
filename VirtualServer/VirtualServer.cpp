@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/30 17:32:30 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/04 00:38:09 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ int 		priority_compare(const std::string &string1, const std::string& string2) {
 	return (result);
 }
 
-Location	VirtualServer::get_location(Request& request) {
+Location	VirtualServer::get_location(const Request& request) const {
 	int 			match_priority;
 	int 			compare;
 	const Location* current_location;

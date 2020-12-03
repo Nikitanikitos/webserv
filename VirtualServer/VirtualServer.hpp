@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/02 18:49:01 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/04 00:38:09 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ public:
 	void												add_port(const std::string&);
 	void												add_route(const Location&);
 
-	Location											get_location(Request&);
+	Location											get_location(const Request& request) const;
 
 	[[nodiscard]] const std::vector<std::string>&		get_server_names() const;
 	[[nodiscard]] const std::vector<std::string>&		get_ports() const;
