@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/01 20:03:41 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/02 18:49:01 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@
 # include "Location.hpp"
 # include "libft.hpp"
 
-class VirtualServer {
+class	VirtualServer {
 public:
-	std::vector<int>			vs_sockets;
+	std::vector<int>						vs_sockets;
 
 private:
 	std::string								_host; /* конвертировать в число через функцию inet_addr */
@@ -54,7 +54,7 @@ public:
 	void												add_port(const std::string&);
 	void												add_route(const Location&);
 
-	Location											_get_location(Request&);
+	Location											get_location(Request&);
 
 	[[nodiscard]] const std::vector<std::string>&		get_server_names() const;
 	[[nodiscard]] const std::vector<std::string>&		get_ports() const;
