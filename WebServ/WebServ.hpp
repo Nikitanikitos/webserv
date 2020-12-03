@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/03 02:31:50 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/03 20:20:43 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,16 +38,13 @@ private:
 	void _cgi_handler(Request&, const VirtualServer&, const Location&, int);
 	void _proxy_handler(Request&, const VirtualServer&, const Location&, int);
 
-public:
-	[[nodiscard]] const VirtualServer&	_get_virtual_server(const Request& request) const;
 
-private:
 	static void			_post_method_handler(Request& request, struct stat* buff, const VirtualServer& virtual_server);
 	static void			_get_head_methods_handler(Request& request, struct stat* buff, int client_socket,
 																							const Location& location);
 
 	static void			_static_file_handler(Request& request, const std::string& path_to_file, int client_socket);
-	static void			_auto_index_generate(Request&, const std::string&, int);
+	static void			_autoindex_handler(Request&, const std::string&, int);
 
 	void				_get_accept_from_ready_sockets();
 	static void			_pointer_file_to_start(int&, int&);
@@ -56,16 +53,15 @@ private:
 	[[noreturn]] void		_worker(int);
 	std::pair<int, int>		_pop_worker();
 
-	Request					_get_request(int);
+	[[nodiscard]] const VirtualServer&	_get_virtual_server(const Request& request) const;
+	[[nodiscard]] const Request			_get_request(int);
 	/* Метод получает данные запроса через функцию recv().
 	 * Из первой строки получает метод, путь и заносит в объект Request.
 	 * Далее парсит заголовки, заносит их в словарь и проверяет корректность заголовка через _check_request_header().
 	 * Далее парсит тело запроса через _parse_request_body() (если тело запроса есть).
 	 * Возвращает объект Request() */
 
-
-	void					_give_response();
-	/* Принимает объект Request(), создает объект Response(), составляет тело ответа и отсылает его через send() */
+	static std::string		_get_path_to_target(const Request&, const Location&);
 
 	void				_serve_client(int);
 
