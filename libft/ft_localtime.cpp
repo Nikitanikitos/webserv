@@ -36,7 +36,7 @@ int 	get_number_years(time_t &seconds, int& is_leap_year) {
 	int 	result;
 	int 	current_year;
 
-	result = is_leap_year = 0;
+	result = 0;
 	while (seconds > SEC_PER_YEAR) {
 		if (is_leap_year == 3) {
 			current_year = SEC_PER_LEAP_YEAR;
@@ -77,7 +77,7 @@ int 	get_number_months(time_t &seconds, int is_leap_year) {
 }
 
 void	ft_localtime(tm& datetime, time_t seconds) {
-	int		is_leap_year;
+	int		is_leap_year = 1;
 
 	datetime.tm_year = get_number_years(seconds, is_leap_year);
 	datetime.tm_mon = get_number_months(seconds, is_leap_year);

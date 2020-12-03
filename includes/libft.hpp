@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 12:50:34 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/02 16:56:56 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/03 01:33:48 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@
 # include <string>
 # include <sys/time.h>
 # include <sys/socket.h>
+# include <sys/types.h>
+# include <dirent.h>
 
 # define HTTP_VERSION	(std::string)"HTTP/1.1"
 # define SERVER_VERSION	"WebServ/0.1"
