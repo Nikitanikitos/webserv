@@ -10,8 +10,12 @@ add_executable(webserv
 		libft/ft_hton.cpp
 		libft/ft_atoi.cpp
 		libft/ft_localtime.cpp
+		libft/ft_getdate.cpp
 
 		WebServ/WebServ.cpp
+		WebServ/WebServ_workers.cpp
+		WebServ/WebServ_default_handler.cpp
+
 		VirtualServer/VirtualServer.cpp
 		Location/Location.cpp
 		ParseConfigFile/ParseConfigFile.cpp
