@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/01 20:05:28 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/03 02:31:50 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,12 +34,20 @@ private:
 	std::queue<std::pair<int, int> >		_worker_queue;
 	int 									_number_workers;
 
-	static void			_default_handler(Request&, int);
-	void 				_cgi_handler(Request&, int);
-	void				_proxy_handler(Request&, int);
+	static void _default_handler(Request&, const VirtualServer&, const Location&, int);
+	void _cgi_handler(Request&, const VirtualServer&, const Location&, int);
+	void _proxy_handler(Request&, const VirtualServer&, const Location&, int);
 
-	static void 		_post_method_handler(Request&, struct stat*);
-	static void			_get_head_methods_handler(Request&, struct stat*, int);
+public:
+	[[nodiscard]] const VirtualServer&	_get_virtual_server(const Request& request) const;
+
+private:
+	static void			_post_method_handler(Request& request, struct stat* buff, const VirtualServer& virtual_server);
+	static void			_get_head_methods_handler(Request& request, struct stat* buff, int client_socket,
+																							const Location& location);
+
+	static void			_static_file_handler(Request& request, const std::string& path_to_file, int client_socket);
+	static void			_auto_index_generate(Request&, const std::string&, int);
 
 	void				_get_accept_from_ready_sockets();
 	static void			_pointer_file_to_start(int&, int&);
@@ -55,13 +63,11 @@ private:
 	 * Далее парсит тело запроса через _parse_request_body() (если тело запроса есть).
 	 * Возвращает объект Request() */
 
-	static void _static_file_send(Request& request, const std::string& path_to_file, int client_socket);
 
 	void					_give_response();
 	/* Принимает объект Request(), создает объект Response(), составляет тело ответа и отсылает его через send() */
 
 	void				_serve_client(int);
-	[[nodiscard]] VirtualServer		_get_virtual_server(const Request& request) const;
 
 public:
 	explicit WebServ(const std::vector<VirtualServer>&);

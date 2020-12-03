@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/02 16:18:15 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/03 02:32:21 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,35 +35,28 @@ WebServ::~WebServ() {
 }
 
 void		WebServ::run_server() {
-	int					 	client_socket;
-	std::pair<int, int>		worker;
-
 	while (true) {
 		select(_vs_sockets.back() + 1, &_set_of_vs_sockets, nullptr, nullptr, nullptr);
 		_get_accept_from_ready_sockets();
 	}
 }
 
-void		WebServ::_give_response() {
-
-}
-
 void		WebServ::_serve_client(int client_socket) {
 	Request			request;
 	Location		location;
+	VirtualServer	virtual_server;
 
 	try {
 		request = _get_request(client_socket);
-		request.set_virtual_server(_list_virtual_servers);
-		request.set_location();
-		location = request.get_location();
+		virtual_server = _get_virtual_server(request);
+		location = virtual_server.get_location(request);
 		switch (location.get_location_type()) {
 			case _default:
-				_default_handler(request, client_socket);
+				_default_handler(request, virtual_server, location, client_socket);
 			case cgi:
-				_cgi_handler(request, client_socket);
+				_cgi_handler(request, virtual_server, location, client_socket);
 			case proxy:
-				_proxy_handler(request, client_socket);
+				_proxy_handler(request, virtual_server, location, client_socket);
 		}
 	}
 	catch (Request301Redirect& redirect_301) {
@@ -78,36 +71,39 @@ Request		WebServ::_get_request(int client_socket) {
 	return (Request());
 }
 
-void		WebServ::_default_handler(Request& request, int client_socket) {
-	const Location&		location = request.get_location();
+void WebServ::_default_handler(Request& request, const VirtualServer& virtual_server, const Location& location,
+																								int client_socket) {
 	const std::string&	path_to_file = location.get_root() + request.get_target().substr(location.get_path().length());
 	struct stat			buff;
 
 	if (stat(path_to_file.c_str(), &buff) == -1)
-		throw RequestException("404", "Not Found", request.get_virtual_server().get_error_page("404"));
+		throw RequestException("404", "Not Found", virtual_server.get_error_page("404"));
 	else if (S_ISDIR(buff.st_mode) && path_to_file.back() != '/')
 		throw Request301Redirect("http://" + request.get_host() + ":" + request.get_port() + "/" + request.get_target() + "/");
-	else if (request.get_location().is_allow_method(request.get_method()))
-		throw RequestException("405", "Method Not Allowed", request.get_virtual_server().get_error_page("405"));
+	else if (location.is_allow_method(request.get_method()))
+		throw RequestException("405", "Method Not Allowed", virtual_server.get_error_page("405"));
 
 	if (request.get_method() == "POST")
-		_post_method_handler(request, &buff);
+		_post_method_handler(request, &buff, virtual_server);
 	else
-		_get_head_methods_handler(request, &buff, client_socket);
+		_get_head_methods_handler(request, &buff, client_socket, location);
 }
 
-void	WebServ::_get_head_methods_handler(Request& request, struct stat* buff, int client_socket) {
-	const Location&		location = request.get_location();
+void
+WebServ::_get_head_methods_handler(Request& request, struct stat* buff, int client_socket, const Location& location) {
 	const std::string&	path_to_file = location.get_root() + request.get_target().substr(location.get_path().length());
 
-	if (S_ISREG(buff->st_mode) || S_ISLNK(buff->st_mode)) {
-		_static_file_send(request, path_to_file, client_socket);
-	}
+	if (S_ISREG(buff->st_mode) || S_ISLNK(buff->st_mode))
+		_static_file_handler(request, path_to_file, client_socket);
 	else if (S_ISDIR(buff->st_mode) && location.is_autoindex())
 		"send autoindex page";
 }
 
-void WebServ::_static_file_send(Request& request, const std::string& path_to_file, int client_socket) {
+void WebServ::_auto_index_generate(Request& request, const std::string& path_to_dir, int client_socket) {
+	DIR*	directory = opendir(path_to_dir.c_str());
+}
+
+void WebServ::_static_file_handler(Request& request, const std::string& path_to_file, int client_socket) {
 	Response			response;
 	std::ifstream		file(path_to_file);
 	std::string			body_response;
@@ -124,14 +120,14 @@ void WebServ::_static_file_send(Request& request, const std::string& path_to_fil
 	response.send_response(client_socket);
 }
 
-void WebServ::_post_method_handler(Request& request, struct stat* buff) {
+void WebServ::_post_method_handler(Request& request, struct stat* buff, const VirtualServer& virtual_server) {
 	if (S_ISDIR(buff->st_mode))
-		throw RequestException("403", "Forbidden", request.get_virtual_server().get_error_page("403"));
+		throw RequestException("403", "Forbidden", virtual_server.get_error_page("403"));
 	else
-		throw RequestException("405", "Method Not Allowed", request.get_virtual_server().get_error_page("405"));
+		throw RequestException("405", "Method Not Allowed", virtual_server.get_error_page("405"));
 }
 
-VirtualServer		WebServ::_get_virtual_server(const Request& request) const {
+const VirtualServer& WebServ::_get_virtual_server(const Request& request) const {
 	bool					default_vs_flag;
 	const VirtualServer		*default_vs;
 
@@ -144,8 +140,10 @@ VirtualServer		WebServ::_get_virtual_server(const Request& request) const {
 					default_vs_flag = true;
 				}
 				for (const auto& server_name : server.get_server_names())
-					if (request.get_header(HOST) == server_name)
-						return (server);
+					if (request.get_header(HOST) == server_name) {
+						default_vs = &server;
+						break ;
+					}
 			}
 		}
 	}
