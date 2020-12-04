@@ -98,3 +98,5 @@ std::string	WebServ::_autoindex_generate(const Request& request, const std::stri
 	body_response.append("</pre><hr></body></html>");
 	return (body_response);
 }
+
+void WebServ::set_number_workers(int number_workers) { _number_workers = number_workers; }

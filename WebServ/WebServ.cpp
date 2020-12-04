@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/04 00:38:09 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/04 04:56:19 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,6 @@ WebServ::WebServ(const std::vector<VirtualServer>& list_virtual_servers) : _list
 			_vs_sockets.push_back(fd_socket);
 			FD_SET(fd_socket, &_set_of_vs_sockets);
 		}
-	_create_workers();
 }
 
 WebServ::~WebServ() {
@@ -30,9 +29,11 @@ WebServ::~WebServ() {
 		worker = _pop_worker();
 		close(worker.first);
 	}
-}
+ }
 
 void		WebServ::run_server() {
+	_create_workers();
+
 	while (true) {
 		select(_vs_sockets.back() + 1, &_set_of_vs_sockets, nullptr, nullptr, nullptr);
 		_get_accept_from_ready_sockets();
@@ -48,10 +49,10 @@ void		WebServ::_serve_client(int client_socket) {
 		switch (location.get_location_type()) {
 			case _default:
 				_default_handler(request, virtual_server, location, client_socket);
-			case cgi:
-				_cgi_handler(request, virtual_server, location, client_socket);
-			case proxy:
-				_proxy_handler(request, virtual_server, location, client_socket);
+//			case cgi:
+//				_cgi_handler(request, virtual_server, location, client_socket);
+//			case proxy:
+//				_proxy_handler(request, virtual_server, location, client_socket);
 		}
 	}
 	catch (Request301Redirect& redirect_301) {

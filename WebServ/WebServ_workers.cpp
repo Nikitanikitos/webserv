@@ -6,11 +6,31 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/02 14:46:29 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/03 02:25:12 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/04 16:34:30 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
 #include "WebServ.hpp"
+
+void		WebServ::_create_workers() {
+	int 	pipe_fd[2];
+//	pthread_mutex_t		*
+
+	FD_ZERO(&_set_of_pipes);
+	for (int i = 0; i < _number_workers; ++i) {
+		pipe(pipe_fd);
+		if (fork() == 0) {
+//			close(pipe_fd[STDOUT_FILENO]);
+			_worker(pipe_fd[STDIN_FILENO]);
+		}
+		else {
+//			close(pipe_fd[STDIN_FILENO]);
+			FD_SET(pipe_fd[STDOUT_FILENO], &_set_of_pipes);
+			_worker_queue.push(std::make_pair(pipe_fd[STDOUT_FILENO], 0));
+		}
+	}
+}
 
 void		WebServ::_worker(int pipe_fd) {
 	int		file_position;
@@ -24,41 +44,28 @@ void		WebServ::_worker(int pipe_fd) {
 		if (file_position >= PIPE_BUFFER_SIZE)
 			_pointer_file_to_start(pipe_fd, file_position);
 		while ((client_socket = accept(socket, nullptr, nullptr)) != -1) {
-			_serve_client(client_socket);
+//			_serve_client(client_socket);
 			close(client_socket);
-		}
-	}
-}
-
-void		WebServ::_create_workers() {
-	int 	pipe_fd[2];
-
-	FD_ZERO(&_set_of_pipes);
-	for (int i = 0; i < _number_workers; ++i) {
-		pipe(pipe_fd);
-		if (fork() == 0) {
-			close(pipe_fd[STDOUT_FILENO]);
-			_worker(pipe_fd[STDIN_FILENO]);
-		}
-		else {
-			close(pipe_fd[STDIN_FILENO]);
-			FD_SET(pipe_fd[STDOUT_FILENO], &_set_of_pipes);
-			_worker_queue.push(std::make_pair(pipe_fd[STDOUT_FILENO], 0));
 		}
 	}
 }
 
 void		WebServ::_get_accept_from_ready_sockets() {
 	std::pair<int, int>		worker;
+	int 					client_socket;
 
 	for (int socket : _vs_sockets) {
 		if (FD_ISSET(socket, &_set_of_vs_sockets)) {
-			worker = _pop_worker();
-			write(worker.first, (char*)&socket, 4);
-			worker.second += 4;
-			if (worker.second >= PIPE_BUFFER_SIZE)
-				_pointer_file_to_start(worker.first, worker.second);
-			_worker_queue.push(worker);
+			while ((client_socket = accept(socket, nullptr, nullptr)) != -1) {
+				_serve_client(client_socket);
+				close(client_socket);
+			}
+//			worker = _pop_worker();
+//			write(worker.first, (char*)&socket, 4);
+//			worker.second += 4;
+//			if (worker.second >= PIPE_BUFFER_SIZE)
+//				_pointer_file_to_start(worker.first, worker.second);
+//			_worker_queue.push(worker);
 		}
 	}
 }

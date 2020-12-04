@@ -38,7 +38,6 @@ private:
 	void				_cgi_handler(const Request&, const VirtualServer&, const Location&, int);
 	void				_proxy_handler(const Request&, const VirtualServer&, const Location&, int);
 
-
 	static void			_POST_method_handler(const Request& request, struct stat* buff, const VirtualServer& virtual_server);
 	static void			_GET_HEAD_methods_handler(const Request& request, struct stat* buff, int client_socket,
 													 const Location& location);
@@ -77,6 +76,8 @@ public:
 	[[noreturn]] void	run_server();
 	/* Метод запускает сервер. Вызывает select() на серверные сокеты с бесконечным тайм-аутом,
 	 * Проверяет в какой сокет поступило соединение и вызывает метод serve_client(), передавая туда сокет клиента */
+
+	void	set_number_workers(int number_workers);
 };
 
 #endif //WEBSERV_WEBSERV_HPP
