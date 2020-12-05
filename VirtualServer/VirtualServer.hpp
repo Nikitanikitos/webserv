@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/04 00:38:09 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/04 03:22:46 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ private:
 
 	void	_init_sock_addr(struct sockaddr_in&, const std::string&);
 
-	int		_create_socket(struct sockaddr_in&);
+	static int		_create_socket(struct sockaddr_in&);
 
 public:
 	VirtualServer();
@@ -52,7 +52,6 @@ public:
 
 	void												add_server_name(const std::string&);
 	void												add_port(const std::string&);
-	void												add_route(const Location&);
 
 	Location											get_location(const Request& request) const;
 
@@ -60,7 +59,11 @@ public:
 	[[nodiscard]] const std::vector<std::string>&		get_ports() const;
 	[[nodiscard]] const std::string&					get_host() const;
 
+	void												add_location(const Location& list_locations);
 	void												set_limit_client_body_size(int);
+
+	void set_server_names(const std::vector<std::string>& server_names);
+
 	void												set_host(const std::string&);
 
 };

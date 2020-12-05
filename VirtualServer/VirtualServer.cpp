@@ -6,10 +6,12 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/04 00:38:09 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/04 03:37:22 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <errno.h>
+#include <iostream>
 #include "VirtualServer.hpp"
 
 VirtualServer::VirtualServer() : _limit_client_body_size(0) { }
@@ -18,7 +20,7 @@ void	VirtualServer::set_host(const std::string& host) { _host = host; }
 
 void	VirtualServer::add_port(const std::string& port) { _ports.push_back(port); }
 void	VirtualServer::add_server_name(const std::string& server_name) { _server_names.push_back(server_name); }
-void	VirtualServer::add_route(const Location& route) { _list_locations.push_back(route); }
+void	VirtualServer::add_location(const Location& list_locations) { _list_locations.push_back(list_locations); }
 
 void	VirtualServer::init_sockets() {
 	for (const std::string& item : _ports) {
@@ -42,7 +44,7 @@ void	VirtualServer::set_limit_client_body_size(int limit_client_body_size) {
 void	VirtualServer::_init_sock_addr(sockaddr_in& sock_addr, const std::string& item) {
 	sock_addr.sin_family = PF_INET;
 	sock_addr.sin_port = ft_htons(ft_atoi(item.c_str()));
-	sock_addr.sin_addr.s_addr = ft_htonl(inet_addr(_host.c_str()));
+	sock_addr.sin_addr.s_addr = inet_addr(_host.c_str());
 }
 
 int		VirtualServer::_create_socket(sockaddr_in& sock_addr) {
@@ -95,3 +97,4 @@ Location	VirtualServer::get_location(const Request& request) const {
 	}
 	return (*current_location);
 }
+
