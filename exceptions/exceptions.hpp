@@ -16,9 +16,10 @@
 # include <exception>
 # include <string>
 # include <fstream>
+#include <Response.hpp>
 # include "libft.hpp"
 
-class	RequestException : public std::exception {
+class	RequestException : public std::exception, public Response {
 private:
 	const std::string	_message_phrase;
 	const std::string	_status_code;
@@ -31,7 +32,7 @@ public:
 
 	~RequestException() override = default;;
 
-	void	send_response(int client_socket) {
+	void	send_response(int client_socket) const override {
 		std::ifstream		file(_error_page);
 		std::string			body_response;
 		std::string			response;
@@ -50,7 +51,7 @@ public:
 	}
 };
 
-class	Request301Redirect : public std::exception  {
+class	Request301Redirect : public std::exception, public Response  {
 private:
 	const std::string	_message_phrase;
 	const std::string	_status_code;
@@ -62,7 +63,7 @@ public:
 	~Request301Redirect() = default;
 
 	[[nodiscard]] const char*	what() const _NOEXCEPT { return ("301 Moved Permanently"); }
-	void						send_response(int);
+	void						send_response(int) { }
 };
 
 #endif //WEBSERV_EXCEPTIONS_HPP
