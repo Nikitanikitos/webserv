@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 12:50:34 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/03 01:33:48 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/05 14:43:17 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include <sys/socket.h>
 # include <sys/types.h>
 # include <dirent.h>
+# include <sys/stat.h>
+# include <thread>
 
 # define HTTP_VERSION	(std::string)"HTTP/1.1"
 # define SERVER_VERSION	"WebServ/0.1"
@@ -33,6 +35,8 @@ uint32_t	ft_htonl(uint32_t);
 int			ft_atoi(const char* nptr);
 
 void		ft_localtime(tm&, time_t);
+
+[[noreturn]] void*		worker(void* arg);
 
 std::string		ft_getdate();
 

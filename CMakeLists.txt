@@ -22,6 +22,9 @@ add_executable(webserv
 		Request/Request.cpp
         Response/Response.cpp
 
+		HttpObject/HttpObject.cpp
+		ThreadPool/ThreadPool.cpp
+
 		exceptions/exceptions.cpp
 		)
 
@@ -34,4 +37,6 @@ include_directories(
 		ParseConfigFile
 		Request
 		Response
+		HttpObject
+		ThreadPool
 		)
