@@ -25,7 +25,7 @@ void				Response::add_header(const std::string& key, const std::string& value) {
 
 const std::string&	Response::get_header(const std::string& key) const { return _headers.at(key); }
 
-void				Response::send_response(int client_socket) {
+void				Response::send_response(int client_socket) const {
 	std::string			response;
 
 	response =
