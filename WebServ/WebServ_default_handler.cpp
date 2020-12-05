@@ -12,8 +12,8 @@
 
 # include "WebServ.hpp"
 
-void		WebServ::_default_handler(const Request& request, const VirtualServer& virtual_server,
-																		const Location& location, int client_socket) {
+void WebServ::_default_handler(HttpObject& http_object, const VirtualServer& virtual_server, const Location& location) {
+	const Request&		request = http_object.get_request();
 	const std::string&	path_to_target = _get_path_to_target(request, location);
 	struct stat			buff;
 
@@ -29,7 +29,7 @@ void		WebServ::_default_handler(const Request& request, const VirtualServer& vir
 	if (request.get_method() == "POST")
 		_POST_method_handler(request, &buff, virtual_server);
 	else
-		_GET_HEAD_methods_handler(request, &buff, client_socket, location);
+		_GET_HEAD_methods_handler(http_object, &buff, location);
 }
 
 void		WebServ::_POST_method_handler(const Request& request, struct stat* buff,
@@ -40,17 +40,17 @@ void		WebServ::_POST_method_handler(const Request& request, struct stat* buff,
 		throw RequestException("405", "Method Not Allowed", virtual_server.get_error_page("405"));
 }
 
-void		WebServ::_GET_HEAD_methods_handler(const Request& request, struct stat* buff, int client_socket,
-																					   const Location& location) {
+void		WebServ::_GET_HEAD_methods_handler(HttpObject& http_object, struct stat* buff, const Location& location) {
+	const Request&		request = http_object.get_request();
 	const std::string&	path_to_target = _get_path_to_target(request, location);
 
 	if (S_ISREG(buff->st_mode) || S_ISLNK(buff->st_mode))
-		_static_file_handler(request, path_to_target, client_socket);
+		http_object.set_response(_static_file_handler(request, path_to_target));
 	else if (S_ISDIR(buff->st_mode) && location.is_autoindex())
-		_autoindex_handler(request, path_to_target, client_socket);
+		http_object.set_response(_autoindex_handler(request, path_to_target));
 }
 
-void	WebServ::_static_file_handler(const Request& request, const std::string& path_to_file, int client_socket) {
+Response WebServ::_static_file_handler(const Request& request, const std::string& path_to_file) {
 	Response			response;
 	std::ifstream		file(path_to_file);
 	std::string			body_response;
@@ -63,11 +63,10 @@ void	WebServ::_static_file_handler(const Request& request, const std::string& pa
 	response.add_header("Connection", "Close");
 	if (request.get_method() == "GET")
 		response.set_body(body_response);
-
-	response.send_response(client_socket);
+	return (response);
 }
 
-void	WebServ::_autoindex_handler(const Request& request, const std::string& path_to_target, int client_socket) {
+Response WebServ::_autoindex_handler(const Request& request, const std::string& path_to_target) {
 	Response			response;
 	std::string 		body_response;
 
@@ -78,7 +77,7 @@ void	WebServ::_autoindex_handler(const Request& request, const std::string& path
 	response.add_header("Connection", "Close");
 	if (request.get_method() == "GET")
 		response.set_body(body_response);
-	response.send_response(client_socket);
+	return (response);
 }
 
 std::string	WebServ::_autoindex_generate(const Request& request, const std::string& path_to_target) {
@@ -98,5 +97,3 @@ std::string	WebServ::_autoindex_generate(const Request& request, const std::stri
 	body_response.append("</pre><hr></body></html>");
 	return (body_response);
 }
-
-void WebServ::set_number_workers(int number_workers) { _number_workers = number_workers; }

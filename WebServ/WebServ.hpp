@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/04 00:38:09 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/05 20:10:45 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,55 +17,49 @@
 # include <map>
 # include <queue>
 # include <zconf.h>
-# include "Request.hpp"
 # include "VirtualServer.hpp"
-# include "Response.hpp"
+# include "HttpObject.hpp"
 # include "exceptions.hpp"
 # include <fcntl.h>
-
-# define PIPE_BUFFER_SIZE	64000
+# include "libft.hpp"
+# include "ThreadPool.hpp"
 
 class WebServ {
+
+	friend	void*	worker(void*);
+
 private:
 	fd_set									_set_of_vs_sockets;
-	fd_set									_set_of_pipes;
 	std::vector<int>						_vs_sockets;
 	std::vector<VirtualServer>				_list_virtual_servers;
-	std::queue<std::pair<int, int> >		_worker_queue;
-	int 									_number_workers;
 
-	static void			_default_handler(const Request& request, const VirtualServer& virtual_server, const Location& location, int client_socket);
+	int 									_number_workers;
+	ThreadPool								_thread_pool;
+
+	static void			_default_handler(HttpObject& request, const VirtualServer& virtual_server, const Location& location);
 	void				_cgi_handler(const Request&, const VirtualServer&, const Location&, int);
 	void				_proxy_handler(const Request&, const VirtualServer&, const Location&, int);
 
 	static void			_POST_method_handler(const Request& request, struct stat* buff, const VirtualServer& virtual_server);
-	static void			_GET_HEAD_methods_handler(const Request& request, struct stat* buff, int client_socket,
-													 const Location& location);
+	static void			_GET_HEAD_methods_handler(HttpObject& request, struct stat* buff, const Location& location);
 
-	static void			_static_file_handler(const Request& request, const std::string& path_to_file, int client_socket);
-	static void			_autoindex_handler(const Request&, const std::string&, int);
+	static Response		_static_file_handler(const Request& request, const std::string& path_to_file);
+	static Response		_autoindex_handler(const Request& request, const std::string& path_to_target);
 
 	static std::string	_autoindex_generate(const Request& request, const std::string& path_to_target);
 
 	void				_get_accept_from_ready_sockets();
-	static void			_pointer_file_to_start(int&, int&);
 
-	void					_create_workers();
-	[[noreturn]] void		_worker(int);
-	std::pair<int, int>		_pop_worker();
+	void				_create_workers();
 
 	[[nodiscard]] const VirtualServer&	_get_virtual_server(const Request& request) const;
 
-	[[nodiscard]] Request				_get_request(int);
-	/* Метод получает данные запроса через функцию recv().
-	 * Из первой строки получает метод, путь и заносит в объект Request.
-	 * Далее парсит заголовки, заносит их в словарь и проверяет корректность заголовка через _check_request_header().
-	 * Далее парсит тело запроса через _parse_request_body() (если тело запроса есть).
-	 * Возвращает объект Request() */
+	void		generate_request(HttpObject& http_object);
+	void		generate_response(HttpObject& http_object);
+	void		send_response(HttpObject& http_object);
 
 	static std::string		_get_path_to_target(const Request&, const Location&);
 
-	void					_serve_client(int);
 
 public:
 	explicit WebServ(const std::vector<VirtualServer>&);

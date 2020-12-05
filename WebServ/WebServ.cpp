@@ -6,13 +6,13 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/04 04:56:19 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/05 18:34:40 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-WebServ::WebServ(const std::vector<VirtualServer>& list_virtual_servers) : _list_virtual_servers(list_virtual_servers) {
+WebServ::WebServ(const std::vector<VirtualServer>& list_virtual_servers) : _list_virtual_servers(list_virtual_servers), _thread_pool() {
 	FD_ZERO(&_set_of_vs_sockets);
 
 	for (const VirtualServer& server : _list_virtual_servers)
@@ -22,14 +22,7 @@ WebServ::WebServ(const std::vector<VirtualServer>& list_virtual_servers) : _list
 		}
 }
 
-WebServ::~WebServ() {
-	std::pair<int, int>		worker;
-
-	while (!_worker_queue.empty()){
-		worker = _pop_worker();
-		close(worker.first);
-	}
- }
+WebServ::~WebServ() { }
 
 void		WebServ::run_server() {
 	_create_workers();
@@ -40,31 +33,32 @@ void		WebServ::run_server() {
 	}
 }
 
-void		WebServ::_serve_client(int client_socket) {
+void WebServ::generate_request(HttpObject& http_object) { }
+
+void WebServ::generate_response(HttpObject& http_object) {
 	try {
-		const Request&			request = _get_request(client_socket);
-		const VirtualServer&	virtual_server = _get_virtual_server(request);
-		const Location&			location = virtual_server.get_location(request);
+		const VirtualServer&	virtual_server = _get_virtual_server(http_object.get_request());
+		const Location&			location = virtual_server.get_location(http_object.get_request());
 
 		switch (location.get_location_type()) {
 			case _default:
-				_default_handler(request, virtual_server, location, client_socket);
+				_default_handler(http_object, virtual_server, location);
 //			case cgi:
 //				_cgi_handler(request, virtual_server, location, client_socket);
 //			case proxy:
 //				_proxy_handler(request, virtual_server, location, client_socket);
 		}
 	}
-	catch (Request301Redirect& redirect_301) {
-		redirect_301.send_response(client_socket);
+	catch (Request301Redirect redirect_301) {
+		http_object.set_response(redirect_301);
 	}
 	catch (RequestException& request_error) {
-		request_error.send_response(client_socket);
+		http_object.set_response(request_error);
 	}
 }
 
-Request		WebServ::_get_request(int client_socket) {
-	return (Request());
+void WebServ::send_response(HttpObject& http_object) {
+	http_object.get_response().send_response(http_object.get_client_socket());
 }
 
 const VirtualServer& WebServ::_get_virtual_server(const Request& request) const {
