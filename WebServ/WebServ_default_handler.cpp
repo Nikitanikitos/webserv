@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ_default_handler.cpp                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/03 23:04:25 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/03 23:06:57 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/06 04:30:03 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,13 +51,11 @@ void		WebServ::_GET_HEAD_methods_handler(HttpObject& http_object, struct stat* b
 }
 
 Response WebServ::_static_file_handler(const Request& request, const std::string& path_to_file) {
-	Response			response;
-	std::ifstream		file(path_to_file);
-	std::string			body_response;
-	char				last_modified[80];
+	Response				response;
+	const std::string		body_response = ft_getfile(path_to_file.c_str());
+	char					last_modified[80];
 
 	response.set_status_code("200");
-	getline(file, body_response, '\0');
 	response.add_header("Content-Length", std::to_string(body_response.length()));
 	response.add_header("Last-modified", last_modified);
 	response.add_header("Connection", "Close");

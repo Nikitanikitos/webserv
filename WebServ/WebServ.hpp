@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/05 20:10:45 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/06 02:22:00 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,17 +16,14 @@
 # include <string>
 # include <map>
 # include <queue>
-# include <zconf.h>
 # include "VirtualServer.hpp"
 # include "HttpObject.hpp"
 # include "exceptions.hpp"
-# include <fcntl.h>
 # include "libft.hpp"
 # include "ThreadPool.hpp"
 
 class WebServ {
-
-	friend	void*	worker(void*);
+	friend void*	worker(void*);
 
 private:
 	fd_set									_set_of_vs_sockets;

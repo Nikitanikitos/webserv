@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ_workers.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/02 14:46:29 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/05 20:17:38 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/06 04:31:04 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,16 +20,14 @@
 	while (true) {
 		pthread_mutex_lock(thread_pool.get_mutex_check_tasks_queue());
 		if (!thread_pool.queue_is_empty()) {
-			HttpObject&		http_object = thread_pool.pop_task();
+			HttpObject		http_object = thread_pool.pop_task();
 			pthread_mutex_unlock(thread_pool.get_mutex_check_tasks_queue());
-			switch (http_object.get_stage()) {
-				case generate_request_:
-					web_serv.generate_request(http_object);
-				case generate_response_:
-					web_serv.generate_response(http_object);
-				case send_response_:
-					web_serv.send_response(http_object);
-			}
+			if (http_object.get_stage() == generate_request_)
+				web_serv.generate_request(http_object);
+			else if (http_object.get_stage() == generate_response_)
+				web_serv.generate_response(http_object);
+			else if (http_object.get_stage() == send_response_)
+				web_serv.send_response(http_object);
 			http_object.next_stage();
 			if (http_object.get_stage() != complited_) {
 				pthread_mutex_lock(thread_pool.get_mutex_check_tasks_queue());
