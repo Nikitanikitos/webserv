@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   HttpObject.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/05 15:36:35 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/05 18:34:40 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/06 01:12:41 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,21 +32,18 @@ private:
 
 public:
 	HttpObject(int, int);
-
-	[[nodiscard]] const Request& get_request() const;
-
-	[[nodiscard]] const Response& get_response() const;
-
 	virtual ~HttpObject();
 
-	[[nodiscard]] int		get_stage() const;
-	[[nodiscard]] int		get_client_socket() const;
+	[[nodiscard]] const Request&	get_request() const;
+	[[nodiscard]] const Response&	get_response() const;
 
-	void set_request(const Request& request);
+	[[nodiscard]] int				get_stage() const;
+	[[nodiscard]] int				get_client_socket() const;
 
-	void set_response(const Response& response);
+	void							set_request(const Request& request);
+	void							set_response(const Response& response);
 
-	void					next_stage();
+	void							next_stage();
 };
 
 
