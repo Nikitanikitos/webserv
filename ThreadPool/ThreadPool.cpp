@@ -22,8 +22,8 @@ ThreadPool::~ThreadPool() {
 	free(_mutex_check_tasks_queue);
 }
 
-HttpObject& ThreadPool::pop_task() {
-	HttpObject&		http_object = _tasks_queue.front();
+HttpObject ThreadPool::pop_task() {
+	HttpObject		http_object = _tasks_queue.front();
 
 	_tasks_queue.pop();
 	return (http_object);

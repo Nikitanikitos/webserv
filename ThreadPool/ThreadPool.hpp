@@ -15,6 +15,7 @@
 
 # include <queue>
 # include "HttpObject.hpp"
+# include "pthread.h"
 
 class ThreadPool {
 private:
@@ -28,7 +29,7 @@ public:
 	[[nodiscard]] pthread_mutex_t*		get_mutex_check_tasks_queue() const;
 	[[nodiscard]] bool					queue_is_empty() const;
 
-	HttpObject&							pop_task();
+	HttpObject							pop_task();
 	void 								push_task(const HttpObject&);
 
 };
