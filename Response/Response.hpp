@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:14:03 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/05 17:56:46 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/06 01:19:27 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include <map>
 # include <ctime>
 # include "libft.hpp"
+# include <fcntl.h>
 
 class Response {
 private:
@@ -33,9 +34,9 @@ public:
 
 	[[nodiscard]] const std::string&		get_header(const std::string& key) const;
 
-	void	add_header(const std::string& key, const std::string& value);
-	void	set_status_code(const std::string&);
-	void	set_body(const std::string& body);
+	void			add_header(const std::string& key, const std::string& value);
+	void			set_status_code(const std::string&);
+	void			set_body(const std::string& body);
 
 	virtual void	send_response(int) const;
 };
