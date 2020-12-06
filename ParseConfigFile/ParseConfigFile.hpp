@@ -14,15 +14,18 @@
 # define WEBSERV_PARSECONFIGFILE_HPP
 
 # include <string>
+# include <iostream>
+# include <fcntl.h>
 # include "VirtualServer.hpp"
 # include "Location.hpp"
+# include "libft.hpp"
 
 /* lvs - list virtual servers */
 
-class	ParseConfigFile
-{
+class	ParseConfigFile {
 private:
-	std::string		_filename;
+	char			*_filename;
+	int 			_fd;
 
 	VirtualServer	_parse_vs_directive();
 	/* Метод будет возвращать объект класса VirtualServer со всеми инициализированными полями */
@@ -31,7 +34,7 @@ private:
 	/* Метод будет возвращать объект класса Route со всеми инициализированными полями */
 
 public:
-	explicit ParseConfigFile(std::string& filename);
+	explicit ParseConfigFile(char *filename);
 	~ParseConfigFile() = default;
 
 	std::vector<VirtualServer>		parse_file();
