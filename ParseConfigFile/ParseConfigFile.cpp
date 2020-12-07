@@ -35,7 +35,7 @@ std::vector<VirtualServer> ParseConfigFile::parse_file() {
 	std::string line_str;
 	int gnl_return;
 	std::vector<VirtualServer> virtual_servers;
-	while ((gnl_return = get_next_line(_fd, &line_char)) > 0) {
+	while ((gnl_return = ft_getline(_fd, &line_char)) > 0) {
 		line_str = line_char;
 		free(line_char);
 		line_char = nullptr;

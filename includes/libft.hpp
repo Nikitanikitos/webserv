@@ -43,4 +43,6 @@ std::string				ft_getfile(const char *path);
 
 [[noreturn]] void*		worker(void* arg);
 
+bool					ft_getline(int fd, std::string &line);
+
 #endif //WEBSERV_LIBFT_HPP
