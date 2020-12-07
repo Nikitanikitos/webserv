@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/06 02:22:00 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/06 15:00:13 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,12 +33,12 @@ private:
 	int 									_number_workers;
 	ThreadPool								_thread_pool;
 
-	static void			_default_handler(HttpObject& request, const VirtualServer& virtual_server, const Location& location);
+	static void			_default_handler(HttpObject *http_object, const VirtualServer& virtual_server, const Location& location);
 	void				_cgi_handler(const Request&, const VirtualServer&, const Location&, int);
 	void				_proxy_handler(const Request&, const VirtualServer&, const Location&, int);
 
 	static void			_POST_method_handler(const Request& request, struct stat* buff, const VirtualServer& virtual_server);
-	static void			_GET_HEAD_methods_handler(HttpObject& request, struct stat* buff, const Location& location);
+	static void			_GET_HEAD_methods_handler(HttpObject *http_object, struct stat* buff, const Location& location);
 
 	static Response		_static_file_handler(const Request& request, const std::string& path_to_file);
 	static Response		_autoindex_handler(const Request& request, const std::string& path_to_target);
@@ -51,9 +51,9 @@ private:
 
 	[[nodiscard]] const VirtualServer&	_get_virtual_server(const Request& request) const;
 
-	void		generate_request(HttpObject& http_object);
-	void		generate_response(HttpObject& http_object);
-	void		send_response(HttpObject& http_object);
+	void		generate_request(HttpObject *http_object);
+	void		generate_response(HttpObject *http_object);
+	void		send_response(HttpObject *http_object);
 
 	static std::string		_get_path_to_target(const Request&, const Location&);
 

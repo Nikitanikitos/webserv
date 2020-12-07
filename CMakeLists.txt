@@ -11,6 +11,7 @@ add_executable(webserv
 		libft/ft_atoi.cpp
 		libft/ft_localtime.cpp
 		libft/ft_getdate.cpp
+		libft/ft_getline.cpp
 
 		WebServ/WebServ.cpp
 		WebServ/WebServ_workers.cpp
@@ -26,7 +27,7 @@ add_executable(webserv
 		ThreadPool/ThreadPool.cpp
 
 		exceptions/exceptions.cpp
-		)
+		libft/ft_getfile.cpp)
 
 include_directories(
 		includes
@@ -40,3 +41,5 @@ include_directories(
 		HttpObject
 		ThreadPool
 		)
+
+target_link_libraries(webserv pthread)

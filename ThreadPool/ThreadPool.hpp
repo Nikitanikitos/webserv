@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ThreadPool.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/05 18:34:43 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/05 18:34:43 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/07 01:13:05 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,18 +19,18 @@
 
 class ThreadPool {
 private:
-	std::queue<HttpObject>		_tasks_queue;
-	pthread_mutex_t*			_mutex_check_tasks_queue;
+	std::queue<HttpObject*>		_tasks_queue;
+	pthread_mutex_t*			_read_write_is_queue_mutex;
 
 public:
 	ThreadPool();
 	~ThreadPool();
 
-	[[nodiscard]] pthread_mutex_t*		get_mutex_check_tasks_queue() const;
+	[[nodiscard]] pthread_mutex_t*		get_read_write_in_queue_mutex() const;
 	[[nodiscard]] bool					queue_is_empty() const;
 
-	HttpObject							pop_task();
-	void 								push_task(const HttpObject&);
+	HttpObject*							pop_task();
+	void 								push_task(HttpObject*);
 
 };
 

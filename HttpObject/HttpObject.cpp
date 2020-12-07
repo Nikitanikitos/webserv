@@ -13,7 +13,7 @@
 #include "HttpObject.hpp"
 
 HttpObject::HttpObject(int client_socket, int stage) : _client_socket(client_socket), _stage(stage) { }
-HttpObject::~HttpObject() { close(_client_socket); }
+HttpObject::~HttpObject() = default;
 
 void				HttpObject::next_stage() { _stage++; }
 

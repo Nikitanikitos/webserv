@@ -6,14 +6,14 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/03 23:04:25 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/06 04:30:03 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/07 15:55:07 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "WebServ.hpp"
+#include "WebServ.hpp"
 
-void WebServ::_default_handler(HttpObject& http_object, const VirtualServer& virtual_server, const Location& location) {
-	const Request&		request = http_object.get_request();
+void WebServ::_default_handler(HttpObject *http_object, const VirtualServer& virtual_server, const Location& location) {
+	const Request&		request = http_object->get_request();
 	const std::string&	path_to_target = _get_path_to_target(request, location);
 	struct stat			buff;
 
@@ -40,14 +40,14 @@ void		WebServ::_POST_method_handler(const Request& request, struct stat* buff,
 		throw RequestException("405", "Method Not Allowed", virtual_server.get_error_page("405"));
 }
 
-void		WebServ::_GET_HEAD_methods_handler(HttpObject& http_object, struct stat* buff, const Location& location) {
-	const Request&		request = http_object.get_request();
+void		WebServ::_GET_HEAD_methods_handler(HttpObject *http_object, struct stat* buff, const Location& location) {
+	const Request&		request = http_object->get_request();
 	const std::string&	path_to_target = _get_path_to_target(request, location);
 
 	if (S_ISREG(buff->st_mode) || S_ISLNK(buff->st_mode))
-		http_object.set_response(_static_file_handler(request, path_to_target));
+		http_object->set_response(_static_file_handler(request, path_to_target));
 	else if (S_ISDIR(buff->st_mode) && location.is_autoindex())
-		http_object.set_response(_autoindex_handler(request, path_to_target));
+		http_object->set_response(_autoindex_handler(request, path_to_target));
 }
 
 Response WebServ::_static_file_handler(const Request& request, const std::string& path_to_file) {

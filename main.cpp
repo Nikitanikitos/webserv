@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/04 21:44:41 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/07 15:55:58 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ int main(int ac, char **av, char **env) {
 	VirtualServer	server;
 	std::vector<VirtualServer>	list_virtual_server;
 
+	std::cout << __DATE__ << std::endl;
+	std::cout << __TIME__ << std::endl;
 	location.set_location_type(_default);
 	location.set_autoindex(true);
 	location.set_root("/Users/imicah/CLionProjects/webserv");
@@ -38,7 +40,7 @@ int main(int ac, char **av, char **env) {
 	server.add_location(location);
 	server.set_host("127.0.0.1");
 	server.add_server_name("localhost");
-	server.add_port("8080");
+	server.add_port("8081");
 
 	server.init_sockets();
 
