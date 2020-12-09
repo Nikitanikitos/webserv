@@ -19,7 +19,7 @@ void WebServ::_default_handler(HttpObject *http_object, const VirtualServer& vir
 
 	if (stat(path_to_target.c_str(), &buff) == -1)
 		throw RequestException("404", "Not Found", virtual_server.get_error_page("404"));
-	else if (S_ISDIR(buff.st_mode) && path_to_target.back() != '/')
+	else if (S_ISDIR(buff.st_mode) && request.get_target().back() != '/')
 		throw Request301Redirect("http://" + request.get_host() + ":" + request.get_port() + "/" + request.get_target() + "/");
 	else if (!location.is_allow_method(request.get_method()))
 		throw RequestException("405", "Method Not Allowed", virtual_server.get_error_page("405"));

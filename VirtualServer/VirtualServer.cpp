@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualServer.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/04 03:37:22 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/09 04:31:48 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,9 @@ void	VirtualServer::_init_sock_addr(sockaddr_in& sock_addr, const std::string& i
 
 int		VirtualServer::_create_socket(sockaddr_in& sock_addr) {
 	int		fd_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	int 	opt;
 
+	setsockopt(fd_socket, SOL_SOCKET,  SO_REUSEADDR, &opt, sizeof(opt));
 	if (bind(fd_socket, (struct sockaddr*) &sock_addr, sizeof(sock_addr)) < 0)
 		throw std::exception();
 	fcntl(fd_socket, F_SETFL, O_NONBLOCK);
@@ -80,21 +82,18 @@ int 		priority_compare(const std::string &string1, const std::string& string2) {
 }
 
 Location	VirtualServer::get_location(const Request& request) const {
-	int 			match_priority;
-	int 			compare;
-	const Location* current_location;
+	int 				priority;
+	const Location*		result;
 
-	current_location = nullptr;
-	match_priority = 0;
-	for (const auto& location : _list_locations) {
-		if (location.get_path() == request.get_target())
-			return (location);
-		compare = priority_compare(location.get_path(), request.get_target());
-		if (compare > match_priority) {
-			match_priority = compare;
-			current_location =  &location;
+	priority = 0;
+	result = nullptr;
+	for (const auto& location : _list_locations)
+		if (request.get_target().find(location.get_path().c_str(), 0, location.get_path().size()) == 0) {
+			if (priority < location.get_path().size()) {
+				priority = location.get_path().size();
+				result = &location;
+			}
 		}
-	}
-	return (*current_location);
+	return (*result);
 }
 

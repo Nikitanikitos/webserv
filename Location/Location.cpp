@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 20:30:05 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/25 17:27:27 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/09 00:10:01 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Location.hpp"
 
-Location::Location() : _autoindex(non_accepted), _root(""), _cgi_pass(""), _proxy_pass(""),
-					   _index("error_page.html") {
+Location::Location() : _autoindex(non_accepted), _root(""), _cgi_pass(""), _proxy_pass(""), _index("index.html") {
 	_allow_methods.assign(5, non_accepted);
 }
 

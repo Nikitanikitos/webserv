@@ -51,6 +51,7 @@ public:
 	/* инициализирует сокеты по хосту и портам */
 
 	void												add_server_name(const std::string&);
+	void												add_error_page(const std::string&, const std::string&);
 	void												add_port(const std::string&);
 
 	Location											get_location(const Request& request) const;
@@ -61,8 +62,6 @@ public:
 
 	void												add_location(const Location& list_locations);
 	void												set_limit_client_body_size(int);
-
-	void set_server_names(const std::vector<std::string>& server_names);
 
 	void												set_host(const std::string&);
 

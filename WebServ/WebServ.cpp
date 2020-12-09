@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/06 15:03:52 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/09 00:28:58 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ void WebServ::generate_response(HttpObject *http_object) {
 		const VirtualServer&	virtual_server = _get_virtual_server(http_object->get_request());
 		const Location&			location = virtual_server.get_location(http_object->get_request());
 
+		chdir(location.get_root().c_str());
 		switch (location.get_location_type()) {
 			case _default:
 				_default_handler(http_object, virtual_server, location);
@@ -90,8 +91,15 @@ const VirtualServer& WebServ::_get_virtual_server(const Request& request) const 
 }
 
 std::string		WebServ::_get_path_to_target(const Request& request, const Location& location) {
-	if (request.get_target() == location.get_path())
-		return (location.get_root() + location.get_index());
-	else
-		return (location.get_root() + request.get_target().substr(location.get_path().length()));
+	std::string 	result = request.get_target().substr(0, location.get_path().size());
+
+	if (result.empty()) {
+		if (int fd = open(location.get_index().c_str(), O_RDONLY) > 0) {
+			close(fd);
+			result.append(location.get_index());
+		}
+		else
+			result.append(".");
+	}
+	return (result);
 }
