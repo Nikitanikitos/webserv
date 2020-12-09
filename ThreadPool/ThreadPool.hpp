@@ -14,12 +14,12 @@
 # define WEBSERV_THREADPOOL_HPP
 
 # include <queue>
-# include "HttpObject.hpp"
+# include "Client.hpp"
 # include "pthread.h"
 
 class ThreadPool {
 private:
-	std::queue<HttpObject*>		_tasks_queue;
+	std::queue<Client*>		_tasks_queue;
 	pthread_mutex_t*			_read_write_is_queue_mutex;
 
 public:
@@ -29,8 +29,8 @@ public:
 	[[nodiscard]] pthread_mutex_t*		get_read_write_in_queue_mutex() const;
 	[[nodiscard]] bool					queue_is_empty() const;
 
-	HttpObject*							pop_task();
-	void 								push_task(HttpObject*);
+	Client*							pop_task();
+	void 								push_task(Client*);
 
 };
 

@@ -23,8 +23,8 @@ ThreadPool::~ThreadPool() {
 	free(_read_write_is_queue_mutex);
 }
 
-HttpObject*		ThreadPool::pop_task() {
-	HttpObject*		http_object = _tasks_queue.front();
+Client*		ThreadPool::pop_task() {
+	Client*		http_object = _tasks_queue.front();
 
 	_tasks_queue.pop();
 	return (http_object);
@@ -32,7 +32,11 @@ HttpObject*		ThreadPool::pop_task() {
 
 pthread_mutex_t*	ThreadPool::get_read_write_in_queue_mutex() const { return (_read_write_is_queue_mutex); }
 
-void				ThreadPool::push_task(HttpObject* http_object) { _tasks_queue.push(http_object); }
+void				ThreadPool::push_task(Client* http_object) {
+	pthread_mutex_lock(_read_write_is_queue_mutex);
+	_tasks_queue.push(http_object);
+	pthread_mutex_unlock(_read_write_is_queue_mutex);
+}
 
 bool				ThreadPool::queue_is_empty() const { return (_tasks_queue.empty()); }
 
