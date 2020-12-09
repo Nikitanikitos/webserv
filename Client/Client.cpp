@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   HttpObject.cpp                                     :+:      :+:    :+:   */
+/*   Client.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,18 +10,20 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "HttpObject.hpp"
+#include "Client.hpp"
 
-HttpObject::HttpObject(int client_socket, int stage) : _client_socket(client_socket), _stage(stage) { }
-HttpObject::~HttpObject() = default;
+Client::Client(int client_socket, int stage) : _client_socket(client_socket), _stage(stage) { }
+Client::~Client() = default;
 
-void				HttpObject::next_stage() { _stage++; }
+void			Client::next_stage() { _stage++; }
 
-void				HttpObject::set_request(const Request& request) { _request = request; }
-void				HttpObject::set_response(const Response& response) { _response = response; }
+void			Client::set_request(Request* request) { _request = request; }
+void			Client::set_response(Response* response) { _response = response; }
 
-const Request&		HttpObject::get_request() const { return (_request); }
-const Response&		HttpObject::get_response() const { return (_response); }
+Request*		Client::get_request() const { return (_request); }
+Response*		Client::get_response() const { return (_response); }
 
-int					HttpObject::get_stage() const { return (_stage); }
-int					HttpObject::get_client_socket() const { return (_client_socket); }
+int				Client::get_stage() const { return (_stage); }
+int				Client::get_socket() const { return (_client_socket); }
+
+void			Client::add_to_buffer(char *data) { _buffer.append(data); }

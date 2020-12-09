@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   HttpObject.hpp                                     :+:      :+:    :+:   */
+/*   Client.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,41 +10,45 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_HTTPOBJECT_HPP
-#define WEBSERV_HTTPOBJECT_HPP
+#ifndef WEBSERV_CLIENT_HPP
+#define WEBSERV_CLIENT_HPP
 
 # include "Request.hpp"
 # include "Response.hpp"
 
 enum stage {
-	generate_request_,
+	read_request_,
+	parsing_request_,
 	generate_response_,
 	send_response_,
-	complited_
+	complited_,
+	close_connection_,
 };
 
-class HttpObject {
+class Client {
 private:
-	int 		_client_socket;
-	int 		_stage;
-	Request		_request;
-	Response	_response;
+	int 			_client_socket;
+	std::string		_buffer;
+	int 			_stage;
+	Request*		_request;
+	Response*		_response;
 
 public:
-	HttpObject(int, int);
-	virtual ~HttpObject();
+	Client(int, int);
+	virtual ~Client();
 
-	[[nodiscard]] const Request&	get_request() const;
-	[[nodiscard]] const Response&	get_response() const;
+	[[nodiscard]] Request*		get_request() const;
+	[[nodiscard]] Response*		get_response() const;
 
-	[[nodiscard]] int				get_stage() const;
-	[[nodiscard]] int				get_client_socket() const;
+	[[nodiscard]] int			get_stage() const;
+	[[nodiscard]] int			get_socket() const;
 
-	void							set_request(const Request& request);
-	void							set_response(const Response& response);
+	void						set_request(Request* request);
+	void						set_response(Response* response);
 
-	void							next_stage();
+	void						add_to_buffer(char *);
+
+	void						next_stage();
 };
 
-
-#endif //WEBSERV_HTTPOBJECT_HPP
+#endif //WEBSERV_CLIENT_HPP
