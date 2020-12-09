@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/02 14:46:29 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/07 01:13:05 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/09 07:51:14 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,26 @@
 	while (true) {
 		pthread_mutex_lock(thread_pool.get_read_write_in_queue_mutex());
 		if (!thread_pool.queue_is_empty()) {
-			HttpObject*		http_object = thread_pool.pop_task();
+			Client*		client = thread_pool.pop_task();
 			pthread_mutex_unlock(thread_pool.get_read_write_in_queue_mutex());
-			if (http_object->get_stage() == generate_request_)
-				web_serv.generate_request(http_object);
-			else if (http_object->get_stage() == generate_response_)
-				web_serv.generate_response(http_object);
-			else if (http_object->get_stage() == send_response_)
-				web_serv.send_response(http_object);
-			http_object->next_stage();
-			pthread_mutex_lock(thread_pool.get_read_write_in_queue_mutex());
-			(http_object->get_stage() != complited_) ? thread_pool.push_task(http_object) : delete http_object;
-			pthread_mutex_unlock(thread_pool.get_read_write_in_queue_mutex());
+			switch (client->get_stage()) {
+				case read_request_:
+					web_serv._read_request(client);
+				case parsing_request_:
+					web_serv._parsing_request(client);
+				case generate_response_:
+					web_serv._generate_response(client);
+				case send_response_:
+					web_serv._send_response(client);
+				case close_connection_:
+					web_serv._close_connection(client);
+			}
+			if (client->get_stage() != read_request_ && client->get_stage() != send_response_)
+				thread_pool.push_task(client);
 		}
 		else
 			pthread_mutex_unlock(thread_pool.get_read_write_in_queue_mutex());
+		usleep(500);
 	}
 }
 
@@ -44,17 +49,6 @@ void		WebServ::_create_workers() {
 	for (int i = 0; i < _number_workers; ++i) {
 		pthread_create(&worker_thread, nullptr, worker, (void*)this);
 		pthread_detach(worker_thread);
-	}
-}
-
-void		WebServ::_get_accept_from_ready_sockets() {
-	int client_socket;
-
-	for (int socket : _vs_sockets) {
-		if (FD_ISSET(socket, &_set_of_vs_sockets)) {
-			while ((client_socket = accept(socket, nullptr, nullptr)) != -1)
-				_thread_pool.push_task(new HttpObject(client_socket, generate_request_));
-		}
 	}
 }
 

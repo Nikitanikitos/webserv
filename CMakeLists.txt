@@ -23,7 +23,7 @@ add_executable(webserv
 		Request/Request.cpp
         Response/Response.cpp
 
-		HttpObject/HttpObject.cpp
+		Client/Client.cpp
 		ThreadPool/ThreadPool.cpp
 
 		exceptions/exceptions.cpp
@@ -38,7 +38,7 @@ include_directories(
 		ParseConfigFile
 		Request
 		Response
-		HttpObject
+		Client
 		ThreadPool
 		)
 

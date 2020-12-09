@@ -54,7 +54,7 @@ public:
 	void												add_error_page(const std::string&, const std::string&);
 	void												add_port(const std::string&);
 
-	Location											get_location(const Request& request) const;
+	Location											get_location(Request *request) const;
 
 	[[nodiscard]] const std::vector<std::string>&		get_server_names() const;
 	[[nodiscard]] const std::vector<std::string>&		get_ports() const;

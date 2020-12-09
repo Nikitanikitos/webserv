@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/09 04:31:48 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/09 07:25:55 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,14 +81,14 @@ int 		priority_compare(const std::string &string1, const std::string& string2) {
 	return (result);
 }
 
-Location	VirtualServer::get_location(const Request& request) const {
+Location	VirtualServer::get_location(Request *request) const {
 	int 				priority;
 	const Location*		result;
 
 	priority = 0;
 	result = nullptr;
 	for (const auto& location : _list_locations)
-		if (request.get_target().find(location.get_path().c_str(), 0, location.get_path().size()) == 0) {
+		if (request->get_target().find(location.get_path().c_str(), 0, location.get_path().size()) == 0) {
 			if (priority < location.get_path().size()) {
 				priority = location.get_path().size();
 				result = &location;

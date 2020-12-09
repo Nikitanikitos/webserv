@@ -38,7 +38,8 @@ public:
 	void			set_status_code(const std::string&);
 	void			set_body(const std::string& body);
 
-	virtual void	send_response(int) const;
+	virtual void	generate_response();
+	virtual int		send_response(int);
 };
 
 #endif //WEBSERV_RESPONSE_HPP

@@ -25,18 +25,22 @@ void				Response::add_header(const std::string& key, const std::string& value) {
 
 const std::string&	Response::get_header(const std::string& key) const { return _headers.at(key); }
 
-void				Response::send_response(int client_socket) const {
-	std::string			response;
-
-	response =
+void				Response::generate_response() {
+	_response.append(
 		HTTP_VERSION + SP + _status_code + SP + _message_phrase + CRLF
 		"Server:" + SP + SERVER_VERSION + CRLF
-		"Date:" + SP + ft_getdate() + CRLF;
+		"Date:" + SP + ft_getdate() + CRLF);
 
 	for (const auto& header : _headers)
-		response.append(header.first + ":" + SP + header.second + CRLF);
-	response.append(CRLF);
-	response.append(_body);
+		_response.append(header.first + ":" + SP + header.second + CRLF);
+	_response.append(CRLF);
+	_response.append(_body);
+}
 
-	send(client_socket, response.c_str(), response.length(), 0);
+int					Response::send_response(int client_socket) {
+	int 	bytes;
+
+	bytes = send(client_socket, _response.c_str(), 512, 0);
+	_response.erase(0, 512);
+	return (bytes);
 }

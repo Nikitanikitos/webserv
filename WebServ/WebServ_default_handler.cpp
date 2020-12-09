@@ -6,13 +6,13 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/03 23:04:25 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/07 15:55:07 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/09 01:37:12 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-void WebServ::_default_handler(HttpObject *http_object, const VirtualServer& virtual_server, const Location& location) {
+void WebServ::_default_handler(Client *http_object, const VirtualServer& virtual_server, const Location& location) {
 	const Request&		request = http_object->get_request();
 	const std::string&	path_to_target = _get_path_to_target(request, location);
 	struct stat			buff;
@@ -40,7 +40,7 @@ void		WebServ::_POST_method_handler(const Request& request, struct stat* buff,
 		throw RequestException("405", "Method Not Allowed", virtual_server.get_error_page("405"));
 }
 
-void		WebServ::_GET_HEAD_methods_handler(HttpObject *http_object, struct stat* buff, const Location& location) {
+void		WebServ::_GET_HEAD_methods_handler(Client *http_object, struct stat* buff, const Location& location) {
 	const Request&		request = http_object->get_request();
 	const std::string&	path_to_target = _get_path_to_target(request, location);
 

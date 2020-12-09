@@ -16,7 +16,7 @@ RequestException::RequestException(const std::string& status_code, const std::st
 		const std::string& error_page) : _message_phrase(message_phrase), _status_code(status_code),
 										 _error_page(error_page) { }
 
-void RequestException::send_response(int client_socket) const {
+void RequestException::generate_response(int client_socket) const {
 	std::string			body_response = ft_getfile(_error_page.c_str());
 	std::string			response;
 
@@ -34,7 +34,7 @@ void RequestException::send_response(int client_socket) const {
 
 Request301Redirect::Request301Redirect(const std::string& location)  : _location(location) { }
 
-void Request301Redirect::send_response(int client_socket) const {
+void Request301Redirect::generate_response(int client_socket) const {
 	std::string			response;
 
 	response =
