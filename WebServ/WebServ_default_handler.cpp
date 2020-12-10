@@ -95,3 +95,10 @@ std::string	WebServ::_autoindex_generate(const Request& request, const std::stri
 	body_response.append("</pre><hr></body></html>");
 	return (body_response);
 }
+
+void WebServ::_parsing_request(Client* client) {
+	Request*	request = new Request();
+
+	client->set_request(request);
+
+}

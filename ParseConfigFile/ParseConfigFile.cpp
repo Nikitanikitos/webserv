@@ -14,7 +14,7 @@
 
 ParseConfigFile::ParseConfigFile(char *filename) :_filename(filename) { }
 
-std::vector<std::string>	getArgsFromLine(std::string const &input) {
+std::vector<std::string>&	getArgsFromLine(std::string const &input) {
 	std::vector<std::string>	result;
 
 	for (size_t pos = 0; pos < input.length(); pos++) {

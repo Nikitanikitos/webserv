@@ -18,10 +18,10 @@
 	ThreadPool&		thread_pool = web_serv._thread_pool;
 
 	while (true) {
-		pthread_mutex_lock(thread_pool.get_read_write_in_queue_mutex());
+		thread_pool.lock_queue_mutex();
 		if (!thread_pool.queue_is_empty()) {
 			Client*		client = thread_pool.pop_task();
-			pthread_mutex_unlock(thread_pool.get_read_write_in_queue_mutex());
+			thread_pool.unlock_queue_mutex();
 			switch (client->get_stage()) {
 				case read_request_:
 					web_serv._read_request(client);
@@ -38,7 +38,7 @@
 				thread_pool.push_task(client);
 		}
 		else
-			pthread_mutex_unlock(thread_pool.get_read_write_in_queue_mutex());
+			thread_pool.unlock_queue_mutex();
 		usleep(500);
 	}
 }

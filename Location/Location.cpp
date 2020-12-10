@@ -43,3 +43,5 @@ bool Location::is_allow_method(const std::string& method) const {
 bool Location::is_autoindex() const { return (_autoindex); }
 
 const std::string&	Location::get_index() const { return (_index); }
+
+void Location::set_path(const std::string& path) { _path = path; }

@@ -59,11 +59,14 @@ public:
 	void									set_index(const std::string&);
 	void									set_cgi_path(const std::string&);
 	void									set_autoindex(bool);
+	void									set_path(const std::string& path);
 
 	void									add_accepted_method(uint8_t);
 
 	[[nodiscard]] const std::string&		get_index() const;
 	[[nodiscard]] const std::string&		get_path() const;
+
+
 	[[nodiscard]] const	std::string&		get_root() const;
 	[[nodiscard]] const	std::vector<bool>&	get_allow_methods() const;
 	[[nodiscard]] int						get_location_type() const;

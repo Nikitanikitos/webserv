@@ -39,8 +39,10 @@ void		WebServ::run_server() {
 		for (const auto& client : _clients) {
 			const int		client_socket = client->get_socket();
 			FD_SET(client_socket, &readfd_set);
+			client->lock_stage_mutex();
 			if (client->get_stage() == send_response_)
 				FD_SET(client_socket, &writefd_set);
+			client->unlock_stage_mutex();
 			if (client_socket > max_fd)
 				max_fd = client_socket;
 		}
@@ -51,14 +53,16 @@ void		WebServ::run_server() {
 			if (FD_ISSET(socket, &readfd_set)) {
 				int 	new_client;
 				while ((new_client = accept(socket, nullptr, nullptr)) != -1)
-					_clients.push_back(new Client(new_client, 0));
+					_clients.push_back(new Client(new_client, read_request_));
 			}
 		}
 
 		for (const auto& client : _clients) {
+			client->lock_stage_mutex();
 			if ((client->get_stage() == read_request_ && FD_ISSET(client->get_socket(), &readfd_set)) ||
-				(client->get_stage() == send_response_ && FD_ISSET(client->get_socket(), &writefd_set)))
+								(client->get_stage() == send_response_ && FD_ISSET(client->get_socket(), &writefd_set)))
 				_thread_pool.push_task(client);
+			client->unlock_stage_mutex();
 		}
 	}
 }

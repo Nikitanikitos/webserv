@@ -21,7 +21,7 @@ enum stage {
 	parsing_request_,
 	generate_response_,
 	send_response_,
-	complited_,
+	completed_,
 	close_connection_,
 };
 
@@ -32,6 +32,9 @@ private:
 	int 			_stage;
 	Request*		_request;
 	Response*		_response;
+
+	pthread_mutex_t*		_stage_mutex;
+
 
 public:
 	Client(int, int);
@@ -49,6 +52,9 @@ public:
 	void						add_to_buffer(char *);
 
 	void						next_stage();
+
+	void						lock_stage_mutex();
+	void						unlock_stage_mutex();
 };
 
 #endif //WEBSERV_CLIENT_HPP

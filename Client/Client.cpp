@@ -12,8 +12,15 @@
 
 #include "Client.hpp"
 
-Client::Client(int client_socket, int stage) : _client_socket(client_socket), _stage(stage) { }
-Client::~Client() = default;
+Client::Client(int client_socket, int stage) : _client_socket(client_socket), _stage(stage) {
+	if ((_stage_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == nullptr)
+		throw std::exception();
+	pthread_mutex_init(_stage_mutex, NULL);
+}
+Client::~Client() {
+	pthread_mutex_destroy(_stage_mutex);
+	free(_stage_mutex);
+}
 
 void			Client::next_stage() { _stage++; }
 
@@ -27,3 +34,6 @@ int				Client::get_stage() const { return (_stage); }
 int				Client::get_socket() const { return (_client_socket); }
 
 void			Client::add_to_buffer(char *data) { _buffer.append(data); }
+
+void			Client::lock_stage_mutex() { pthread_mutex_lock(_stage_mutex); }
+void			Client::unlock_stage_mutex() { pthread_mutex_unlock(_stage_mutex); }

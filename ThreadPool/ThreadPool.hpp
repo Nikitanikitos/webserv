@@ -20,7 +20,7 @@
 class ThreadPool {
 private:
 	std::queue<Client*>		_tasks_queue;
-	pthread_mutex_t*			_read_write_is_queue_mutex;
+	pthread_mutex_t*		_queue_mutex;
 
 public:
 	ThreadPool();
@@ -29,7 +29,9 @@ public:
 	[[nodiscard]] pthread_mutex_t*		get_read_write_in_queue_mutex() const;
 	[[nodiscard]] bool					queue_is_empty() const;
 
-	Client*							pop_task();
+	void								lock_queue_mutex();
+	void								unlock_queue_mutex();
+	Client*								pop_task();
 	void 								push_task(Client*);
 
 };
