@@ -72,8 +72,12 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 		std::vector<std::string> trimmedStr = _getArgsFromLine(line);
 		if (trimmedStr.empty() || trimmedStr[0][0] == '#')
 			continue;
-		else if (trimmedStr.size() == 1)
-			throw std::exception(); // TODO error in config file
+		else if (trimmedStr.size() == 1) {
+			if (trimmedStr[0] == "}")
+				break ;
+			else
+				throw std::exception(); // TODO error in config file
+		}
 		else if (!_manageSemicolon(trimmedStr))
 			throw std::exception(); // TODO error in config file
 		switch (_getIndexOfArg(trimmedStr[0])) {
@@ -117,7 +121,7 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 				throw std::exception(); // TODO error invalid field in config
 		}
 	}
-	return (virtual_server);
+	return virtual_server;
 }
 
 Location			ParseConfigFile::_parse_location_directive() {
