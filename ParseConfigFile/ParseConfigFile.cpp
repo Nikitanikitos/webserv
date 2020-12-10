@@ -12,9 +12,18 @@
 
 #include "ParseConfigFile.hpp"
 
+std::string ParseConfigFile::serverCurrentFields[6] = {
+		"server_names",
+		"error_page",
+		"limit_body_size",
+		"host",
+		"port",
+		"location"
+};
+
 ParseConfigFile::ParseConfigFile(char *filename) :_filename(filename) { }
 
-std::vector<std::string>&	getArgsFromLine(std::string const &input) {
+std::vector<std::string>	ParseConfigFile::_getArgsFromLine(std::string const &input) const {
 	std::vector<std::string>	result;
 
 	for (size_t pos = 0; pos < input.length(); pos++) {
@@ -26,6 +35,25 @@ std::vector<std::string>&	getArgsFromLine(std::string const &input) {
 		result.push_back(input.substr(posFind, (pos - posFind)));
 	}
 	return result;
+}
+
+int 			ParseConfigFile::_getIndexOfArg(std::string const &arg) const {
+	for (int index = 0; index < 6; ++index)
+		if (serverCurrentFields[index] == arg)
+			return index;
+	return -1;
+}
+
+bool 			ParseConfigFile::_manageSemicolon(std::vector<std::string>& v) {
+	int countSemicolon = 0;
+	for (size_t i = 0; i < v.size(); ++i)
+		if (v[i].find(';'))
+			++countSemicolon;
+	if (countSemicolon == 1 && v[v.size() - 1][v[v.size() - 1].length() - 1] == ';') {
+		v[v.size() - 1] = v[v.size() - 1].substr(0, v[v.size() - 1].size() - 1);
+		return true;
+	} else
+		return false;
 }
 
 VirtualServer	ParseConfigFile::_parse_vs_directive() {
@@ -40,49 +68,53 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 	//	port                port (обязательный аргумент);
 
 
-//	TODO add support and validate ";"
 	while (ft_getline(_fd, line)) {
-		// skip spaces
-		size_t i = 0;
-		for (i; i < line.length() && line[i] == ' '; ++i);
-		if (line.compare(i, 4, "host")) {
-			i += 4;
-			for (i; i < line.length() && line[i] == ' '; ++i);
-			virtual_server.set_host(line.substr(i, line.find(';')));
-		}
-		else if (line.compare(i, 4, "port")) {
-			i += 4;
-			for (i; i < line.length() && line[i] == ' '; ++i);
-			virtual_server.add_port(line.substr(i, line.find(';')));
-		}
-		else if (line.compare(i, 12, "server_names")) {
-			i += 12;
-			for (i; i < line.length() && line[i] == ' '; ++i);
-			for (size_t j = i; j < line.length(); ++j) {
-				if (j == ',') {
-					virtual_server.add_server_name(line.substr(i, j - i));
-					i = j + 1;
-				}
+		std::vector<std::string> trimmedStr = _getArgsFromLine(line);
+		if (trimmedStr.empty() || trimmedStr[0][0] == '#')
+			continue;
+		else if (trimmedStr.size() == 1)
+			throw std::exception(); // TODO error in config file
+		else if (!_manageSemicolon(trimmedStr))
+			throw std::exception(); // TODO error in config file
+		switch (_getIndexOfArg(trimmedStr[0])) {
+			case 0: // server_names
+				for (size_t i = 1; i < trimmedStr.size(); ++i)
+					virtual_server.add_server_name(trimmedStr[i]);
+			case 1: { // error_page
+				if (trimmedStr.size() == 3)
+					virtual_server.add_error_page(trimmedStr[1], trimmedStr[2]);
+				else
+					throw std::exception(); // TODO error in config file
+				// trimmedStr[1] - код
+				// trimmedStr[2] - адрес
 			}
-		}
-		else if (line.compare(i, 15, "limit_body_size")) {
-			i += 15;
-			virtual_server.set_limit_client_body_size(std::stoi(line, &i));
-		}
-		else if (line.compare(i, 10, "error_page")) {
-			i+= 10;
-			// TODO add error_page
-		}
-		else if (line.compare(i, 8, "location")) {
-			i += 8;
-			for (size_t j = i; j < line.length(); ++j) {
-				if (j == '{') {
-					// TODO validate and	asqd set <path> or <extension>
-					virtual_server.add_location(_parse_location_directive());
-					break;
+			case 2: { // limit_body_size
+				if (trimmedStr.size() == 2) {
+					try {
+						virtual_server.set_limit_client_body_size(std::stoi(trimmedStr[1]));
+					} catch (std::exception &e) {
+						throw e; // TODO error
+					}
 				}
+				else
+					throw std::exception(); // TODO error
 			}
-			// call _parse_location_directive
+			case 3: { // host
+				if (trimmedStr.size() == 2)
+					virtual_server.set_host(trimmedStr[1]);
+				else
+					throw std::exception(); // TODO error
+			}
+			case 4: { // port
+				if (trimmedStr.size() == 2)
+					virtual_server.add_port(trimmedStr[1]);
+				else
+					throw std::exception(); // TODO error
+			}
+			case 5: { // location
+			}
+			default:
+				throw std::exception(); // TODO error invalid field in config
 		}
 	}
 	return (virtual_server);
@@ -139,22 +171,20 @@ Location			ParseConfigFile::_parse_location_directive() {
 std::vector<VirtualServer> ParseConfigFile::parse_file() {
 	/* метод будет возвращать список виртуальных серверов, в которых есть список роутеров */
 	if ((_fd = open(_filename, O_RDONLY)) < 0)
-		throw std::exception(); // ERROR
+		throw std::exception(); // TODO ERROR
 	std::string line;
 	std::vector<VirtualServer> virtual_servers;
 	while (ft_getline(_fd, line)) {
-		// remove spaces
-		std::string::iterator end_pos = std::remove(line.begin(), line.end(), ' ');
-		line.erase(end_pos, line.end());
-		if (line == "#")
+		if (line[0] == '#')
 			continue;
-		else if (line.compare(0, 6, "worker")) {
-			int workers = std::stoi(&line[6]); // atoi workers
+		else if (line.compare(0, 7, "worker ")) {
+			int workers = std::stoi(&line[7]); // atoi workers
+			std::cout << "Workers = " << workers << std::endl;
 		}
-		else if (line == "server{")
+		else if (line == "server {")
 			virtual_servers.push_back(_parse_vs_directive()); // mb check return value ? or not
 		else if (line.length() > 0)
-			throw std::exception(); // ERROR
+			throw std::exception(); // TODO ERROR
 	}
-	return (std::vector<VirtualServer>());
+	return (virtual_servers);
 }

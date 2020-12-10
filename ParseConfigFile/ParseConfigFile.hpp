@@ -33,12 +33,23 @@ private:
 	Location			_parse_location_directive();
 	/* Метод будет возвращать объект класса Route со всеми инициализированными полями */
 
+	std::vector<std::string>	_getArgsFromLine(std::string const &input) const;
+	/* Метод для разбивания строки на слова в вектор */
+
+	int 						_getIndexOfArg(std::string const &arg) const;
+	/* Метод для получения индекса из массива строк */
+
+	bool 						_manageSemicolon(std::vector<std::string>& v);
+	/* Метод валидации строки на наличие точки с запятой */
+
 public:
 	explicit ParseConfigFile(char *filename);
 	~ParseConfigFile() = default;
 
 	std::vector<VirtualServer>		parse_file();
 	/* метод будет возвращать список виртуальных серверов, в которых есть список роутеров */
+	static std::string serverCurrentFields[6];
+	static
 };
 
 #endif //WEBSERV_PARSECONFIGFILE_HPP
