@@ -30,7 +30,7 @@ private:
 	VirtualServer	_parse_vs_directive();
 	/* Метод будет возвращать объект класса VirtualServer со всеми инициализированными полями */
 
-	Location			_parse_location_directive();
+	Location			_parse_location_directive(std::string const &);
 	/* Метод будет возвращать объект класса Route со всеми инициализированными полями */
 
 	std::vector<std::string>	_getArgsFromLine(std::string const &input) const;

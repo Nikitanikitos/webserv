@@ -12,6 +12,8 @@
 
 #include "ParseConfigFile.hpp"
 
+# define ONLY_DIGITS(s) (s.find_first_not_of("0123456789") == std::string::npos)
+
 std::string ParseConfigFile::serverCurrentFields[6] = {
 		"server_names",
 		"error_page",
@@ -93,12 +95,8 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 				// trimmedStr[2] - адрес
 			}
 			case 2: { // limit_body_size
-				if (trimmedStr.size() == 2) {
-					try {
-						virtual_server.set_limit_client_body_size(std::stoi(trimmedStr[1]));
-					} catch (std::exception &e) {
-						throw e; // TODO error
-					}
+				if (trimmedStr.size() == 2 && ONLY_DIGITS(trimmedStr[1])) {
+					virtual_server.set_limit_client_body_size(std::stoi(trimmedStr[1]));
 				}
 				else
 					throw std::exception(); // TODO error
@@ -110,12 +108,17 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 					throw std::exception(); // TODO error
 			}
 			case 4: { // port
+				// TODO multiple ports
 				if (trimmedStr.size() == 2)
 					virtual_server.add_port(trimmedStr[1]);
 				else
 					throw std::exception(); // TODO error
 			}
 			case 5: { // location
+				if (trimmedStr.size() == 3 && trimmedStr[2] == "{")
+					virtual_server.add_location(_parse_location_directive(trimmedStr[1]));
+				else
+					throw std::exception(); // TODO error
 			}
 			default:
 				throw std::exception(); // TODO error invalid field in config
@@ -124,7 +127,7 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 	return virtual_server;
 }
 
-Location			ParseConfigFile::_parse_location_directive() {
+Location			ParseConfigFile::_parse_location_directive(std::string const &locationAttribute) {
 	/* Метод будет возвращать объект класса Route со всеми инициализированными полями */
 //	location <path> {
 //			allow_methods           METHOD_NAME, ... (обязательный аругмент);
@@ -133,7 +136,8 @@ Location			ParseConfigFile::_parse_location_directive() {
 //			request_is_directory    filename (необязательный аргумент, по умолчанию используется заготовленный файл);
 //	}
 //
-//	location <extension> {
+//	location <path> {
+//			extension				.php;
 //			allow_methods           METHOD_NAME, ... (обязательный аругмент);
 //			cgi_pass                path_to_cgi (обязательный аругмент);
 //			root                    directory_path (обазятельный аргумент);
@@ -147,27 +151,14 @@ Location			ParseConfigFile::_parse_location_directive() {
 //	}
 //
 //	location <path> {
-//			accepted_methods        METHOD_NAME, ... (обязательный аругмент);
 //			proxy_pass              URI (обязательный аругмент);
 //	}
 	Location location;
 	std::string line;
+	location.set_path(locationAttribute);
+	// path or extension ?
 	while (ft_getline(_fd, line)) {
-		size_t i = 0;
-		for (i; i < line.length() && line[i] == ' '; ++i);
-		if (line.compare(i, 4, "root")) {
-			i += 4;
-			for (i; i < line.length() && line[i] == ' '; ++i);
-			// TODO add root
-
-		}
-		else if (line.compare(i, 9, "extension")) {
-			i += 9;
-			// TODO add extension
-
-		}
-		else if (line.find('{'))
-			break ;
+		
 	}
 	return (location);
 }
