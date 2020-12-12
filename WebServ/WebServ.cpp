@@ -6,20 +6,26 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/12 08:07:02 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/12 08:51:13 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
+#include <iostream>
 
 WebServ::WebServ(const std::vector<VirtualServer>& list_virtual_servers) : _list_virtual_servers(list_virtual_servers), _thread_pool() {
-	for (const VirtualServer& server : _list_virtual_servers)
-		for (const int fd_socket : server.vs_sockets)
-			_sockets.push_back(fd_socket);
+	for (int i = 0; i < _list_virtual_servers.size(); ++i) {
+		std::vector<int>	sockets = _list_virtual_servers[i].vs_sockets;
+		for (int j = 0; j < sockets.size(); ++j)
+			_sockets.push_back(sockets[j]);
+	}
+	_writefd_set = (fd_set*)malloc(sizeof(fd_set));
 }
 
 WebServ::~WebServ() = default;
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "EndlessLoop"
 void		WebServ::run_server() {
 	_create_workers();
 
@@ -27,58 +33,57 @@ void		WebServ::run_server() {
 	fd_set		readfd_set;
 	int 		max_fd;
 
+	FD_ZERO(_writefd_set);
 	while (true) {
 		max_fd = _sockets.back();
-		FD_ZERO(&writefd_set);
 		FD_ZERO(&readfd_set);
 
-		for (const auto& socket : _sockets)
-			FD_SET(socket, &readfd_set);
+		for (int i = 0; i < _sockets.size(); ++i)
+			FD_SET(_sockets[i], &readfd_set);
 
-		for (const auto& client : _clients) {
-			const int		client_socket = client->get_socket();
-			client->lock_stage_mutex();
-			if (client->get_stage() == read_request_)
+		for (int i = 0; i < _clients.size(); ++i) {
+			const int		client_socket = _clients[i]->get_socket();
+			if (_clients[i]->get_stage() == read_request_)
 				FD_SET(client_socket, &readfd_set);
-			else if (client->get_stage() == send_response_)
-				FD_SET(client_socket, &writefd_set);
-			client->unlock_stage_mutex();
+			else if (_clients[i]->get_stage() == send_response_)
+				FD_SET(client_socket, _writefd_set);
 			if (client_socket > max_fd)
 				max_fd = client_socket;
 		}
 
-		select(max_fd + 1, &readfd_set, &writefd_set,  nullptr, nullptr);
+		select(max_fd + 1, &readfd_set, _writefd_set,  nullptr, nullptr);
 
-		for (const auto& socket : _sockets) {
-			if (FD_ISSET(socket, &readfd_set)) {
+		for (int i = 0; i < _sockets.size(); ++i) {
+			if (FD_ISSET(_sockets[i], &readfd_set)) {
 				int 	new_client;
-				while ((new_client = accept(socket, nullptr, nullptr)) != -1)
+				while ((new_client = accept(_sockets[i], nullptr, nullptr)) != -1)
 					_clients.push_back(new Client(new_client, read_request_));
 			}
 		}
 
-		for (const auto& client : _clients) {
-			if (!client->in_task_queue() && (client->ready_to_action(&readfd_set, read_request_)))
-				_thread_pool.push_task(client);
+		for (int i = 0; i < _clients.size(); ++i) {
+			if (!_clients[i]->in_task_queue() && (_clients[i]->ready_to_action(&readfd_set, read_request_)))
+				_thread_pool.push_task(_clients[i]);
 		}
 	}
 }
 
-const VirtualServer& WebServ::_get_virtual_server(Request *request) const {
+const VirtualServer&	WebServ::_get_virtual_server(Request *request) const {
 	bool					default_vs_flag;
 	const VirtualServer		*default_vs;
 
 	default_vs_flag = false;
-	for (const auto & server : _list_virtual_servers) {
-		for (const auto& port : server.get_ports()) {
-			if (request->get_port() == port) {
+	for (int i = 0; i < _list_virtual_servers.size(); ++i) {
+		std::vector<std::string>	ports = _list_virtual_servers[i].get_ports();
+		for (int j = 0; j < ports.size(); ++j) {
+			if (request->get_port() == ports[j]) {
 				if (!default_vs_flag) {
-					default_vs = &server;
+					default_vs = &_list_virtual_servers[i];
 					default_vs_flag = true;
 				}
-				for (const auto& server_name : server.get_server_names())
+				for (const auto& server_name : _list_virtual_servers[i].get_server_names())
 					if (request->get_header(HOST) == server_name) {
-						default_vs = &server;
+						default_vs = &_list_virtual_servers[i];
 						break ;
 					}
 			}

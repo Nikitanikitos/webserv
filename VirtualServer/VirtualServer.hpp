@@ -44,26 +44,24 @@ public:
 	virtual ~VirtualServer();
 	/* закрытие сокетов */
 
-	void												init_sockets();
+	void								init_sockets();
 
-	const std::string&									get_error_page(const std::string& status_code) const;
+	const std::string&					get_error_page(const std::string& status_code) const;
 
-	/* инициализирует сокеты по хосту и портам */
+	void								add_server_name(const std::string&);
+	void								add_error_page(const std::string&, const std::string&);
+	void								add_port(const std::string&);
 
-	void												add_server_name(const std::string&);
-	void												add_error_page(const std::string&, const std::string&);
-	void												add_port(const std::string&);
+	Location							get_location(Request *request) const;
 
-	Location											get_location(Request *request) const;
+	const std::vector<std::string>&		get_server_names() const;
+	const std::vector<std::string>&		get_ports() const;
+	const std::string&					get_host() const;
 
-	[[nodiscard]] const std::vector<std::string>&		get_server_names() const;
-	[[nodiscard]] const std::vector<std::string>&		get_ports() const;
-	[[nodiscard]] const std::string&					get_host() const;
+	void								add_location(const Location& list_locations);
+	void								set_limit_client_body_size(int);
 
-	void												add_location(const Location& list_locations);
-	void												set_limit_client_body_size(int);
-
-	void												set_host(const std::string&);
+	void								set_host(const std::string&);
 
 };
 

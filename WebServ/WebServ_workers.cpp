@@ -6,14 +6,17 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/02 14:46:29 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/12 08:05:39 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/12 08:13:37 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include "WebServ.hpp"
 
-[[noreturn]] void*	worker(void* arg) {
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "UnreachableCode"
+#pragma ide diagnostic ignored "EndlessLoop"
+void*	worker(void* arg) {
 	WebServ&		web_serv = *(WebServ*)arg;
 	ThreadPool&		thread_pool = web_serv._thread_pool;
 
@@ -48,6 +51,7 @@
 			thread_pool.unlock_queue_mutex();
 		usleep(500);
 	}
+	return (NULL);
 }
 
 void		WebServ::_create_workers() {

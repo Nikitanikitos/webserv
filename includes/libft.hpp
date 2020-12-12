@@ -41,7 +41,7 @@ void					ft_localtime(tm&, time_t);
 std::string				ft_getdate();
 std::string				ft_getfile(const char *path);
 
-[[noreturn]] void*		worker(void* arg);
+void*					worker(void* arg);
 
 bool					ft_getline(int fd, std::string &line);
 

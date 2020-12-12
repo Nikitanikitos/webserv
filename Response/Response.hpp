@@ -32,7 +32,7 @@ public:
 	explicit Response(std::string&);
 	virtual ~Response();
 
-	[[nodiscard]] const std::string&		get_header(const std::string& key) const;
+	const std::string&		get_header(const std::string& key) const;
 
 	void			add_header(const std::string& key, const std::string& value);
 	void			set_status_code(const std::string&);

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/12 08:05:39 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/12 08:17:18 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ private:
 
 	int 									_number_workers;
 	ThreadPool								_thread_pool;
+	fd_set*									_writefd_set;
 
 
 	static void			_default_handler(Client *http_object, const VirtualServer& virtual_server, const Location& location);
@@ -41,14 +42,14 @@ private:
 	static void			_POST_method_handler(const Request& request, struct stat* buff, const VirtualServer& virtual_server);
 	static void			_GET_HEAD_methods_handler(Client *http_object, struct stat* buff, const Location& location);
 
-	static Response* _static_file_handler(const Request& request, const std::string& path_to_file);
-	static Response* _autoindex_handler(const Request& request, const std::string& path_to_target);
+	static Response*	_static_file_handler(const Request& request, const std::string& path_to_file);
+	static Response*	_autoindex_handler(const Request& request, const std::string& path_to_target);
 
 	static std::string	_autoindex_generate(const Request& request, const std::string& path_to_target);
 
 	void				_create_workers();
 
-	[[nodiscard]] const VirtualServer& _get_virtual_server(Request *request) const;
+	const VirtualServer&	_get_virtual_server(Request *request) const;
 
 	void		read_request(Client*);
 	void		parsing_request(Client *client);
@@ -65,7 +66,7 @@ public:
 
 	virtual ~WebServ();
 
-	[[noreturn]] void	run_server();
+	void	run_server();
 	/* Метод запускает сервер. Вызывает select() на серверные сокеты с бесконечным тайм-аутом,
 	 * Проверяет в какой сокет поступило соединение и вызывает метод serve_client(), передавая туда сокет клиента */
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualServer.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/09 07:25:55 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/12 04:39:35 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,5 +95,9 @@ Location	VirtualServer::get_location(Request *request) const {
 			}
 		}
 	return (*result);
+}
+
+void VirtualServer::add_error_page(const std::string&, const std::string&) {
+
 }
 

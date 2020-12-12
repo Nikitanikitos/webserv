@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/07 15:55:58 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/12 06:50:51 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int main(int ac, char **av, char **env) {
 	list_virtual_server.push_back(server);
 
 	WebServ		web_server(list_virtual_server);
-	web_server.set_number_workers(2);
+	web_server.set_number_workers(1);
 
 	web_server.run_server();
 	//	fd_set				sockets_set;

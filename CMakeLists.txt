@@ -16,6 +16,7 @@ add_executable(webserv
 		WebServ/WebServ.cpp
 		WebServ/WebServ_workers.cpp
 		WebServ/WebServ_default_handler.cpp
+		WebServ/WebServ_handlers.cpp
 
 		VirtualServer/VirtualServer.cpp
 		Location/Location.cpp

@@ -26,13 +26,13 @@ public:
 	ThreadPool();
 	~ThreadPool();
 
-	[[nodiscard]] pthread_mutex_t*		get_read_write_in_queue_mutex() const;
-	[[nodiscard]] bool					queue_is_empty() const;
+	pthread_mutex_t*		get_read_write_in_queue_mutex() const;
+	bool					queue_is_empty() const;
 
-	void								lock_queue_mutex();
-	void								unlock_queue_mutex();
-	Client*								pop_task();
-	void 								push_task(Client*);
+	void					lock_queue_mutex();
+	void					unlock_queue_mutex();
+	Client*					pop_task();
+	void 					push_task(Client*);
 
 };
 

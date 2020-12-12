@@ -49,7 +49,6 @@ public:
 	std::vector<VirtualServer>		parse_file();
 	/* метод будет возвращать список виртуальных серверов, в которых есть список роутеров */
 	static std::string serverCurrentFields[6];
-	static
 };
 
 #endif //WEBSERV_PARSECONFIGFILE_HPP

@@ -29,7 +29,7 @@ public:
 	RequestException(const std::string& status_code, const std::string& message_phrase, const std::string &error_page);
 	~RequestException() override = default;
 
-	void	generate_response(int client_socket) const override;
+	virtual void	generate_response(int client_socket) const;
 };
 
 class	Request301Redirect : public std::exception, public Response  {
@@ -43,7 +43,7 @@ public:
 
 	virtual ~Request301Redirect() = default;
 
-	void				generate_response(int) const override ;
+	virtual void			generate_response(int) const;
 };
 
 #endif //WEBSERV_EXCEPTIONS_HPP

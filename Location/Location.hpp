@@ -54,25 +54,25 @@ public:
 	Location();
 	~Location() = default;
 
-	void									set_location_type(int location_type);
-	void									set_root(const std::string&);
-	void									set_index(const std::string&);
-	void									set_cgi_path(const std::string&);
-	void									set_autoindex(bool);
-	void									set_path(const std::string& path);
+	void						set_location_type(int location_type);
+	void						set_root(const std::string&);
+	void						set_index(const std::string&);
+	void						set_cgi_path(const std::string&);
+	void						set_autoindex(bool);
+	void						set_path(const std::string& path);
 
-	void									add_accepted_method(uint8_t);
+	void						add_accepted_method(uint8_t);
 
-	[[nodiscard]] const std::string&		get_index() const;
-	[[nodiscard]] const std::string&		get_path() const;
+	const std::string&			get_index() const;
+	const std::string&			get_path() const;
 
 
-	[[nodiscard]] const	std::string&		get_root() const;
-	[[nodiscard]] const	std::vector<bool>&	get_allow_methods() const;
-	[[nodiscard]] int						get_location_type() const;
+	const	std::string&		get_root() const;
+	const	std::vector<bool>&	get_allow_methods() const;
+	int							get_location_type() const;
 
-	[[nodiscard]] bool						is_allow_method(const std::string&) const;
-	[[nodiscard]] bool						is_autoindex() const;
+	bool						is_allow_method(const std::string&) const;
+	bool						is_autoindex() const;
 };
 
 #endif //WEBSERV_LOCATION_HPP

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ThreadPool.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/05 18:37:33 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/07 01:13:05 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/12 05:32:56 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,19 @@ Client*		ThreadPool::pop_task() {
 
 pthread_mutex_t*	ThreadPool::get_read_write_in_queue_mutex() const { return (_queue_mutex); }
 
-void				ThreadPool::push_task(Client* http_object) {
+void				ThreadPool::push_task(Client* client) {
 	pthread_mutex_lock(_queue_mutex);
-	_tasks_queue.push(http_object);
+	client->set_processed(true);
+	_tasks_queue.push(client);
 	pthread_mutex_unlock(_queue_mutex);
 }
 
 bool				ThreadPool::queue_is_empty() const { return (_tasks_queue.empty()); }
+
+void ThreadPool::lock_queue_mutex() {
+	pthread_mutex_lock(_queue_mutex);
+}
+
+void ThreadPool::unlock_queue_mutex() {
+	pthread_mutex_unlock(_queue_mutex);
+}

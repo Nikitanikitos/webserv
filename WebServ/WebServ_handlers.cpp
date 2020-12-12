@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/12 08:09:30 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/12 09:03:18 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,21 @@ void	WebServ::read_request(Client *client) {
 }
 
 void	WebServ::parsing_request(Client *client) {
+	Request*	request = new Request();
+
 	std::cout << "generate request " << client->get_socket() << " client" << std::endl;
+
+	client->set_request(request);
 	client->next_stage();
 }
 
 void	WebServ::generate_response(Client *client) {
+	Response*	response = new Response();
+
 	std::cout << "generate response " << client->get_socket() << " client" << std::endl;
+
 	client->next_stage();
-	client->set_response(new Response());
+	client->set_response(response);
 //	try {
 //		const VirtualServer&	virtual_server = _get_virtual_server(client->get_request());
 //		const Location&			location = virtual_server.get_location(client->get_request());
@@ -54,8 +61,9 @@ void	WebServ::generate_response(Client *client) {
 //	}
 }
 
-void	WebServ::send_response(Client* http_object) {
-
+void	WebServ::send_response(Client* client) {
+	client->get_response()->send_response(client->get_socket());
+	client->set_stage(read_request_);
 }
 
 void	WebServ::close_connection(Client* client) {

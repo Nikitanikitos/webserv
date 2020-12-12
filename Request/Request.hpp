@@ -58,12 +58,12 @@ public:
 	void								set_target(const std::string&);
 	void								set_method(const std::string&);
 
-	[[nodiscard]] const std::string&	get_host() const;
-	[[nodiscard]] const std::string&	get_method() const;
-	[[nodiscard]] const std::string&	get_target() const;
-	[[nodiscard]] const std::string&	get_port() const;
-	[[nodiscard]] const std::string&	get_body() const;
-	[[nodiscard]] const	std::string&	get_header(const std::string&) const;
+	const std::string&					get_host() const;
+	const std::string&					get_method() const;
+	const std::string&					get_target() const;
+	const std::string&					get_port() const;
+	const std::string&					get_body() const;
+	const std::string&					get_header(const std::string&) const;
 };
 
 #endif //WEBSERV_REQUEST_HPP
