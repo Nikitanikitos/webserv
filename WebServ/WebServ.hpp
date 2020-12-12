@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/09 07:24:34 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/12 08:05:39 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,6 @@ private:
 	int 									_number_workers;
 	ThreadPool								_thread_pool;
 
-	static void			_read_request(Client*);
-	static void			_parsing_request(Client*);
-	static void			_generate_response(Client*);
-	static void			_send_response(Client*);
-	static void			_close_connection(Client*);
 
 	static void			_default_handler(Client *http_object, const VirtualServer& virtual_server, const Location& location);
 	void				_cgi_handler(const Request&, const VirtualServer&, const Location&, int);
@@ -46,8 +41,8 @@ private:
 	static void			_POST_method_handler(const Request& request, struct stat* buff, const VirtualServer& virtual_server);
 	static void			_GET_HEAD_methods_handler(Client *http_object, struct stat* buff, const Location& location);
 
-	static Response		_static_file_handler(const Request& request, const std::string& path_to_file);
-	static Response		_autoindex_handler(const Request& request, const std::string& path_to_target);
+	static Response* _static_file_handler(const Request& request, const std::string& path_to_file);
+	static Response* _autoindex_handler(const Request& request, const std::string& path_to_target);
 
 	static std::string	_autoindex_generate(const Request& request, const std::string& path_to_target);
 
@@ -55,9 +50,11 @@ private:
 
 	[[nodiscard]] const VirtualServer& _get_virtual_server(Request *request) const;
 
-	void		generate_request(Client *http_object);
-	void		generate_response(Client *http_object);
+	void		read_request(Client*);
+	void		parsing_request(Client *client);
+	void		generate_response(Client *client);
 	void		send_response(Client *http_object);
+	void		close_connection(Client*);
 
 	static std::string		_get_path_to_target(const Request&, const Location&);
 

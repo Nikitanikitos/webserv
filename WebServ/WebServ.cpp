@@ -3,14 +3,13 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/09 07:51:14 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/12 08:07:02 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
 #include "WebServ.hpp"
 
 WebServ::WebServ(const std::vector<VirtualServer>& list_virtual_servers) : _list_virtual_servers(list_virtual_servers), _thread_pool() {
@@ -38,9 +37,10 @@ void		WebServ::run_server() {
 
 		for (const auto& client : _clients) {
 			const int		client_socket = client->get_socket();
-			FD_SET(client_socket, &readfd_set);
 			client->lock_stage_mutex();
-			if (client->get_stage() == send_response_)
+			if (client->get_stage() == read_request_)
+				FD_SET(client_socket, &readfd_set);
+			else if (client->get_stage() == send_response_)
 				FD_SET(client_socket, &writefd_set);
 			client->unlock_stage_mutex();
 			if (client_socket > max_fd)
@@ -58,40 +58,9 @@ void		WebServ::run_server() {
 		}
 
 		for (const auto& client : _clients) {
-			client->lock_stage_mutex();
-			if ((client->get_stage() == read_request_ && FD_ISSET(client->get_socket(), &readfd_set)) ||
-								(client->get_stage() == send_response_ && FD_ISSET(client->get_socket(), &writefd_set)))
+			if (!client->in_task_queue() && (client->ready_to_action(&readfd_set, read_request_)))
 				_thread_pool.push_task(client);
-			client->unlock_stage_mutex();
 		}
-	}
-}
-
-void WebServ::generate_request(Client *http_object) {
-	std::cout << "generate request " << http_object->get_socket() << " client" << std::endl;
-}
-
-void WebServ::generate_response(Client *http_object) {
-	std::cout << "generate response " << http_object->get_socket() << " client" << std::endl;
-	try {
-		const VirtualServer&	virtual_server = _get_virtual_server(http_object->get_request());
-		const Location&			location = virtual_server.get_location(http_object->get_request());
-
-		chdir(location.get_root().c_str());
-		switch (location.get_location_type()) {
-			case _default:
-				_default_handler(http_object, virtual_server, location);
-//			case cgi:
-//				_cgi_handler(request, virtual_server, location, client_socket);
-//			case proxy:
-//				_proxy_handler(request, virtual_server, location, client_socket);
-		}
-	}
-	catch (Request301Redirect& redirect_301) {
-		http_object->set_response(redirect_301);
-	}
-	catch (RequestException& request_error) {
-		http_object->set_response(request_error);
 	}
 }
 
@@ -130,19 +99,4 @@ std::string		WebServ::_get_path_to_target(const Request& request, const Location
 			result.append(".");
 	}
 	return (result);
-}
-
-void WebServ::_read_request(Client *client) {
-	char	buff[512];
-	int 	bytes;
-
-	bytes = recv(client->get_socket(), buff, 512, 0);
-	client->add_to_buffer(buff);
-	if (bytes < 512)
-		client->next_stage();
-}
-
-void WebServ::_send_response(Client *client) {
-	if (client->get_response()->send_response(client->get_socket()) < 512)
-		client->next_stage();
 }

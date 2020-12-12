@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ_workers.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/02 14:46:29 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/09 07:51:14 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/12 08:05:39 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,18 +24,25 @@
 			thread_pool.unlock_queue_mutex();
 			switch (client->get_stage()) {
 				case read_request_:
-					web_serv._read_request(client);
+					web_serv.read_request(client);
+					break;
 				case parsing_request_:
-					web_serv._parsing_request(client);
+					web_serv.parsing_request(client);
+					break;
 				case generate_response_:
-					web_serv._generate_response(client);
+					web_serv.generate_response(client);
+					break;
 				case send_response_:
-					web_serv._send_response(client);
+					web_serv.send_response(client);
+					break;
 				case close_connection_:
-					web_serv._close_connection(client);
+					web_serv.close_connection(client);
+					break;
 			}
 			if (client->get_stage() != read_request_ && client->get_stage() != send_response_)
 				thread_pool.push_task(client);
+			else
+				client->set_processed(false);
 		}
 		else
 			thread_pool.unlock_queue_mutex();
