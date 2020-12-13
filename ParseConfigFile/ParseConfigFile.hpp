@@ -24,6 +24,7 @@
 
 class	ParseConfigFile {
 private:
+	std::string		_line_surplus;
 	char			*_filename;
 	int 			_fd;
 
@@ -36,11 +37,10 @@ private:
 	std::vector<std::string>	_getArgsFromLine(std::string const &input) const;
 	/* Метод для разбивания строки на слова в вектор */
 
-	int 						_getIndexOfArg(std::string const &arg) const;
+	int 						_getIndexOfArg(std::string const &arg, std::string *arr, int size) const;
 	/* Метод для получения индекса из массива строк */
 
-	bool 						_manageSemicolon(std::vector<std::string>& v);
-	/* Метод валидации строки на наличие точки с запятой */
+	bool 						_checkTabulation(std::string const &line, int expectedTabCount) const;
 
 public:
 	explicit ParseConfigFile(char *filename);
@@ -49,6 +49,7 @@ public:
 	std::vector<VirtualServer>		parse_file();
 	/* метод будет возвращать список виртуальных серверов, в которых есть список роутеров */
 	static std::string serverCurrentFields[6];
+	static std::string locationCurrentFields[7];
 };
 
 #endif //WEBSERV_PARSECONFIGFILE_HPP

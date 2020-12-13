@@ -23,6 +23,11 @@ void	Location::set_cgi_path(const std::string& cgi_path) { _cgi_pass = cgi_path;
 void	Location::set_index(const std::string& index) { _index = index; }
 void	Location::set_location_type(int location_type) { _location_type = location_type; }
 
+void	Location::erase_accepted_methods() {
+	for (int i = 0; i < _allow_methods.size(); ++i)
+		_allow_methods[i] = false;
+}
+
 const std::vector<bool>&	Location::get_allow_methods() const { return (_allow_methods); }
 
 int						Location::get_location_type() const { return (_location_type); }
@@ -31,14 +36,14 @@ const std::string&		Location::get_path() const { return (_path); }
 const std::string&		Location::get_root() const { return (_root); }
 
 bool Location::is_allow_method(const std::string& method) const {
-		static std::string	methods[NUMBER_METHODS] = {"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"};
+	static std::string	methods[NUMBER_METHODS] = {"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"};
 
-		for (int i = 0; i < NUMBER_METHODS; ++i) {
-			if (method == methods[i])
-				return (_allow_methods[i]);
-		}
-		return (false);
+	for (int i = 0; i < NUMBER_METHODS; ++i) {
+		if (method == methods[i])
+			return (_allow_methods[i]);
 	}
+	return (false);
+}
 
 bool Location::is_autoindex() const { return (_autoindex); }
 

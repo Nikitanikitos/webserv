@@ -62,6 +62,7 @@ public:
 	void						set_path(const std::string& path);
 
 	void						add_accepted_method(uint8_t);
+	void 						erase_accepted_methods();
 
 	const std::string&			get_index() const;
 	const std::string&			get_path() const;
