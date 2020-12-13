@@ -42,6 +42,7 @@ enum {
 class	Location {
 private:
 	std::vector<bool>	_allow_methods;
+	std::string			_extension;
 	std::string			_path;
 	std::string			_root;
 	std::string			_cgi_pass;
@@ -60,12 +61,14 @@ public:
 	void						set_cgi_path(const std::string&);
 	void						set_autoindex(bool);
 	void						set_path(const std::string& path);
+	void 						set_extension(const std::string &extension);
 
 	void						add_accepted_method(uint8_t);
 	void 						erase_accepted_methods();
 
 	const std::string&			get_index() const;
 	const std::string&			get_path() const;
+	const std::string&			get_extension() const;
 
 
 	const	std::string&		get_root() const;

@@ -22,6 +22,7 @@ void	Location::set_autoindex(bool autoindex) { _autoindex = autoindex; }
 void	Location::set_cgi_path(const std::string& cgi_path) { _cgi_pass = cgi_path; }
 void	Location::set_index(const std::string& index) { _index = index; }
 void	Location::set_location_type(int location_type) { _location_type = location_type; }
+void	Location::set_extension(const std::string &extension) {_extension = extension;}
 
 void	Location::erase_accepted_methods() {
 	for (int i = 0; i < _allow_methods.size(); ++i)
@@ -34,6 +35,7 @@ int						Location::get_location_type() const { return (_location_type); }
 
 const std::string&		Location::get_path() const { return (_path); }
 const std::string&		Location::get_root() const { return (_root); }
+const std::string&		Location::get_extension() const { return (_extension); }
 
 bool Location::is_allow_method(const std::string& method) const {
 	static std::string	methods[NUMBER_METHODS] = {"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"};

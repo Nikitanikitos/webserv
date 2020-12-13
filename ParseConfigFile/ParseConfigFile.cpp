@@ -194,7 +194,7 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 			case 5: { // extension
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
-				// location.set_extension(trimmedStr[1]);
+				location.set_extension(trimmedStr[1]);
 			}
 			case 6: { // proxy_pass
 				if (trimmedStr.size() != 2)
