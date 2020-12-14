@@ -53,4 +53,4 @@ const std::string&	Location::get_index() const { return (_index); }
 
 void Location::set_path(const std::string& path) { _path = path; }
 
-void Location::setProxyPass(const std::string &proxyPass) { _proxy_pass = proxyPass; }
+void Location::set_proxy_pass(const std::string &proxyPass) { _proxy_pass = proxyPass; }

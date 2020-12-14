@@ -59,7 +59,7 @@ public:
 	void						set_root(const std::string&);
 	void						set_index(const std::string&);
 	void						set_cgi_path(const std::string&);
-	void						setProxyPass(const std::string &proxyPass);
+	void						set_proxy_pass(const std::string &proxyPass);
 
 	void						set_autoindex(bool);
 	void						set_path(const std::string& path);

@@ -200,7 +200,7 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
 				location.set_location_type(proxy);
-				location.setProxyPass(trimmedStr[1]);
+				location.set_proxy_pass(trimmedStr[1]);
 			}
 			default:
 				throw std::exception(); // TODO error
