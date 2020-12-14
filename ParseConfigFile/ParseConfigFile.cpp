@@ -63,7 +63,6 @@ bool ParseConfigFile::_checkTabulation(const std::string &line, int expectedTabC
 		if (line.compare(TAB_SIZE * i, TAB_SIZE, TAB))
 			return false;
 	}
-	// TODO refactor
 	return line[expectedTabCount * TAB_SIZE] == ' ';
 }
 
@@ -84,7 +83,6 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 			_line_surplus = line;
 			return virtual_server;
 		}
-		// TODO break loop if tabsize is 0 and call this func again
 		switch (_getIndexOfArg(trimmedStr[0], serverCurrentFields, 6)) {
 			case 0: // server_names
 				for (size_t i = 1; i < trimmedStr.size(); ++i)
@@ -112,8 +110,9 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 			}
 			case 4: { // port
 				// TODO multiple ports
-				if (trimmedStr.size() == 2)
-					virtual_server.add_port(trimmedStr[1]);
+				if (trimmedStr.size() > 1)
+					for (int i = 1; i < trimmedStr.size(); ++i)
+						virtual_server.add_port(trimmedStr[i]);
 				else
 					throw std::exception(); // TODO error
 			}
