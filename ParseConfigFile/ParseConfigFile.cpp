@@ -189,6 +189,7 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
 				location.set_location_type(cgi);
+				location.set_cgi_path(trimmedStr[1]);
 			}
 			case 5: { // extension
 				if (trimmedStr.size() != 2)
@@ -199,6 +200,7 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
 				location.set_location_type(proxy);
+				location.setProxyPass(trimmedStr[1]);
 			}
 			default:
 				throw std::exception(); // TODO error

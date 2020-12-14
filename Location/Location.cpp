@@ -52,3 +52,5 @@ bool Location::is_autoindex() const { return (_autoindex); }
 const std::string&	Location::get_index() const { return (_index); }
 
 void Location::set_path(const std::string& path) { _path = path; }
+
+void Location::setProxyPass(const std::string &proxyPass) { _proxy_pass = proxyPass; }
