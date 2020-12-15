@@ -25,7 +25,7 @@ void				Response::add_header(const std::string& key, const std::string& value) {
 
 const std::string&	Response::get_header(const std::string& key) { return (_headers[key]); }
 
-void				Response::generate_response(int) {
+void				Response::generate_response() {
 	_buffer.append(
 		HTTP_VERSION + SP + _status_code + SP + _message_phrase + CRLF
 		"Server:" + SP + SERVER_VERSION + CRLF

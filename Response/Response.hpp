@@ -22,7 +22,7 @@
 class Response {
 protected:
 	std::string								_status_code;
-	std::map<const std::string, std::string>		_headers;
+	std::map<std::string, std::string>		_headers;
 	std::string 							_body;
 	std::string 							_buffer;
 	std::string								_message_phrase;
@@ -39,7 +39,7 @@ public:
 	void			set_status_code(const std::string&);
 	void			set_body(const std::string& body);
 
-	virtual void	generate_response(int);
+	virtual void generate_response();
 	virtual int		send_response(int);
 
 	virtual void	clear();

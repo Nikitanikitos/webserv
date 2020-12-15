@@ -27,7 +27,7 @@ public:
 	ResponseException(const std::string& status_code, const std::string& message_phrase, const std::string &error_page);
 	~ResponseException() override = default;
 
-	virtual void	generate_response(int client_socket);
+	virtual void generate_response();
 	virtual void	clear();
 };
 

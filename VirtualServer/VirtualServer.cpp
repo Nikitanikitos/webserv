@@ -81,14 +81,14 @@ int 		priority_compare(const std::string &string1, const std::string& string2) {
 	return (result);
 }
 
-Location	VirtualServer::get_location(Request *request) const {
+Location	VirtualServer::get_location(const Request& request) const {
 	int 				priority;
 	const Location*		result;
 
 	priority = 0;
 	result = nullptr;
 	for (const auto& location : _list_locations)
-		if (request->get_target().find(location.get_path().c_str(), 0, location.get_path().size()) == 0) {
+		if (request.get_target().find(location.get_path().c_str(), 0, location.get_path().size()) == 0) {
 			if (priority < location.get_path().size()) {
 				priority = location.get_path().size();
 				result = &location;

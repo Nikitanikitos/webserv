@@ -115,7 +115,7 @@ void		WebServ::run_server() {
 	}
 }
 
-const VirtualServer&	WebServ::_get_virtual_server(Request *request) const {
+const VirtualServer& WebServ::_get_virtual_server(Request& request) const {
 	bool					default_vs_flag;
 	const VirtualServer		*default_vs;
 
@@ -123,13 +123,13 @@ const VirtualServer&	WebServ::_get_virtual_server(Request *request) const {
 	for (int i = 0; i < _list_virtual_servers.size(); ++i) {
 		std::vector<std::string>	ports = _list_virtual_servers[i].get_ports();
 		for (int j = 0; j < ports.size(); ++j) {
-			if (request->get_port() == ports[j]) {
+			if (request.get_port() == ports[j]) {
 				if (!default_vs_flag) {
 					default_vs = &_list_virtual_servers[i];
 					default_vs_flag = true;
 				}
 				for (const auto& server_name : _list_virtual_servers[i].get_server_names())
-					if (request->get_header(HOST) == server_name) {
+					if (request.get_header(HOST) == server_name) {
 						default_vs = &_list_virtual_servers[i];
 						break ;
 					}

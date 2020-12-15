@@ -30,8 +30,8 @@ private:
 	int 			_socket;
 	std::string		_buffer;
 	int 			_stage;
-	Request*		_request;
-	Response*		_response;
+	Request			_request;
+	Response		_response;
 	bool 			_in_proccessed;
 
 	pthread_mutex_t*		_proccess_mutex;
@@ -41,14 +41,14 @@ public:
 	virtual ~Client();
 
 	const std::string&			get_buffer() const;
-	Request*					get_request() const;
-	Response*					get_response() const;
+	Request&					get_request();
+	Response&					get_response();
 	int							get_stage() const;
 	int							get_socket() const;
 
 	void						set_processed(bool processed);
-	void						set_request(Request* request);
-	void						set_response(Response* response);
+	void						set_request(const Request &request);
+	void						set_response(const Response &response);
 	void						set_stage(int stage);
 
 	void						add_to_buffer(char *);

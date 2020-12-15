@@ -37,7 +37,7 @@
 
 class	Request {
 private:
-	typedef		std::map<const std::string, std::string>		_headers_t;
+	typedef		std::map<std::string, std::string>		_headers_t;
 
 	std::string				_method;
 	std::string				_target;
