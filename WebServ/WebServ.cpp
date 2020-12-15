@@ -28,7 +28,7 @@ WebServ::~WebServ() {
 		delete _clients[i];
 };
 
-void WebServ::init_sets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd) {
+void WebServ::_init_sets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd) {
 	max_fd = _sockets.back();
 	FD_ZERO(&readfd_set);
 	FD_ZERO(&writefd_set);
@@ -37,7 +37,7 @@ void WebServ::init_sets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd) {
 		FD_SET(_sockets[i], &readfd_set);
 }
 
-void	WebServ::add_client_in_task_queue(fd_set &readfd_set) {
+void	WebServ::_add_client_in_task_queue(fd_set &readfd_set) {
 	for (std::vector<Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
 		if ((*it)->get_stage() == close_connection_) {
 			delete *it;
@@ -48,7 +48,7 @@ void	WebServ::add_client_in_task_queue(fd_set &readfd_set) {
 	}
 }
 
-void	WebServ::add_client_socket_in_set(fd_set &readfd_set, int &max_fd) {
+void	WebServ::_add_client_socket_in_set(fd_set &readfd_set, int &max_fd) {
 	for (int i = 0; i < _clients.size(); ++i) {
 		const int		client_socket = _clients[i]->get_socket();
 		if (_clients[i]->get_stage() == read_request_)
@@ -58,7 +58,7 @@ void	WebServ::add_client_socket_in_set(fd_set &readfd_set, int &max_fd) {
 	}
 }
 
-void	WebServ::add_new_client(fd_set readfd_set) {
+void	WebServ::_add_new_client(fd_set& readfd_set) {
 	int 	new_client;
 
 	for (int i = 0; i < _sockets.size(); ++i) {
@@ -77,45 +77,17 @@ void		WebServ::run_server() {
 	int 		max_fd;
 
 	while (true) {
-		max_fd = _sockets.back();
-		FD_ZERO(&readfd_set);
-		FD_ZERO(&writefd_set);
-
-		for (int i = 0; i < _sockets.size(); ++i)
-			FD_SET(_sockets[i], &readfd_set);
-
-		for (int i = 0; i < _clients.size(); ++i) {
-			const int		client_socket = _clients[i]->get_socket();
-			if (_clients[i]->get_stage() == read_request_)
-				FD_SET(client_socket, &readfd_set);
-//			if (_clients[i]->get_stage() == send_response_)
-//			FD_SET(client_socket, &writefd_set);
-			if (client_socket > max_fd)
-				max_fd = client_socket;
-		}
+		_init_sets(writefd_set, readfd_set, max_fd);
+		_add_client_socket_in_set(readfd_set, max_fd);
 
 		select(max_fd + 1, &readfd_set, &writefd_set,  nullptr, nullptr);
 
-		int 	new_client;
-		for (int i = 0; i < _sockets.size(); ++i) {
-			if (FD_ISSET(_sockets[i], &readfd_set)) {
-				while ((new_client = accept(_sockets[i], nullptr, nullptr)) != -1)
-					_clients.push_back(new Client(new_client, read_request_));
-			}
-		}
-
-		for (std::vector<Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-			if ((*it)->get_stage() == close_connection_) {
-				delete *it;
-				_clients.erase(it);
-			}
-			else if (!(*it)->in_task_queue() && (FD_ISSET((*it)->get_socket(), &readfd_set)))
-				_thread_pool.push_task((*it));
-		}
+		_add_new_client(readfd_set);
+		_add_client_in_task_queue(readfd_set);
 	}
 }
 
-const VirtualServer& WebServ::_get_virtual_server(Request& request) const {
+const VirtualServer&	WebServ::_get_virtual_server(Request& request) const {
 	bool					default_vs_flag;
 	const VirtualServer		*default_vs;
 

@@ -28,7 +28,7 @@ add_executable(webserv
 		ThreadPool/ThreadPool.cpp
 
         exceptions/ResponseException.cpp
-		libft/ft_getfile.cpp)
+		libft/ft_getfile.cpp WebServ/WebServ_parsing_request.cpp)
 
 include_directories(
 		includes

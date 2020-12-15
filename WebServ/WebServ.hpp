@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/12 08:17:18 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 20:11:06 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 class WebServ {
 private:
 	friend void*	worker(void*);
+
+	static std::string						methods[6];
 
 	std::vector<int>						_sockets;
 	std::vector<Client*>					_clients;
@@ -55,36 +57,23 @@ private:
 	void		send_response(Client *http_object);
 	void		close_connection(Client*);
 
-	static std::string		_get_path_to_target(const Request&, const Location&);
-	std::vector<std::string> _getArgs(std::string const& line) const;
-	std::vector<std::string> _trimRequest(std::string const& buff) const;
-	bool _checkCountSpace(std::string const& line, int numSpaces) const;
-	bool _checkMethod(std::string method, int size) const;
-	void 	_strToLower(std::string& str) const;
+	static std::string			_get_path_to_target(const Request&, const Location&);
+	std::vector<std::string>	_getArgs(std::string const& line) const;
+	std::vector<std::string>	_trimRequest(std::string const& buff) const;
+	bool						_checkCountSpace(std::string const& line, int numSpaces) const;
+	bool						_checkMethod(std::string method, int size) const;
+	void						_strToLower(std::string& str) const;
 
+	void	_add_new_client(fd_set& readfd_set);
+	void	_add_client_socket_in_set(fd_set &readfd_set, int &max_fd);
+	void	_add_client_in_task_queue(fd_set &readfd_set);
+	void	_init_sets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
 
 public:
 	explicit WebServ(const std::vector<VirtualServer> &list_virtual_servers, int number_of_workers);
-	/* Инициализируем _set_vs_sockets, добавляем все сокеты виртуальных серверов в _set_vs_sockets, */
-
 	virtual ~WebServ();
 
 	void	run_server();
-	/* Метод запускает сервер. Вызывает select() на серверные сокеты с бесконечным тайм-аутом,
-	 * Проверяет в какой сокет поступило соединение и вызывает метод serve_client(), передавая туда сокет клиента */
-
-	void add_new_client(fd_set readfd_set);
-
-	void	set_number_workers(int number_workers);
-
-	void add_client_socket_in_set(fd_set &readfd_set, int &max_fd);
-
-	void add_client_in_task_queue(fd_set &readfd_set);
-
-	void init_sets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
-
-	static std::string methods[6];
-	static std::string fields[18];
 };
 
 #endif //WEBSERV_WEBSERV_HPP
