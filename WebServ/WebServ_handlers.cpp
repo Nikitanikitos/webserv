@@ -119,19 +119,19 @@ void	WebServ::parsing_request(Client *client) {
 		std::cout << client->get_buffer() << std::endl;
 		std::vector<std::string> args = _trimRequest(client->get_buffer());
 		if (!_checkCountSpace(args[0], 2))
-			throw RequestException("404", "Bad Request", "404.html"); //TODO доделать
+			throw RequestException("400", "Bad Request", "400.html"); //TODO доделать
 		else {
 			std::vector<std::string> line = _getArgs(args[0]);
 			if (line.size() != 3 || _checkMethod(args[0], 6) || line[2] != HTTP_VERSION)
-				throw RequestException("404", "Bad Request", "404.html"); //TODO доделать
+				throw RequestException("400", "Bad Request", "400.html"); //TODO доделать
 			request->set_method(line[0]);
 			request->set_target(line[1]);
 			for (size_t i = 1; i < args.size(); ++i) {
 				line = _getArgs(args[i]);
-				if (line.size() == 1 || line.size() > 2 || line[0].back() != ':')
-					throw RequestException("404", "Bad Request", "404.html"); //TODO доделать
-				std::string key = line[0].substr(0, line.size() - 1);
-				_strToLower(key);
+				_strToLower(line[0]);
+				if ((line.size() == 1 || line.size() > 2 || line[0].back() != ':'))
+					throw RequestException("400", "Bad Request", "400.html"); //TODO доделать 400 ошибка
+				std::string key = line[0].substr(0, line[0].size() - 1);
 				request->add_header(std::make_pair(key, line[1]));
 			}
 		}
