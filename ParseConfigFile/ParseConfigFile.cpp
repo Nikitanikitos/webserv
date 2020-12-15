@@ -37,18 +37,15 @@ std::string ParseConfigFile::locationCurrentFields[7] = {
 
 ParseConfigFile::ParseConfigFile(char *filename) :_filename(filename), _line_surplus(std::string()) { }
 
+ParseConfigFile::ParseConfigFileException::ParseConfigFileException(const std::string &message) : _message("Config File: " + message) {}
+
+const char*					ParseConfigFile::ParseConfigFileException::what() const throw() {
+	return _message.c_str();
+}
+
 std::vector<std::string>	ParseConfigFile::_getArgsFromLine(std::string &input) const {
 	std::vector<std::string>	result;
 	size_t						pos_find;
-
-//	for (size_t pos = 0; pos < input.length(); pos++) {
-//		size_t pos_find = input.find_first_not_of(' ', pos);
-//		if (pos_find == std::string::npos)
-//			return result;
-//		if ((pos = input.find_first_of(' ', pos)) == std::string::npos)
-//			pos = input.length();
-//		result.push_back(input.substr(pos_find, (pos - pos_find)));
-//	}
 
 	while (!input.empty()){
 		pos_find = input.find(' ');
@@ -101,41 +98,71 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 				if (trimmedStr.size() == 3)
 					virtual_server.add_error_page(trimmedStr[1], trimmedStr[2]);
 				else
-					throw std::exception(); // TODO error in config file
-				// trimmedStr[1] - код
-				// trimmedStr[2] - адрес
+					throw ParseConfigFileException("Wrong error page parameter");
 				break;
 			case limit_body_size_d:
 				if (trimmedStr.size() == 2 && ONLY_DIGITS(trimmedStr[1]))
 					virtual_server.set_limit_client_body_size(std::stoi(trimmedStr[1]));
 				else
-					throw std::exception(); // TODO error
+					throw ParseConfigFileException("Wrong limit body size parameter");
 				break;
 			case host_d:
 				if (trimmedStr.size() == 2)
 					virtual_server.set_host(trimmedStr[1]);
 				else
-					throw std::exception(); // TODO error
+					throw ParseConfigFileException("Wrong host parameter");
 				break;
 			case port_d:
-				// TODO multiple ports
 				if (trimmedStr.size() > 1)
 					for (int i = 1; i < trimmedStr.size(); ++i)
 						virtual_server.add_port(trimmedStr[i]);
 				else
-					throw std::exception(); // TODO error
+					throw ParseConfigFileException("Wrong port parameter");
 				break;
 			case location_d:
 				if (trimmedStr.size() == 2)
 					virtual_server.add_location(_parse_location_directive(trimmedStr[1]));
 				else
-					throw std::exception(); // TODO error
+					throw ParseConfigFileException("Wrong location path parameter");
 				break;
 			default:
-				throw std::exception(); // TODO error invalid field in config
+				throw ParseConfigFileException("Unknown parameter");
 		}
 	}
 	return virtual_server;
+}
+
+void				ParseConfigFile::_add_allow_methods_to_location(Location &location, const std::vector<std::string> &trimmedStr) {
+	if (trimmedStr.size() == 1)
+		throw ParseConfigFileException("Allow methods must contain at least 1 parameter");
+	location.erase_accepted_methods();
+	for (int i = 1; i < trimmedStr.size(); ++i) {
+		if (trimmedStr[i] == "GET")
+			location.add_accepted_method(GET);
+		else if (trimmedStr[i] == "HEAD")
+			location.add_accepted_method(HEAD);
+		else if (trimmedStr[i] == "POST")
+			location.add_accepted_method(POST);
+		else if (trimmedStr[i] == "PUT")
+			location.add_accepted_method(PUT);
+		else if (trimmedStr[i] == "DELETE")
+			location.add_accepted_method(DELETE);
+		else if (trimmedStr[i] == "OPTIONS")
+			location.add_accepted_method(OPTIONS);
+		else
+			throw ParseConfigFileException("Unknown allow method parameter");
+	}
+}
+
+void				ParseConfigFile::_set_autoindex_in_location(Location &location, const std::vector<std::string> &trimmedStr) {
+	if (trimmedStr.size() != 2)
+		throw ParseConfigFileException("Autoindex has no parameter");
+	if (trimmedStr[1] == "on")
+		location.set_autoindex(true);
+	else if (trimmedStr[1] == "off")
+		location.set_autoindex(false);
+	else
+		throw ParseConfigFileException("Unknown option to autoindex");
 }
 
 Location			ParseConfigFile::_parse_location_directive(std::string const &locationAttribute) {
@@ -154,59 +181,34 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 
 		switch (_getIndexOfArg(trimmedStr[0], locationCurrentFields, 7)) {
 			case allow_methods_d:
-				if (trimmedStr.size() == 1)
-					throw std::exception(); // todo error
-				location.erase_accepted_methods();
-				for (int i = 1; i < trimmedStr.size(); ++i) {
-					if (trimmedStr[i] == "GET")
-						location.add_accepted_method(GET);
-					else if (trimmedStr[i] == "HEAD")
-						location.add_accepted_method(HEAD);
-					else if (trimmedStr[i] == "POST")
-						location.add_accepted_method(POST);
-					else if (trimmedStr[i] == "PUT")
-						location.add_accepted_method(PUT);
-					else if (trimmedStr[i] == "DELETE")
-						location.add_accepted_method(DELETE);
-					else if (trimmedStr[i] == "OPTIONS")
-						location.add_accepted_method(OPTIONS);
-					else
-						throw std::exception(); // TODO error
-				}
+				_add_allow_methods_to_location(location, trimmedStr);
 				break;
 			case root_d:
 				if (trimmedStr.size() != 2)
-					throw std::exception(); // todo error
+					throw ParseConfigFileException("Location root has no parameter");
 				location.set_root(trimmedStr[1]);
 				break;
 			case autoindex_d:
-				if (trimmedStr.size() != 2)
-					throw std::exception(); // todo error
-				if (trimmedStr[1] == "on")
-					location.set_autoindex(true);
-				else if (trimmedStr[1] == "off")
-					location.set_autoindex(false);
-				else
-					throw std::exception(); // todo error
+				_set_autoindex_in_location(location, trimmedStr);
 				break;
 			case index_d:
 				if (trimmedStr.size() != 2)
-					throw std::exception(); // todo error
+					throw ParseConfigFileException("Index has no parameter");
 				location.set_index(trimmedStr[1]);
 				break;
 			case cgi_pass_d:
 				if (trimmedStr.size() != 2)
-					throw std::exception(); // todo error
+					throw ParseConfigFileException("Cgi_pass has no parameter");
 				location.set_location_type(cgi_location);
 				location.set_cgi_path(trimmedStr[1]);
 				break;
 			case extension_d:
 				if (trimmedStr.size() != 2)
-					throw std::exception(); // todo error
+					throw ParseConfigFileException("Extension has no parameter");
 				location.set_extension(trimmedStr[1]);
 				break;
 			default:
-				throw std::exception(); // TODO error
+				throw ParseConfigFileException("Unknown parameter " + trimmedStr[0]);
 		}
 	}
 	return (location);
@@ -214,7 +216,7 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 
 std::vector<VirtualServer>		ParseConfigFile::parse_file(std::string& number_of_workers) {
 	if ((_fd = open(_filename, O_RDONLY)) < 0)
-		throw std::exception(); // TODO ERROR
+		throw ParseConfigFileException("Config file can not be opened");
 	std::string line;
 	std::vector<VirtualServer> virtual_servers;
 	while (!_line_surplus.empty() || ft_getline(_fd, line)) {
@@ -227,9 +229,9 @@ std::vector<VirtualServer>		ParseConfigFile::parse_file(std::string& number_of_w
 		else if (!line.compare(0, 7, "worker "))
 			number_of_workers.append(&line[7]);
 		else if (line == "server")
-			virtual_servers.push_back(_parse_vs_directive()); // mb check return value ? or not
+				virtual_servers.push_back(_parse_vs_directive());
 		else if (line.length() > 0)
-			throw std::exception(); // TODO ERROR
+			throw ParseConfigFileException("Unknown parameter " + line);
 	}
 	return (virtual_servers);
 }

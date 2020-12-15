@@ -24,13 +24,6 @@ void	WebServ::read_request(Client *client) {
 		client->next_stage();
 }
 
-//	GET,
-//	HEAD,
-//	POST,
-//	PUT,
-//	DELETE,
-//	OPTIONS,
-
 std::string WebServ::methods[6] = {
 		"GET",
 		"HEAD",
@@ -55,7 +48,7 @@ std::vector<std::string> _getArgs(std::string const& line) { //TODO добави
 	return (result);
 }
 
-std::vector<std::string> _trimRequest(std::string const& buff) { //TODO добавить в хедер
+std::vector<std::string> WebServ::_trimRequest(std::string const& buff) const {
 	std::vector<std::string> result;
 	std::string::size_type start = 0;
 	std::string::size_type pos = 0;
@@ -69,7 +62,7 @@ std::vector<std::string> _trimRequest(std::string const& buff) { //TODO доба
 	return result;
 }
 
-bool _checkCountSpace(std::string const& line, int numSpaces) { //TODO добавить в хедер
+bool WebServ::_checkCountSpace(std::string const& line, int numSpaces) const { //TODO добавить в хедер
 	int countSpace = 0;
 	for (int i = 0; i < line.size(); ++i)
 		if (line[i] == ' ')
@@ -77,12 +70,17 @@ bool _checkCountSpace(std::string const& line, int numSpaces) { //TODO доба�
 	return countSpace == numSpaces;
 }
 
-bool _checkMethod(std::string method, int size) { //TODO добавить в хедер
+bool WebServ::_checkMethod(std::string method, int size) const { //TODO добавить в хедер
 	for (int i = 0; i < size; ++i) {
 		if (WebServ::methods[i] == method)
 			return true;
 	}
 	return false;
+}
+
+void 	WebServ::_strToLower(std::string& str) const {
+	for (int i = 0; i < str.size(); ++i)
+		str[i] = std::tolower(str[i]);
 }
 
 void	WebServ::parsing_request(Client *client) {
@@ -103,7 +101,9 @@ void	WebServ::parsing_request(Client *client) {
 				line = _getArgs(args[i]);
 				if (line.size() == 1 || line.size() > 2 || line[0].back() != ':')
 					throw ResponseException("404", "Bad Request", "404.html");
-				request->add_header(std::make_pair(line[0].substr(0, line.size() - 1), line[1]));
+				std::string key = line[0].substr(0, line.size() - 1);
+				_strToLower(key);
+				request->add_header(std::make_pair(key, line[1]));
 			}
 		}
 		client->set_request(request);

@@ -54,12 +54,23 @@ private:
 
 	bool 						_checkTabulation(std::string const &line, int expectedTabCount) const;
 
+	void 						_add_allow_methods_to_location(Location &location, std::vector<std::string> const& trimmedStr);
+
+	void 						_set_autoindex_in_location(Location &location, std::vector<std::string> const& trimmedStr);
+
 public:
 	explicit ParseConfigFile(char *filename);
 	~ParseConfigFile() = default;
 
 	std::vector<VirtualServer> parse_file(std::string &number_of_workers);
 	/* метод будет возвращать список виртуальных серверов, в которых есть список роутеров */
+	class ParseConfigFileException: public std::exception {
+	private:
+		std::string 			_message;
+	public:
+		ParseConfigFileException(std::string const &message);
+		virtual const char* what() const throw();
+	};
 	static std::string serverCurrentFields[6];
 	static std::string locationCurrentFields[7];
 };
