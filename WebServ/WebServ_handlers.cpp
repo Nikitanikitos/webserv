@@ -106,6 +106,11 @@ bool _checkMethod(std::string method, int size) { //TODO добавить в х�
 	return false;
 }
 
+void 	strToLower(std::string& str) {
+	for (int i = 0; i < str.size(); ++i)
+		str[i] = std::tolower(str[i]);
+}
+
 void	WebServ::parsing_request(Client *client) {
 
 	try {
@@ -125,7 +130,9 @@ void	WebServ::parsing_request(Client *client) {
 				line = _getArgs(args[i]);
 				if (line.size() == 1 || line.size() > 2 || line[0].back() != ':')
 					throw RequestException("404", "Bad Request", "404.html"); //TODO доделать
-				request->add_header(std::make_pair(line[0].substr(0, line.size() - 1), line[1]));
+				std::string key = line[0].substr(0, line.size() - 1);
+				strToLower(key);
+				request->add_header(std::make_pair(key, line[1]));
 			}
 		}
 		client->set_request(request);
