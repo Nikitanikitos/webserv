@@ -16,7 +16,7 @@ Client::Client(int client_socket, int stage) : _socket(client_socket), _stage(st
 	if ((_proccess_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == nullptr)
 		throw std::exception();
 	pthread_mutex_init(_proccess_mutex, NULL);
-	_set_timeout_on_socket();
+//	_set_timeout_on_socket();
 }
 
 Client::~Client() {

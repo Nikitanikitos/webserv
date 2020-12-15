@@ -37,18 +37,27 @@ std::string ParseConfigFile::locationCurrentFields[7] = {
 
 ParseConfigFile::ParseConfigFile(char *filename) :_filename(filename), _line_surplus(std::string()) { }
 
-std::vector<std::string>	ParseConfigFile::_getArgsFromLine(std::string const &input) const {
+std::vector<std::string>	ParseConfigFile::_getArgsFromLine(std::string &input) const {
 	std::vector<std::string>	result;
+	size_t						pos_find;
 
-	for (size_t pos = 0; pos < input.length(); pos++) {
-		size_t posFind = input.find_first_not_of(' ', pos);
-		if (posFind == std::string::npos)
-			return result;
-		if ((pos = input.find_first_of(' ', pos)) == std::string::npos)
-			pos = input.length();
-		result.push_back(input.substr(posFind, (pos - posFind)));
+//	for (size_t pos = 0; pos < input.length(); pos++) {
+//		size_t pos_find = input.find_first_not_of(' ', pos);
+//		if (pos_find == std::string::npos)
+//			return result;
+//		if ((pos = input.find_first_of(' ', pos)) == std::string::npos)
+//			pos = input.length();
+//		result.push_back(input.substr(pos_find, (pos - pos_find)));
+//	}
+
+	while (!input.empty()){
+		pos_find = input.find(' ');
+		input.erase(pos_find, input.find_first_not_of(' '));
+		pos_find = input.find(' ');
+		result.push_back(input.substr(0, pos_find));
+		input.erase(0, pos_find);
 	}
-	return result;
+	return (result);
 }
 
 int 			ParseConfigFile::_getIndexOfArg(std::string const &arg, std::string *arr, int size) const {
@@ -63,11 +72,10 @@ bool ParseConfigFile::_checkTabulation(const std::string &line, int expectedTabC
 		if (line.compare(TAB_SIZE * i, TAB_SIZE, TAB))
 			return false;
 	}
-	return line[expectedTabCount * TAB_SIZE] == ' ';
+	return line[expectedTabCount * TAB_SIZE] != ' ';
 }
 
 VirtualServer	ParseConfigFile::_parse_vs_directive() {
-	/* Метод будет возвращать объект класса VirtualServer со всеми инициализированными полями */
 	VirtualServer virtual_server;
 	std::string line;
 
@@ -76,52 +84,53 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 			line = _line_surplus;
 			_line_surplus.clear();
 		}
-		std::vector<std::string> trimmedStr = _getArgsFromLine(line);
-		if (trimmedStr.empty() || trimmedStr[0][0] == '#')
+		if (line.empty() || line[0] == '#')
 			continue;
 		else if (!_checkTabulation(line, 1)) {
 			_line_surplus = line;
 			return virtual_server;
 		}
+		std::vector<std::string> trimmedStr = _getArgsFromLine(line);
+
 		switch (_getIndexOfArg(trimmedStr[0], serverCurrentFields, 6)) {
 			case server_names_d:
 				for (size_t i = 1; i < trimmedStr.size(); ++i)
 					virtual_server.add_server_name(trimmedStr[i]);
-			case error_page_d: {
+				break;
+			case error_page_d:
 				if (trimmedStr.size() == 3)
 					virtual_server.add_error_page(trimmedStr[1], trimmedStr[2]);
 				else
 					throw std::exception(); // TODO error in config file
 				// trimmedStr[1] - код
 				// trimmedStr[2] - адрес
-			}
-			case limit_body_size_d: {
-				if (trimmedStr.size() == 2 && ONLY_DIGITS(trimmedStr[1])) {
+				break;
+			case limit_body_size_d:
+				if (trimmedStr.size() == 2 && ONLY_DIGITS(trimmedStr[1]))
 					virtual_server.set_limit_client_body_size(std::stoi(trimmedStr[1]));
-				}
 				else
 					throw std::exception(); // TODO error
-			}
-			case host_d: {
+				break;
+			case host_d:
 				if (trimmedStr.size() == 2)
 					virtual_server.set_host(trimmedStr[1]);
 				else
 					throw std::exception(); // TODO error
-			}
-			case port_d: {
+				break;
+			case port_d:
 				// TODO multiple ports
 				if (trimmedStr.size() > 1)
 					for (int i = 1; i < trimmedStr.size(); ++i)
 						virtual_server.add_port(trimmedStr[i]);
 				else
 					throw std::exception(); // TODO error
-			}
-			case location_d: {
+				break;
+			case location_d:
 				if (trimmedStr.size() == 2)
 					virtual_server.add_location(_parse_location_directive(trimmedStr[1]));
 				else
 					throw std::exception(); // TODO error
-			}
+				break;
 			default:
 				throw std::exception(); // TODO error invalid field in config
 		}
@@ -135,15 +144,16 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 
 	location.set_path(locationAttribute);
 	while (ft_getline(_fd, line)) {
-		std::vector<std::string> trimmedStr = _getArgsFromLine(line);
-		if (trimmedStr.empty() || trimmedStr[0][0] == '#')
+		if (line.empty() || line[0] == '#')
 			continue;
 		else if (!_checkTabulation(line, 2)) {
 			_line_surplus = line;
 			return location;
 		}
+		std::vector<std::string> trimmedStr = _getArgsFromLine(line);
+
 		switch (_getIndexOfArg(trimmedStr[0], locationCurrentFields, 7)) {
-			case allow_methods_d: {
+			case allow_methods_d:
 				if (trimmedStr.size() == 1)
 					throw std::exception(); // todo error
 				location.erase_accepted_methods();
@@ -163,13 +173,13 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 					else
 						throw std::exception(); // TODO error
 				}
-			}
-			case root_d: {
+				break;
+			case root_d:
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
 				location.set_root(trimmedStr[1]);
-			}
-			case autoindex_d: {
+				break;
+			case autoindex_d:
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
 				if (trimmedStr[1] == "on")
@@ -178,23 +188,23 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 					location.set_autoindex(false);
 				else
 					throw std::exception(); // todo error
-			}
-			case index_d: {
+				break;
+			case index_d:
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
 				location.set_index(trimmedStr[1]);
-			}
-			case cgi_pass_d: {
+				break;
+			case cgi_pass_d:
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
 				location.set_location_type(cgi_location);
 				location.set_cgi_path(trimmedStr[1]);
-			}
-			case extension_d: {
+				break;
+			case extension_d:
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
 				location.set_extension(trimmedStr[1]);
-			}
+				break;
 			default:
 				throw std::exception(); // TODO error
 		}

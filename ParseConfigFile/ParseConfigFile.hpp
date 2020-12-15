@@ -48,7 +48,7 @@ private:
 
 	Location					_parse_location_directive(std::string const &);
 
-	std::vector<std::string>	_getArgsFromLine(std::string const &input) const;
+	std::vector<std::string>	_getArgsFromLine(std::string &input) const;
 
 	int 						_getIndexOfArg(std::string const &arg, std::string *arr, int size) const;
 

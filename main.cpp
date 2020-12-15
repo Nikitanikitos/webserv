@@ -27,35 +27,36 @@
 #include "libft.hpp"
 
 int main(int ac, char **av, char **env) {
-//	std::string			number_of_workers;
-//	ParseConfigFile		parse("default.conf");
-//
-//	parse.parse_file(number_of_workers);
+	std::string			number_of_workers;
+	ParseConfigFile		parse("default.conf");
 
-	Location					location;
-	VirtualServer				server;
+
+//	Location					location;
 	std::vector<VirtualServer>	list_virtual_server;
 
-	std::cout << __DATE__ << std::endl;
-	std::cout << __TIME__ << std::endl;
-	location.set_location_type(default_location);
-	location.set_autoindex(true);
-	location.set_root("/Users/imicah/CLionProjects/webserv");
-	location.set_index("index.html");
+	list_virtual_server = parse.parse_file(number_of_workers);
 
-	server.add_location(location);
-	server.set_host("127.0.0.1");
-	server.add_server_name("localhost");
-	server.add_port("8080");
+	WebServ			server(list_virtual_server, 2);
 
-	server.init_sockets();
-
-	list_virtual_server.push_back(server);
-
-	WebServ		web_server(list_virtual_server);
-	web_server.set_number_workers(1);
-
-	web_server.run_server();
+	server.run_server();
+//	std::cout << __DATE__ << std::endl;
+//	std::cout << __TIME__ << std::endl;
+//	location.set_location_type(default_location);
+//	location.set_autoindex(true);
+//	location.set_root("/Users/imicah/CLionProjects/webserv");
+//	location.set_index("index.html");
+//
+//	server.add_location(location);
+//	server.set_host("127.0.0.1");
+//	server.add_server_name("localhost");
+//	server.add_port("8080");
+//
+//
+//
+//	WebServ		web_server(list_virtual_server);
+//	web_server.set_number_workers(1);
+//
+//	web_server.run_server();
 	//	fd_set				sockets_set;
 //	int					fd_socket_80 = 1;
 //	int					fd_socket_8080;

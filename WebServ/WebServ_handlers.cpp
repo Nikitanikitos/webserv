@@ -63,6 +63,7 @@ void	WebServ::generate_response(Client *client) {
 void	WebServ::send_response(Client* client) {
 	Response*	response = client->get_response();
 
+	std::cout << "Ku!" << std::endl;
 	response->send_response(client->get_socket());
 	if (response->get_buffer().empty()) {
 		if (response->get_header("Connection") == "close")

@@ -59,7 +59,7 @@ private:
 
 
 public:
-	explicit WebServ(const std::vector<VirtualServer>&);
+	explicit WebServ(const std::vector<VirtualServer> &list_virtual_servers, int number_of_workers);
 	/* Инициализируем _set_vs_sockets, добавляем все сокеты виртуальных серверов в _set_vs_sockets, */
 
 	virtual ~WebServ();
