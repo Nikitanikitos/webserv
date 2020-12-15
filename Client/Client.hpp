@@ -34,9 +34,9 @@ private:
 	Response*		_response;
 	bool 			_in_proccessed;
 
-	pthread_mutex_t*		_stage_mutex;
 	pthread_mutex_t*		_proccess_mutex;
 
+	void					_set_timeout_on_socket() const;
 public:
 	Client(int, int);
 	virtual ~Client();
@@ -53,13 +53,9 @@ public:
 	void						set_stage(int stage);
 
 	void						add_to_buffer(char *);
+	void						clear_buffer();
 
 	void						next_stage();
-
-	bool						ready_to_action(fd_set* set, int stage) const;
-
-	void						lock_stage_mutex();
-	void						unlock_stage_mutex();
 
 	bool						in_task_queue();
 };

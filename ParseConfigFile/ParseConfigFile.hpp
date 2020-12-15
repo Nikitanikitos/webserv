@@ -28,17 +28,13 @@ private:
 	char			*_filename;
 	int 			_fd;
 
-	VirtualServer	_parse_vs_directive();
-	/* Метод будет возвращать объект класса VirtualServer со всеми инициализированными полями */
+	VirtualServer				_parse_vs_directive();
 
-	Location			_parse_location_directive(std::string const &);
-	/* Метод будет возвращать объект класса Route со всеми инициализированными полями */
+	Location					_parse_location_directive(std::string const &);
 
 	std::vector<std::string>	_getArgsFromLine(std::string const &input) const;
-	/* Метод для разбивания строки на слова в вектор */
 
 	int 						_getIndexOfArg(std::string const &arg, std::string *arr, int size) const;
-	/* Метод для получения индекса из массива строк */
 
 	bool 						_checkTabulation(std::string const &line, int expectedTabCount) const;
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/12 06:50:51 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 02:04:49 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,9 +23,13 @@
 #include <Location.hpp>
 #include <VirtualServer.hpp>
 #include <WebServ.hpp>
+#include <ParseConfigFile.hpp>
 #include "libft.hpp"
 
 int main(int ac, char **av, char **env) {
+//	ParseConfigFile		parse("default.conf");
+//
+//	parse.parse_file();
 	Location		location;
 	VirtualServer	server;
 	std::vector<VirtualServer>	list_virtual_server;
@@ -40,7 +44,7 @@ int main(int ac, char **av, char **env) {
 	server.add_location(location);
 	server.set_host("127.0.0.1");
 	server.add_server_name("localhost");
-	server.add_port("8081");
+	server.add_port("8080");
 
 	server.init_sockets();
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/12 07:03:59 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 02:28:59 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,24 +23,26 @@ void				Response::add_header(const std::string& key, const std::string& value) {
 	_headers.insert(std::make_pair(key, value));
 }
 
-const std::string&	Response::get_header(const std::string& key) const { return _headers.at(key); }
+const std::string&	Response::get_header(const std::string& key) { return (_headers[key]); }
 
 void				Response::generate_response() {
-	_response.append(
+	_buffer.append(
 		HTTP_VERSION + SP + _status_code + SP + _message_phrase + CRLF
 		"Server:" + SP + SERVER_VERSION + CRLF
 		"Date:" + SP + ft_getdate() + CRLF);
 
 	for (const auto& header : _headers)
-		_response.append(header.first + ":" + SP + header.second + CRLF);
-	_response.append(CRLF);
-	_response.append(_body);
+		_buffer.append(header.first + ":" + SP + header.second + CRLF);
+	_buffer.append(CRLF);
+	_buffer.append(_body);
 }
 
 int					Response::send_response(int client_socket) {
 	int 	bytes;
 
-	bytes = send(client_socket, _response.c_str(), 512, 0);
-	_response.erase(0, 512);
+	bytes = send(client_socket, _buffer.c_str(), _buffer.size(), 0);
+	_buffer.erase(0, bytes);
 	return (bytes);
 }
+
+const std::string& Response::get_buffer() { return (_buffer); }

@@ -24,10 +24,10 @@ ThreadPool::~ThreadPool() {
 }
 
 Client*		ThreadPool::pop_task() {
-	Client*		http_object = _tasks_queue.front();
+	Client*		client = _tasks_queue.front();
 
 	_tasks_queue.pop();
-	return (http_object);
+	return (client);
 }
 
 pthread_mutex_t*	ThreadPool::get_read_write_in_queue_mutex() const { return (_queue_mutex); }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/12 08:51:13 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 01:32:22 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,10 @@ void		WebServ::run_server() {
 	fd_set		readfd_set;
 	int 		max_fd;
 
-	FD_ZERO(_writefd_set);
 	while (true) {
 		max_fd = _sockets.back();
 		FD_ZERO(&readfd_set);
+		FD_ZERO(&writefd_set);
 
 		for (int i = 0; i < _sockets.size(); ++i)
 			FD_SET(_sockets[i], &readfd_set);
@@ -45,13 +45,11 @@ void		WebServ::run_server() {
 			const int		client_socket = _clients[i]->get_socket();
 			if (_clients[i]->get_stage() == read_request_)
 				FD_SET(client_socket, &readfd_set);
-			else if (_clients[i]->get_stage() == send_response_)
-				FD_SET(client_socket, _writefd_set);
 			if (client_socket > max_fd)
 				max_fd = client_socket;
 		}
 
-		select(max_fd + 1, &readfd_set, _writefd_set,  nullptr, nullptr);
+		select(max_fd + 1, &readfd_set, &writefd_set,  nullptr, nullptr);
 
 		for (int i = 0; i < _sockets.size(); ++i) {
 			if (FD_ISSET(_sockets[i], &readfd_set)) {
@@ -61,9 +59,13 @@ void		WebServ::run_server() {
 			}
 		}
 
-		for (int i = 0; i < _clients.size(); ++i) {
-			if (!_clients[i]->in_task_queue() && (_clients[i]->ready_to_action(&readfd_set, read_request_)))
-				_thread_pool.push_task(_clients[i]);
+		for (std::vector<Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
+			if ((*it)->get_stage() == close_connection_) {
+				delete *it;
+				_clients.erase(it);
+			}
+			else if (!(*it)->in_task_queue() && FD_ISSET((*it)->get_socket(), &readfd_set))
+				_thread_pool.push_task((*it));
 		}
 	}
 }

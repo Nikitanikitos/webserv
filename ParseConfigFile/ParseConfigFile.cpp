@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ParseConfigFile.cpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 14:17:15 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/25 04:21:46 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 02:04:49 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -209,7 +209,6 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 }
 
 std::vector<VirtualServer> ParseConfigFile::parse_file() {
-	/* метод будет возвращать список виртуальных серверов, в которых есть список роутеров */
 	if ((_fd = open(_filename, O_RDONLY)) < 0)
 		throw std::exception(); // TODO ERROR
 	std::string line;
@@ -221,7 +220,7 @@ std::vector<VirtualServer> ParseConfigFile::parse_file() {
 		}
 		if (line[0] == '#')
 			continue;
-		else if (line.compare(0, 7, "worker ")) {
+		else if (!line.compare(0, 7, "worker ")) {
 			int workers = std::stoi(&line[7]); // atoi workers
 			std::cout << "Workers = " << workers << std::endl;
 		}
