@@ -30,3 +30,13 @@ const std::string&	Request::get_target() const { return (_target); }
 const std::string&	Request::get_host() const { return (_host); }
 const std::string&	Request::get_port() const { return (_port); }
 const std::string&	Request::get_body() const { return (_body); }
+
+void Request::clear() {
+	_body.clear();
+	_headers.clear();
+	_arguments.clear();
+	_host.clear();
+	_port.clear();
+	_method.clear();
+	_target.clear();
+}

@@ -20,7 +20,7 @@
 # include <fcntl.h>
 
 class Response {
-private:
+protected:
 	std::string								_status_code;
 	std::map<const std::string, std::string>		_headers;
 	std::string 							_body;
@@ -39,8 +39,10 @@ public:
 	void			set_status_code(const std::string&);
 	void			set_body(const std::string& body);
 
-	virtual void	generate_response();
+	virtual void	generate_response(int);
 	virtual int		send_response(int);
+
+	virtual void	clear();
 };
 
 #endif //WEBSERV_RESPONSE_HPP

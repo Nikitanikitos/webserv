@@ -27,7 +27,7 @@ add_executable(webserv
 		Client/Client.cpp
 		ThreadPool/ThreadPool.cpp
 
-		exceptions/exceptions.cpp
+        exceptions/ResponseException.cpp
 		libft/ft_getfile.cpp)
 
 include_directories(

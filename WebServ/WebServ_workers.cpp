@@ -58,5 +58,3 @@ void		WebServ::_create_workers() {
 		pthread_detach(worker_thread);
 	}
 }
-
-void WebServ::set_number_workers(int number_workers) { _number_workers = number_workers; }
