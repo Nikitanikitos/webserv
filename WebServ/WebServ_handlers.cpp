@@ -91,19 +91,19 @@ void	WebServ::parsing_request(Client *client) {
 
 		std::vector<std::string> args = _trimRequest(client->get_buffer());
 		if (!_checkCountSpace(args[0], 2))
-			throw ResponseException("404", "Bad Request", "404.html");
+			throw ResponseException("400", "Bad Request", "400.html");
 		else {
 			std::vector<std::string> line = _getArgs(args[0]);
 			if (line.size() != 3 || _checkMethod(args[0], 6) || line[2] != HTTP_VERSION)
-				throw ResponseException("404", "Bad Request", "404.html");
+				throw ResponseException("400", "Bad Request", "400.html");
 			request.set_method(line[0]);
 			request.set_target(line[1]);
 			for (size_t i = 1; i < args.size(); ++i) {
 				line = _getArgs(args[i]);
+				_strToLower(line[0]);
 				if (line.size() == 1 || line.size() > 2 || line[0].back() != ':')
-					throw ResponseException("404", "Bad Request", "404.html");
+					throw ResponseException("400", "Bad Request", "400.html");
 				std::string key = line[0].substr(0, line[0].size() - 1);
-				_strToLower(key);
 				request.add_header(std::make_pair(key, line[1]));
 			}
 		}
