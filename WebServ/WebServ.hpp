@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/15 20:11:06 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 22:27:48 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,8 @@ private:
 
 	static std::string						methods[6];
 
-	std::vector<int>						_sockets;
 	std::vector<Client*>					_clients;
-	std::vector<VirtualServer>				_list_virtual_servers;
+	std::vector<VirtualServer>				_virtual_servers;
 
 	int 									_number_workers;
 	ThreadPool								_thread_pool;
@@ -70,7 +69,7 @@ private:
 	void	_init_sets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
 
 public:
-	explicit WebServ(const std::vector<VirtualServer> &list_virtual_servers, int number_of_workers);
+	explicit WebServ(int number_of_workers);
 	virtual ~WebServ();
 
 	void	run_server();

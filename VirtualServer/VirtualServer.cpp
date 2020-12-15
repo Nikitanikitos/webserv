@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/15 21:32:55 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 22:36:58 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,3 +102,4 @@ void VirtualServer::add_error_page(const std::string&, const std::string&) {
 
 }
 
+int VirtualServer::get_socket() const { return (_socket); }

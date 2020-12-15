@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/04 03:22:46 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 22:27:48 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,13 @@
 
 class	VirtualServer {
 public:
-	std::vector<int>						vs_sockets;
 
 private:
-	std::string								_host; /* конвертировать в число через функцию inet_addr */
+	std::string								_host;
 	std::vector<std::string>				_ports;
+	int										_socket;
 	int										_limit_client_body_size;
-	std::vector<std::string>				_server_names; /* если sever_names в конфиг файле нет, server_name = _host */
+	std::vector<std::string>				_server_names;
 	std::map<std::string, std::string>		_error_pages;
 	std::vector<Location>					_list_locations;
 
@@ -39,12 +39,12 @@ private:
 
 public:
 	VirtualServer();
-	/* Инициализирует путь к _error_page */
 
 	virtual ~VirtualServer();
-	/* закрытие сокетов */
 
 	void								init_sockets();
+
+	int									get_socket() const;
 
 	const std::string&					get_error_page(const std::string& status_code) const;
 
@@ -62,7 +62,6 @@ public:
 	void								set_limit_client_body_size(int);
 
 	void								set_host(const std::string&);
-
 };
 
 #endif //WEBSERV_VIRTUALSERVER_HPP
