@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/15 22:36:58 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 23:11:02 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	VirtualServer::init_socket() {
 
 	_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-//	setsockopt(_socket, SOL_SOCKET,  SO_REUSEADDR, &opt, sizeof(opt));
+	setsockopt(_socket, SOL_SOCKET,  SO_REUSEADDR, &opt, sizeof(opt));
 	if (bind(_socket, (struct sockaddr*) &sock_addr, sizeof(sock_addr)) < 0)
 		throw std::exception();
 	fcntl(_socket, F_SETFL, O_NONBLOCK);
@@ -50,7 +50,12 @@ const std::string&					VirtualServer::get_port() const { return (_port); }
 const std::vector<std::string>&		VirtualServer::get_server_names() const { return (_server_names); }
 
 const std::string&	VirtualServer::get_error_page(const std::string& status_code) const {
-	return _error_pages.at(status_code);
+	try {
+		return _error_pages.at(status_code);
+	}
+	catch (std::exception&) {
+		return ("");
+	}
 }
 
 int 		priority_compare(const std::string &string1, const std::string& string2) {

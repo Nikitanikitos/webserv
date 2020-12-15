@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/15 22:27:48 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 23:00:02 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ private:
 
 	void				_create_workers();
 
-	const VirtualServer& _get_virtual_server(Request& request) const;
+	const VirtualServer& _get_virtual_server(Client *client) const;
 
 	void		read_request(Client*);
 	void		parsing_request(Client *client);

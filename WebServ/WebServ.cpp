@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/15 22:27:48 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 23:17:23 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,12 +54,10 @@ void	WebServ::_add_new_client(fd_set& readfd_set) {
 	int 	new_client;
 
 	for (int i = 0; i < _virtual_servers.size(); ++i) {
-		struct sockaddr_in		sock_addr;
-
-		ft_memset(&sock_addr, 0, sizeof(sock_addr));
 		if (FD_ISSET(_virtual_servers[i].get_socket(), &readfd_set)) {
-			while ((new_client = accept(_virtual_servers[i].get_socket(), NULL, NULL) != -1))
-				_clients.push_back(new Client(new_client, read_request_));
+			while ((new_client = accept(_virtual_servers[i].get_socket(), NULL, NULL)) != -1)
+				_clients.push_back(new Client(new_client, read_request_, _virtual_servers[i].get_ip(),
+																					_virtual_servers[i].get_port()));
 		}
 	}
 }
@@ -82,26 +80,19 @@ void		WebServ::run_server() {
 	}
 }
 
-const VirtualServer&	WebServ::_get_virtual_server(Request& request) const {
-	bool					default_vs_flag;
-	const VirtualServer		*default_vs;
+const VirtualServer& WebServ::_get_virtual_server(Client *client) const {
+	const VirtualServer		*default_vs = NULL;
+	Request&				request = client->get_request();
 
-	default_vs_flag = false;
 	for (int i = 0; i < _virtual_servers.size(); ++i) {
-		const std::string&	port = _virtual_servers[i].get_port();
-//		for (int j = 0; j < ports.size(); ++j) {
-//			if (request.get_port() == ports[j]) {
-//				if (!default_vs_flag) {
-//					default_vs = &_virtual_servers[i];
-//					default_vs_flag = true;
-//				}
-//				for (const auto& server_name : _virtual_servers[i].get_server_names())
-//					if (request.get_header(HOST) == server_name) {
-//						default_vs = &_virtual_servers[i];
-//						break ;
-//					}
-//			}
-//		}
+		const VirtualServer&	virtual_server = _virtual_servers[i];
+		if (client->get_ip() == virtual_server.get_ip() && client->get_port() == virtual_server.get_port()) {
+			if (!default_vs)
+				default_vs = &virtual_server;
+			for (int j = 0; j < virtual_server.get_server_names().size(); ++j)
+				if (request.get_header(HOST) == virtual_server.get_server_names()[j])
+					return (virtual_server);
+		}
 	}
 	return (*default_vs);
 }

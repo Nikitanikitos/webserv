@@ -28,6 +28,8 @@ enum stage {
 class Client {
 private:
 	int 			_socket;
+	std::string		_ip;
+	std::string		_port;
 	std::string		_buffer;
 	int 			_stage;
 	Request			_request;
@@ -37,10 +39,15 @@ private:
 	pthread_mutex_t*		_proccess_mutex;
 
 public:
-	Client(int, int);
+	Client(int socket, int stage, const std::string& ip, const std::string& port);
 	virtual ~Client();
 
 	const std::string&			get_buffer() const;
+
+	const std::string& get_port() const;
+
+	const std::string& get_ip() const;
+
 	Request&					get_request();
 	Response&					get_response();
 	int							get_stage() const;

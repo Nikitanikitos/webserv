@@ -12,7 +12,8 @@
 
 #include "Client.hpp"
 
-Client::Client(int client_socket, int stage) : _socket(client_socket), _stage(stage), _in_proccessed(false) {
+Client::Client(int socket, int stage, const std::string& ip, const std::string& port)
+		: _socket(socket), _ip(ip), _port(port), _stage(stage), _in_proccessed(false) {
 	if ((_proccess_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == nullptr)
 		throw std::exception();
 	pthread_mutex_init(_proccess_mutex, NULL);
@@ -46,3 +47,8 @@ bool			Client::in_task_queue() { return (_in_proccessed); }
 void			Client::clear_buffer() { _buffer.clear(); }
 void			Client::clear_response() { _response.clear(); }
 void			Client::clear_request() { _request.clear(); }
+
+const std::string& Client::get_ip() const { return (_ip);
+}
+
+const std::string& Client::get_port() const { return _port; }
