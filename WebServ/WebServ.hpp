@@ -68,7 +68,15 @@ public:
 	/* Метод запускает сервер. Вызывает select() на серверные сокеты с бесконечным тайм-аутом,
 	 * Проверяет в какой сокет поступило соединение и вызывает метод serve_client(), передавая туда сокет клиента */
 
+	void add_new_client(fd_set readfd_set);
+
 	void	set_number_workers(int number_workers);
+
+	void add_client_socket_in_set(fd_set &readfd_set, int &max_fd);
+
+	void add_client_in_task_queue(fd_set &readfd_set);
+
+	void init_sets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
 };
 
 #endif //WEBSERV_WEBSERV_HPP

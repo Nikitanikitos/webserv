@@ -13,9 +13,6 @@
 #include <iostream>
 #include "WebServ.hpp"
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "UnreachableCode"
-#pragma ide diagnostic ignored "EndlessLoop"
 void*	worker(void* arg) {
 	WebServ&		web_serv = *(WebServ*)arg;
 	ThreadPool&		thread_pool = web_serv._thread_pool;
@@ -51,7 +48,6 @@ void*	worker(void* arg) {
 			thread_pool.unlock_queue_mutex();
 		usleep(500);
 	}
-	return (NULL);
 }
 
 void		WebServ::_create_workers() {
