@@ -77,6 +77,9 @@ public:
 	void add_client_in_task_queue(fd_set &readfd_set);
 
 	void init_sets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
+
+	static std::string methods[6];
+	static std::string fields[18];
 };
 
 #endif //WEBSERV_WEBSERV_HPP

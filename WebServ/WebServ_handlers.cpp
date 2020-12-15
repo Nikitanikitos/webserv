@@ -24,13 +24,119 @@ void	WebServ::read_request(Client *client) {
 		client->next_stage();
 }
 
+//	GET,
+//	HEAD,
+//	POST,
+//	PUT,
+//	DELETE,
+//	OPTIONS,
+
+std::string WebServ::methods[6] = {
+		"GET",
+		"HEAD",
+		"POST",
+		"PUT",
+		"DELETE",
+		"OPTIONS"
+};
+
+//std::string WebServ::fields[18] = {
+//		"accept-charsets:",
+//		"accept-language:",
+//		"allow:",
+//		"authorization:",
+//		"content-language:",
+//		"content-length:",
+//		"content-location:",
+//		"content-type:",
+//		"date:",
+//		"host:",
+//		"last-modified:",
+//		"location:",
+//		"referer:",
+//		"retry-after:",
+//		"server:",
+//		"transfer-encoding:",
+//		"user-agent",
+//		"www-authenticate:"
+//};
+
+std::vector<std::string> _getArgs(std::string const& line) { //TODO добавить в хедер
+	std::vector<std::string>	result;
+	size_t						pos_find;
+
+	std::string input(line);
+	while (!input.empty()){
+		pos_find = input.find(' ');
+		input.erase(pos_find, input.find_first_not_of(' '));
+		pos_find = input.find(' ');
+		result.push_back(input.substr(0, pos_find));
+		input.erase(0, pos_find);
+	}
+	return (result);
+}
+
+std::vector<std::string> _trimRequest(std::string const& buff) { //TODO добавить в хедер
+	std::vector<std::string> result;
+	std::string::size_type start = 0;
+	std::string::size_type pos = 0;
+	while (true) {
+		pos = buff.find("\r\n", start);
+		result.push_back(buff.substr(start, pos - start));
+		if (!buff.compare(pos, 4, "\r\n\r\n"))
+			break ;
+		start = pos + 2;
+	}
+	return result;
+}
+
+bool _checkCountSpace(std::string const& line, int numSpaces) { //TODO добавить в хедер
+	int countSpace = 0;
+	for (int i = 0; i < line.size(); ++i)
+		if (line[i] == ' ')
+			++countSpace;
+	return countSpace == numSpaces;
+}
+
+bool _checkMethod(std::string method, int size) { //TODO добавить в хедер
+	for (int i = 0; i < size; ++i) {
+		if (WebServ::methods[i] == method)
+			return true;
+	}
+	return false;
+}
+
 void	WebServ::parsing_request(Client *client) {
-	Request*	request = new Request();
 
-	std::cout << client->get_buffer() << std::endl;
+	try {
+		Request*	request = new Request();
 
-	client->set_request(request);
-	client->next_stage();
+		std::cout << client->get_buffer() << std::endl;
+		std::vector<std::string> args = _trimRequest(client->get_buffer());
+		if (!_checkCountSpace(args[0], 2))
+			throw RequestException("404", "Bad Request", "404.html"); //TODO доделать
+		else {
+			std::vector<std::string> line = _getArgs(args[0]);
+			if (line.size() != 3 || _checkMethod(args[0], 6) || line[2] != HTTP_VERSION)
+				throw RequestException("404", "Bad Request", "404.html"); //TODO доделать
+			request->set_method(line[0]);
+			request->set_target(line[1]);
+			for (size_t i = 1; i < args.size(); ++i) {
+				line = _getArgs(args[i]);
+				if (line.size() == 1 || line.size() > 2 || line[0].back() != ':')
+					throw RequestException("404", "Bad Request", "404.html"); //TODO доделать
+				request->add_header(std::make_pair(line[0].substr(0, line.size() - 1), line[1]));
+			}
+		}
+		client->set_request(request);
+		client->next_stage();
+	}
+	catch (RequestException& response) {
+		std::cout << "GOVNO!\n";
+		client->set_response(new RequestException(response));
+		client->get_response()->generate_response();
+		client->set_stage(send_response_);
+	}
 }
 
 void	WebServ::generate_response(Client *client) {
@@ -72,7 +178,8 @@ void	WebServ::send_response(Client* client) {
 			client->set_stage(read_request_);
 
 		delete response;
-		delete client->get_request();
+//		if (client->get_request())
+//			delete client->get_request();
 
 		client->set_request(NULL);
 		client->set_response(NULL);

@@ -89,7 +89,7 @@ void		WebServ::run_server() {
 			if (_clients[i]->get_stage() == read_request_)
 				FD_SET(client_socket, &readfd_set);
 //			if (_clients[i]->get_stage() == send_response_)
-			FD_SET(client_socket, &writefd_set);
+//			FD_SET(client_socket, &writefd_set);
 			if (client_socket > max_fd)
 				max_fd = client_socket;
 		}
@@ -109,7 +109,7 @@ void		WebServ::run_server() {
 				delete *it;
 				_clients.erase(it);
 			}
-			else if (!(*it)->in_task_queue() && (FD_ISSET((*it)->get_socket(), &readfd_set) || FD_ISSET((*it)->get_socket(), &writefd_set)))
+			else if (!(*it)->in_task_queue() && (FD_ISSET((*it)->get_socket(), &readfd_set)))
 				_thread_pool.push_task((*it));
 		}
 	}
