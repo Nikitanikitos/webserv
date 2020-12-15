@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_EXCEPTIONS_HPP
-# define WEBSERV_EXCEPTIONS_HPP
+#ifndef WEBSERV_RESPONSEEXCEPTION_HPP
+# define WEBSERV_RESPONSEEXCEPTION_HPP
 
 # include <exception>
 # include <string>
@@ -19,23 +19,20 @@
 #include <Response.hpp>
 # include "libft.hpp"
 
-class	RequestException : public std::exception, public Response {
+class	ResponseException : public std::exception, public Response {
 private:
-	const std::string	_message_phrase;
-	const std::string	_status_code;
-	const std::string	_error_page;
+	std::string		_error_page;
 
 public:
-	RequestException(const std::string& status_code, const std::string& message_phrase, const std::string &error_page);
-	~RequestException() override = default;
+	ResponseException(const std::string& status_code, const std::string& message_phrase, const std::string &error_page);
+	~ResponseException() override = default;
 
-	virtual void	generate_response(int client_socket) const;
+	virtual void	generate_response(int client_socket);
+	virtual void	clear();
 };
 
 class	Request301Redirect : public std::exception, public Response  {
 private:
-	const std::string	_message_phrase;
-	const std::string	_status_code;
 	const std::string	_location;
 
 public:
@@ -46,4 +43,4 @@ public:
 	virtual void			generate_response(int) const;
 };
 
-#endif //WEBSERV_EXCEPTIONS_HPP
+#endif //WEBSERV_RESPONSEEXCEPTION_HPP

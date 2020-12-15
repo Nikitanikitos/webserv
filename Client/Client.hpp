@@ -36,7 +36,6 @@ private:
 
 	pthread_mutex_t*		_proccess_mutex;
 
-	void					_set_timeout_on_socket() const;
 public:
 	Client(int, int);
 	virtual ~Client();
@@ -58,6 +57,9 @@ public:
 	void						next_stage();
 
 	bool						in_task_queue();
+
+	void						clear_response();
+	void						clear_request();
 };
 
 #endif //WEBSERV_CLIENT_HPP

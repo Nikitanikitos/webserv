@@ -64,6 +64,8 @@ public:
 	const std::string&				get_port() const;
 	const std::string&				get_body() const;
 	const std::string&				get_header(const std::string&);
+
+	void							clear();
 };
 
 #endif //WEBSERV_REQUEST_HPP

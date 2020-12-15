@@ -25,7 +25,7 @@ void				Response::add_header(const std::string& key, const std::string& value) {
 
 const std::string&	Response::get_header(const std::string& key) { return (_headers[key]); }
 
-void				Response::generate_response() {
+void				Response::generate_response(int) {
 	_buffer.append(
 		HTTP_VERSION + SP + _status_code + SP + _message_phrase + CRLF
 		"Server:" + SP + SERVER_VERSION + CRLF
@@ -46,3 +46,11 @@ int					Response::send_response(int client_socket) {
 }
 
 const std::string& Response::get_buffer() { return (_buffer); }
+
+void	Response::clear() {
+	_status_code.clear();
+	_buffer.clear();
+	_headers.clear();
+	_body.clear();
+	_message_phrase.clear();
+}

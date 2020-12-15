@@ -10,31 +10,33 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "exceptions.hpp"
+#include "ResponseException.hpp"
 
-RequestException::RequestException(const std::string& status_code, const std::string& message_phrase,
-		const std::string& error_page) : _message_phrase(message_phrase), _status_code(status_code),
-										 _error_page(error_page) { }
+ResponseException::ResponseException(const std::string& status_code, const std::string& message_phrase,
+									 const std::string& error_page) : _error_page(error_page) { }
 
-void RequestException::generate_response(int client_socket) const {
+void	ResponseException::generate_response(int client_socket) {
 	std::string			body_response = ft_getfile(_error_page.c_str());
 	std::string			response;
 
-	response =
+	_buffer.append(
 			HTTP_VERSION + SP + _status_code + SP + _message_phrase + CRLF
 			"Server:" + SP + SERVER_VERSION + CRLF
-			"Date:" + SP + ft_getdate() + CRLF
-			"Content-type: text/html" + CRLF
-			"Content-length:" + SP + std::to_string(body_response.length()) + CRLF
-			"Connection:" + SP + "close" + CRLF CRLF +
-			body_response;
+		  	"Date:" + SP + ft_getdate() + CRLF
+		  	"Content-type: text/html" + CRLF
+		  	"Content-length:" + SP + std::to_string(body_response.length()) + CRLF
+		  	"Connection:" + SP + "close" + CRLF CRLF +
+			body_response);
+}
 
-	send(client_socket, response.c_str(), response.length(), 0);
+void	ResponseException::clear() {
+	Response::clear();
+	_error_page.clear();
 }
 
 Request301Redirect::Request301Redirect(const std::string& location)  : _location(location) { }
 
-void Request301Redirect::generate_response(int client_socket) const {
+void	Request301Redirect::generate_response(int client_socket) const {
 	std::string			response;
 
 	response =
@@ -43,8 +45,4 @@ void Request301Redirect::generate_response(int client_socket) const {
 			"Date:" + SP + ft_getdate() + CRLF
 			"Location:" + SP + _location + CRLF
 			"Connection:" + SP + "close" + CRLF CRLF;
-
-	send(client_socket, response.c_str(), response.length(), 0);
-
 }
-

@@ -18,13 +18,13 @@ void WebServ::_default_handler(Client *http_object, const VirtualServer& virtual
 	struct stat			buff;
 
 	if (stat(path_to_target.c_str(), &buff) == -1)
-		throw RequestException("404", "Not Found", virtual_server.get_error_page("404"));
+		throw ResponseException("404", "Not Found", virtual_server.get_error_page("404"));
 	else if (S_ISDIR(buff.st_mode) && request->get_target().back() != '/')
 		throw Request301Redirect("http://" + request->get_host() + ":" + request->get_port() + "/" + request->get_target() + "/");
 	else if (!location.is_allow_method(request->get_method()))
-		throw RequestException("405", "Method Not Allowed", virtual_server.get_error_page("405"));
+		throw ResponseException("405", "Method Not Allowed", virtual_server.get_error_page("405"));
 	else if (S_ISDIR(buff.st_mode) && !location.get_autoindex())
-		throw RequestException("403", "Forbidden", virtual_server.get_error_page("403"));
+		throw ResponseException("403", "Forbidden", virtual_server.get_error_page("403"));
 
 	if (request->get_method() == "POST")
 		_POST_method_handler(*request, &buff, virtual_server);
@@ -35,9 +35,9 @@ void WebServ::_default_handler(Client *http_object, const VirtualServer& virtual
 void		WebServ::_POST_method_handler(const Request& request, struct stat* buff,
 																				const VirtualServer& virtual_server) {
 	if (S_ISDIR(buff->st_mode))
-		throw RequestException("403", "Forbidden", virtual_server.get_error_page("403"));
+		throw ResponseException("403", "Forbidden", virtual_server.get_error_page("403"));
 	else
-		throw RequestException("405", "Method Not Allowed", virtual_server.get_error_page("405"));
+		throw ResponseException("405", "Method Not Allowed", virtual_server.get_error_page("405"));
 }
 
 void		WebServ::_GET_HEAD_methods_handler(Client *http_object, struct stat* buff, const Location& location) {
