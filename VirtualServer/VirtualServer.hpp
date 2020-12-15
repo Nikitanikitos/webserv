@@ -23,11 +23,15 @@
 
 class	VirtualServer {
 public:
-	std::vector<int>						vs_sockets;
+	int										_socket;
+
+	void set_socket(int socket);
+
+	int get_socket() const;
 
 private:
-	std::string								_host; /* конвертировать в число через функцию inet_addr */
-	std::vector<std::string>				_ports;
+	std::string								_ip; /* конвертировать в число через функцию inet_addr */
+	std::string								_port;
 	int										_limit_client_body_size;
 	std::vector<std::string>				_server_names; /* если sever_names в конфиг файле нет, server_name = _host */
 	std::map<std::string, std::string>		_error_pages;
@@ -44,19 +48,19 @@ public:
 	virtual ~VirtualServer();
 	/* закрытие сокетов */
 
-	void								init_sockets();
+	void								init_socket();
 
 	const std::string&					get_error_page(const std::string& status_code) const;
 
 	void								add_server_name(const std::string&);
 	void								add_error_page(const std::string&, const std::string&);
-	void								add_port(const std::string&);
+	void								set_port(const std::string &port);
 
 	Location							get_location(const Request& request) const;
 
 	const std::vector<std::string>&		get_server_names() const;
-	const std::vector<std::string>&		get_ports() const;
-	const std::string&					get_host() const;
+	const std::string&					get_port() const;
+	const std::string&					get_ip() const;
 
 	void								add_location(const Location& list_locations);
 	void								set_limit_client_body_size(int);

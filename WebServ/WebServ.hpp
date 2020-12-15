@@ -83,6 +83,7 @@ public:
 
 	void init_sets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
 
+	void add_virtual_server(VirtualServer &virtualServer);
 	static std::string methods[6];
 	static std::string fields[18];
 };

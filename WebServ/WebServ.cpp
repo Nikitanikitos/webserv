@@ -16,8 +16,8 @@
 WebServ::WebServ(const std::vector<VirtualServer> &list_virtual_servers, int number_of_workers)
 									: _list_virtual_servers(list_virtual_servers), _number_workers(number_of_workers) {
 	for (int i = 0; i < _list_virtual_servers.size(); ++i) {
-		_list_virtual_servers[i].init_sockets();
-		std::vector<int>	sockets = _list_virtual_servers[i].vs_sockets;
+		_list_virtual_servers[i].init_socket();
+		std::vector<int>	sockets = _list_virtual_servers[i]._socket;
 		for (int j = 0; j < sockets.size(); ++j)
 			_sockets.push_back(sockets[j]);
 	}
@@ -151,4 +151,16 @@ std::string		WebServ::_get_path_to_target(const Request& request, const Location
 			result.append(".");
 	}
 	return (result);
+}
+
+void WebServ::add_virtual_server(VirtualServer &virtualServer) {
+	for (int i = 0; i < _list_virtual_servers.size(); ++i) {
+		if (virtualServer.get_ip() == _list_virtual_servers[i].get_ip() && virtualServer.get_ip() == _list_virtual_servers[i].get_ip()) {
+			virtualServer.set_socket(_list_virtual_servers[i].get_socket());
+			_list_virtual_servers.push_back(virtualServer);
+			return ;
+		}
+	}
+	virtualServer.init_socket();
+	_list_virtual_servers.push_back(virtualServer);
 }

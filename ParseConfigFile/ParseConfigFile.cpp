@@ -115,7 +115,7 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 			case port_d:
 				if (trimmedStr.size() > 1)
 					for (int i = 1; i < trimmedStr.size(); ++i)
-						virtual_server.add_port(trimmedStr[i]);
+						virtual_server.set_port(trimmedStr[i]);
 				else
 					throw ParseConfigFileException("Wrong port parameter");
 				break;

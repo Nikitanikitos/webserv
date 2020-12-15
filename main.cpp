@@ -37,6 +37,8 @@ int main(int ac, char **av, char **env) {
 	list_virtual_server = parse.parse_file(number_of_workers);
 
 	WebServ			server(list_virtual_server, 2);
+	for (int i = 0; i < list_virtual_server.size(); ++i)
+		server.add_virtual_server(list_virtual_server[i]);
 
 	server.run_server();
 //	std::cout << __DATE__ << std::endl;

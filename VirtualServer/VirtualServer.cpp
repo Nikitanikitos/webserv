@@ -16,24 +16,22 @@
 
 VirtualServer::VirtualServer() : _limit_client_body_size(0) { }
 
-void	VirtualServer::set_host(const std::string& host) { _host = host; }
+void	VirtualServer::set_host(const std::string& host) { _ip = host; }
 
-void	VirtualServer::add_port(const std::string& port) { _ports.push_back(port); }
+void	VirtualServer::set_port(const std::string& port) { _port = port; }
 void	VirtualServer::add_server_name(const std::string& server_name) { _server_names.push_back(server_name); }
 void	VirtualServer::add_location(const Location& list_locations) { _list_locations.push_back(list_locations); }
 
-void	VirtualServer::init_sockets() {
-	for (const std::string& item : _ports) {
-		struct sockaddr_in		sock_addr;
+void	VirtualServer::init_socket() {
+	struct sockaddr_in sock_addr;
 
-		ft_memset(&sock_addr, 0, sizeof(sock_addr));
-		_init_sock_addr(sock_addr, item);
-		vs_sockets.push_back(_create_socket(sock_addr));
-	}
+	ft_memset(&sock_addr, 0, sizeof(sock_addr));
+	_init_sock_addr(sock_addr, _port);
+	_socket.push_back(_create_socket(sock_addr));
 }
 
 VirtualServer::~VirtualServer() {
-	for (int vsSocket : vs_sockets)
+	for (int vsSocket : _socket)
 		close(vsSocket);
 }
 
@@ -44,11 +42,11 @@ void	VirtualServer::set_limit_client_body_size(int limit_client_body_size) {
 void	VirtualServer::_init_sock_addr(sockaddr_in& sock_addr, const std::string& item) {
 	sock_addr.sin_family = PF_INET;
 	sock_addr.sin_port = ft_htons(ft_atoi(item.c_str()));
-	sock_addr.sin_addr.s_addr = inet_addr(_host.c_str());
+	sock_addr.sin_addr.s_addr = inet_addr(_ip.c_str());
 }
 
 int		VirtualServer::_create_socket(sockaddr_in& sock_addr) {
-	int		fd_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	int		fd_socket = _socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	int 	opt;
 
 	setsockopt(fd_socket, SOL_SOCKET,  SO_REUSEADDR, &opt, sizeof(opt));
@@ -59,8 +57,8 @@ int		VirtualServer::_create_socket(sockaddr_in& sock_addr) {
 	return (fd_socket);
 }
 
-const std::string&					VirtualServer::get_host() const { return (_host); }
-const std::vector<std::string>&		VirtualServer::get_ports() const { return (_ports); }
+const std::string&					VirtualServer::get_ip() const { return (_ip); }
+const std::string&					VirtualServer::get_port() const { return (_port); }
 const std::vector<std::string>&		VirtualServer::get_server_names() const { return (_server_names); }
 
 const std::string&	VirtualServer::get_error_page(const std::string& status_code) const {
@@ -99,5 +97,13 @@ Location	VirtualServer::get_location(const Request& request) const {
 
 void VirtualServer::add_error_page(const std::string&, const std::string&) {
 
+}
+
+int VirtualServer::get_socket() const {
+	return _socket;
+}
+
+void VirtualServer::set_socket(int socket) {
+	_socket = socket;
 }
 
