@@ -22,46 +22,36 @@
 # include "libft.hpp"
 
 class	VirtualServer {
-public:
-
 private:
-	std::string								_host;
-	std::vector<std::string>				_ports;
 	int										_socket;
+	std::string								_ip;
+	std::string								_port;
 	int										_limit_client_body_size;
 	std::vector<std::string>				_server_names;
 	std::map<std::string, std::string>		_error_pages;
 	std::vector<Location>					_list_locations;
-
-	void			_init_sock_addr(struct sockaddr_in&, const std::string&);
-
-	static int		_create_socket(struct sockaddr_in&);
 
 public:
 	VirtualServer();
 
 	virtual ~VirtualServer();
 
-	void								init_sockets();
+	void								init_socket();
 
 	int									get_socket() const;
-
 	const std::string&					get_error_page(const std::string& status_code) const;
+	Location							get_location(const Request& request) const;
+	const std::vector<std::string>&		get_server_names() const;
+	const std::string&					get_port() const;
+	const std::string&					get_ip() const;
 
 	void								add_server_name(const std::string&);
 	void								add_error_page(const std::string&, const std::string&);
-	void								add_port(const std::string&);
-
-	Location							get_location(const Request& request) const;
-
-	const std::vector<std::string>&		get_server_names() const;
-	const std::vector<std::string>&		get_ports() const;
-	const std::string&					get_host() const;
-
 	void								add_location(const Location& list_locations);
+	void								set_port(const std::string &port);
 	void								set_limit_client_body_size(int);
-
-	void								set_host(const std::string&);
+	void								set_ip(const std::string& ip);
+	void								set_socket(int socket);
 };
 
 #endif //WEBSERV_VIRTUALSERVER_HPP

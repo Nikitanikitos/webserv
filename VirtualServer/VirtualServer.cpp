@@ -16,52 +16,37 @@
 
 VirtualServer::VirtualServer() : _limit_client_body_size(0) { }
 
-void	VirtualServer::set_host(const std::string& host) { _host = host; }
-
-void	VirtualServer::add_port(const std::string& port) { _ports.push_back(port); }
+void	VirtualServer::set_ip(const std::string& ip) { _ip = ip; }
+void	VirtualServer::set_port(const std::string& port) { _port = port; }
 void	VirtualServer::add_server_name(const std::string& server_name) { _server_names.push_back(server_name); }
 void	VirtualServer::add_location(const Location& list_locations) { _list_locations.push_back(list_locations); }
 
-void	VirtualServer::init_sockets() {
-	for (const std::string& item : _ports) {
-		struct sockaddr_in		sock_addr;
+void	VirtualServer::init_socket() {
+	struct sockaddr_in	sock_addr;
+	int 				opt;
 
-		ft_memset(&sock_addr, 0, sizeof(sock_addr));
-		_init_sock_addr(sock_addr, item);
-		vs_sockets.push_back(_create_socket(sock_addr));
-	}
+	ft_memset(&sock_addr, 0, sizeof(sock_addr));
+	sock_addr.sin_family = PF_INET;
+	sock_addr.sin_port = ft_htons(ft_atoi(_port.c_str()));
+	sock_addr.sin_addr.s_addr = inet_addr(_ip.c_str());
+
+	_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+//	setsockopt(_socket, SOL_SOCKET,  SO_REUSEADDR, &opt, sizeof(opt));
+	if (bind(_socket, (struct sockaddr*) &sock_addr, sizeof(sock_addr)) < 0)
+		throw std::exception();
+	fcntl(_socket, F_SETFL, O_NONBLOCK);
+	listen(_socket, 10);
 }
 
-VirtualServer::~VirtualServer() {
-	for (int vsSocket : vs_sockets)
-		close(vsSocket);
-}
+VirtualServer::~VirtualServer() { close(_socket); }
 
 void	VirtualServer::set_limit_client_body_size(int limit_client_body_size) {
 	_limit_client_body_size = limit_client_body_size;
 }
 
-void	VirtualServer::_init_sock_addr(sockaddr_in& sock_addr, const std::string& item) {
-	sock_addr.sin_family = PF_INET;
-	sock_addr.sin_port = ft_htons(ft_atoi(item.c_str()));
-	sock_addr.sin_addr.s_addr = inet_addr(_host.c_str());
-}
-
-int		VirtualServer::_create_socket(sockaddr_in& sock_addr) {
-	int		fd_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	int 	opt;
-
-//	setsockopt(fd_socket, SOL_SOCKET,  SO_REUSEADDR, &opt, sizeof(opt));
-
-	if (bind(fd_socket, (struct sockaddr*) &sock_addr, sizeof(sock_addr)) < 0)
-		throw std::exception();
-	fcntl(fd_socket, F_SETFL, O_NONBLOCK);
-	listen(fd_socket, 10);
-	return (fd_socket);
-}
-
-const std::string&					VirtualServer::get_host() const { return (_host); }
-const std::vector<std::string>&		VirtualServer::get_ports() const { return (_ports); }
+const std::string&					VirtualServer::get_ip() const { return (_ip); }
+const std::string&					VirtualServer::get_port() const { return (_port); }
 const std::vector<std::string>&		VirtualServer::get_server_names() const { return (_server_names); }
 
 const std::string&	VirtualServer::get_error_page(const std::string& status_code) const {
@@ -98,8 +83,8 @@ Location	VirtualServer::get_location(const Request& request) const {
 	return (*result);
 }
 
-void VirtualServer::add_error_page(const std::string&, const std::string&) {
-
-}
+void VirtualServer::add_error_page(const std::string&, const std::string&) { }
 
 int VirtualServer::get_socket() const { return (_socket); }
+
+void VirtualServer::set_socket(int socket) { _socket = socket; }

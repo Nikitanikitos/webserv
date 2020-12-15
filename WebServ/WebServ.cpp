@@ -88,20 +88,20 @@ const VirtualServer&	WebServ::_get_virtual_server(Request& request) const {
 
 	default_vs_flag = false;
 	for (int i = 0; i < _virtual_servers.size(); ++i) {
-		std::vector<std::string>	ports = _virtual_servers[i].get_ports();
-		for (int j = 0; j < ports.size(); ++j) {
-			if (request.get_port() == ports[j]) {
-				if (!default_vs_flag) {
-					default_vs = &_virtual_servers[i];
-					default_vs_flag = true;
-				}
-				for (const auto& server_name : _virtual_servers[i].get_server_names())
-					if (request.get_header(HOST) == server_name) {
-						default_vs = &_virtual_servers[i];
-						break ;
-					}
-			}
-		}
+		const std::string&	port = _virtual_servers[i].get_port();
+//		for (int j = 0; j < ports.size(); ++j) {
+//			if (request.get_port() == ports[j]) {
+//				if (!default_vs_flag) {
+//					default_vs = &_virtual_servers[i];
+//					default_vs_flag = true;
+//				}
+//				for (const auto& server_name : _virtual_servers[i].get_server_names())
+//					if (request.get_header(HOST) == server_name) {
+//						default_vs = &_virtual_servers[i];
+//						break ;
+//					}
+//			}
+//		}
 	}
 	return (*default_vs);
 }
@@ -118,4 +118,16 @@ std::string		WebServ::_get_path_to_target(const Request& request, const Location
 			result.append(".");
 	}
 	return (result);
+}
+
+void WebServ::add_virtual_server(VirtualServer &virtual_server) {
+	for (int i = 0; i < _virtual_servers.size(); ++i) {
+		if (virtual_server.get_ip() == _virtual_servers[i].get_ip() && virtual_server.get_port() == _virtual_servers[i].get_port()) {
+			virtual_server.set_socket(_virtual_servers[i].get_socket());
+			_virtual_servers.push_back(virtual_server);
+			return ;
+		}
+	}
+	virtual_server.init_socket();
+	_virtual_servers.push_back(virtual_server);
 }

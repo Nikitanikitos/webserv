@@ -73,6 +73,8 @@ public:
 	virtual ~WebServ();
 
 	void	run_server();
+
+	void add_virtual_server(VirtualServer &virtual_server);
 };
 
 #endif //WEBSERV_WEBSERV_HPP
