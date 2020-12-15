@@ -58,7 +58,7 @@ public:
 	explicit ParseConfigFile(char *filename);
 	~ParseConfigFile() = default;
 
-	std::vector<VirtualServer>		parse_file();
+	std::vector<VirtualServer> parse_file(std::string &number_of_workers);
 	/* метод будет возвращать список виртуальных серверов, в которых есть список роутеров */
 	static std::string serverCurrentFields[6];
 	static std::string locationCurrentFields[7];

@@ -202,7 +202,7 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 	return (location);
 }
 
-std::vector<VirtualServer> ParseConfigFile::parse_file() {
+std::vector<VirtualServer>		ParseConfigFile::parse_file(std::string& number_of_workers) {
 	if ((_fd = open(_filename, O_RDONLY)) < 0)
 		throw std::exception(); // TODO ERROR
 	std::string line;
@@ -215,8 +215,8 @@ std::vector<VirtualServer> ParseConfigFile::parse_file() {
 		if (line[0] == '#')
 			continue;
 		else if (!line.compare(0, 7, "worker ")) {
-			int workers = std::stoi(&line[7]); // atoi workers
-			std::cout << "Workers = " << workers << std::endl;
+			number_of_workers.append(&line[7]);
+			std::cout << "Workers = " << number_of_workers << std::endl;
 		}
 		else if (line == "server")
 			virtual_servers.push_back(_parse_vs_directive()); // mb check return value ? or not

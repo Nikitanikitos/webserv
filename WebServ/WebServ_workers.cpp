@@ -39,7 +39,7 @@ void*	worker(void* arg) {
 					web_serv.close_connection(client);
 					break;
 			}
-			if (client->get_stage() != read_request_)
+			if (client->get_stage() != read_request_ && client->get_stage() != close_connection_)
 				thread_pool.push_task(client);
 			else
 				client->set_processed(false);

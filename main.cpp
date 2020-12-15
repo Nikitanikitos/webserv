@@ -27,11 +27,13 @@
 #include "libft.hpp"
 
 int main(int ac, char **av, char **env) {
-	ParseConfigFile		parse("default.conf");
+//	std::string			number_of_workers;
+//	ParseConfigFile		parse("default.conf");
+//
+//	parse.parse_file(number_of_workers);
 
-	parse.parse_file();
-	Location		location;
-	VirtualServer	server;
+	Location					location;
+	VirtualServer				server;
 	std::vector<VirtualServer>	list_virtual_server;
 
 	std::cout << __DATE__ << std::endl;
