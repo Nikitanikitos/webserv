@@ -19,7 +19,6 @@ WebServ::WebServ(const std::vector<VirtualServer>& list_virtual_servers) : _list
 		for (int j = 0; j < sockets.size(); ++j)
 			_sockets.push_back(sockets[j]);
 	}
-	_writefd_set = (fd_set*)malloc(sizeof(fd_set));
 }
 
 WebServ::~WebServ() = default;

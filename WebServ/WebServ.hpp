@@ -23,17 +23,15 @@
 # include "ThreadPool.hpp"
 
 class WebServ {
+private:
 	friend void*	worker(void*);
 
-private:
 	std::vector<int>						_sockets;
 	std::vector<Client*>					_clients;
 	std::vector<VirtualServer>				_list_virtual_servers;
 
 	int 									_number_workers;
 	ThreadPool								_thread_pool;
-	fd_set*									_writefd_set;
-
 
 	static void			_default_handler(Client *http_object, const VirtualServer& virtual_server, const Location& location);
 	void				_cgi_handler(const Request&, const VirtualServer&, const Location&, int);

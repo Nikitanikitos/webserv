@@ -27,16 +27,16 @@
 #include "libft.hpp"
 
 int main(int ac, char **av, char **env) {
-//	ParseConfigFile		parse("default.conf");
-//
-//	parse.parse_file();
+	ParseConfigFile		parse("default.conf");
+
+	parse.parse_file();
 	Location		location;
 	VirtualServer	server;
 	std::vector<VirtualServer>	list_virtual_server;
 
 	std::cout << __DATE__ << std::endl;
 	std::cout << __TIME__ << std::endl;
-	location.set_location_type(_default);
+	location.set_location_type(default_location);
 	location.set_autoindex(true);
 	location.set_root("/Users/imicah/CLionProjects/webserv");
 	location.set_index("index.html");

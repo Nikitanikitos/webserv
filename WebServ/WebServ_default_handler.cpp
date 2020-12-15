@@ -23,7 +23,7 @@ void WebServ::_default_handler(Client *http_object, const VirtualServer& virtual
 		throw Request301Redirect("http://" + request->get_host() + ":" + request->get_port() + "/" + request->get_target() + "/");
 	else if (!location.is_allow_method(request->get_method()))
 		throw RequestException("405", "Method Not Allowed", virtual_server.get_error_page("405"));
-	else if (S_ISDIR(buff.st_mode) && !location.is_autoindex())
+	else if (S_ISDIR(buff.st_mode) && !location.get_autoindex())
 		throw RequestException("403", "Forbidden", virtual_server.get_error_page("403"));
 
 	if (request->get_method() == "POST")
@@ -46,7 +46,7 @@ void		WebServ::_GET_HEAD_methods_handler(Client *http_object, struct stat* buff,
 
 	if (S_ISREG(buff->st_mode) || S_ISLNK(buff->st_mode))
 		http_object->set_response(_static_file_handler(*request, path_to_target));
-	else if (S_ISDIR(buff->st_mode) && location.is_autoindex())
+	else if (S_ISDIR(buff->st_mode) && location.get_autoindex())
 		http_object->set_response(_autoindex_handler(*request, path_to_target));
 }
 
@@ -58,7 +58,12 @@ Response*	WebServ::_static_file_handler(const Request& request, const std::strin
 	response->set_status_code("200");
 	response->add_header("Content-Length", std::to_string(body_response.length()));
 	response->add_header("Last-modified", last_modified);
-	response->add_header("Connection", "Close");
+
+	if (response->get_header("Connection") == "close")
+		response->add_header("Connection", "Close");
+	else
+		response->add_header("Connection", "Keep-alive");
+
 	if (request.get_method() == "GET")
 		response->set_body(body_response);
 	return (response);

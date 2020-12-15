@@ -20,12 +20,28 @@
 # include "Location.hpp"
 # include "libft.hpp"
 
-/* lvs - list virtual servers */
+enum {
+    server_names_d,
+    error_page_d,
+    limit_body_size_d,
+    host_d,
+    port_d,
+    location_d
+};
+
+enum {
+    allow_methods_d,
+    root_d,
+    autoindex_d,
+    index_d,
+    cgi_pass_d,
+    extension_d,
+};
 
 class	ParseConfigFile {
 private:
 	std::string		_line_surplus;
-	char			*_filename;
+	char*           _filename;
 	int 			_fd;
 
 	VirtualServer				_parse_vs_directive();

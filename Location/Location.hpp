@@ -34,9 +34,8 @@ enum {
 };
 
 enum {
-	_default,
-	cgi,
-	proxy
+	default_location = true,
+	cgi_location = false,
 };
 
 class	Location {
@@ -46,20 +45,18 @@ private:
 	std::string			_path;
 	std::string			_root;
 	std::string			_cgi_pass;
-	std::string			_proxy_pass;
-	bool				_autoindex;
 	std::string			_index;
-	int 				_location_type;
+	bool				_autoindex;
+	bool 				_location_type;
 
 public:
 	Location();
 	~Location() = default;
 
-	void						set_location_type(int location_type);
+	void						set_location_type(bool location_type);
 	void						set_root(const std::string&);
 	void						set_index(const std::string&);
 	void						set_cgi_path(const std::string&);
-	void						set_proxy_pass(const std::string &proxyPass);
 
 	void						set_autoindex(bool);
 	void						set_path(const std::string& path);
@@ -75,10 +72,10 @@ public:
 
 	const	std::string&		get_root() const;
 	const	std::vector<bool>&	get_allow_methods() const;
-	int							get_location_type() const;
+	bool get_location_type() const;
 
 	bool						is_allow_method(const std::string&) const;
-	bool						is_autoindex() const;
+	bool						get_autoindex() const;
 };
 
 #endif //WEBSERV_LOCATION_HPP

@@ -23,10 +23,8 @@ void	Request::set_port(const std::string& port) { _port = port; }
 void	Request::add_header(const std::pair<std::string, std::string>& header) {
 	_headers[header.first] = header.second;
 }
-const std::string&	Request::get_header(const std::string& header) const {
-	return _headers.at(header);
-}
 
+const std::string&	Request::get_header(const std::string& header) { return (_headers[header]); }
 const std::string&	Request::get_method() const { return (_method); }
 const std::string&	Request::get_target() const { return (_target); }
 const std::string&	Request::get_host() const { return (_host); }

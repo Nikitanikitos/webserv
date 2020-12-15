@@ -26,7 +26,6 @@ public:
 	ThreadPool();
 	~ThreadPool();
 
-	pthread_mutex_t*		get_read_write_in_queue_mutex() const;
 	bool					queue_is_empty() const;
 
 	void					lock_queue_mutex();
@@ -35,6 +34,5 @@ public:
 	void 					push_task(Client*);
 
 };
-
 
 #endif //WEBSERV_THREADPOOL_HPP

@@ -37,7 +37,7 @@
 
 class	Request {
 private:
-	typedef		std::map<std::string, std::string>		_headers_t;
+	typedef		std::map<const std::string, std::string>		_headers_t;
 
 	std::string				_method;
 	std::string				_target;
@@ -51,19 +51,19 @@ public:
 	Request();
 	virtual ~Request();
 
-	void								add_header(const std::pair<std::string, std::string>&);
+	void							add_header(const std::pair<std::string, std::string>&);
 
-	void								set_port(const std::string&);
-	void							 	set_host(const std::string&);
-	void								set_target(const std::string&);
-	void								set_method(const std::string&);
+	void							set_port(const std::string&);
+	void						 	set_host(const std::string&);
+	void							set_target(const std::string&);
+	void							set_method(const std::string&);
 
-	const std::string&					get_host() const;
-	const std::string&					get_method() const;
-	const std::string&					get_target() const;
-	const std::string&					get_port() const;
-	const std::string&					get_body() const;
-	const std::string&					get_header(const std::string&) const;
+	const std::string&				get_host() const;
+	const std::string&				get_method() const;
+	const std::string&				get_target() const;
+	const std::string&				get_port() const;
+	const std::string&				get_body() const;
+	const std::string&				get_header(const std::string&);
 };
 
 #endif //WEBSERV_REQUEST_HPP

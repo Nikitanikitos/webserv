@@ -50,8 +50,6 @@ void	WebServ::generate_response(Client *client) {
 //				_default_handler(client, virtual_server, location);
 ////			case cgi:
 ////				_cgi_handler(request, virtual_server, location, client_socket);
-////			case proxy:
-////				_proxy_handler(request, virtual_server, location, client_socket);
 //		}
 //	}
 //	catch (Request301Redirect* redirect_301) {

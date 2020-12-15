@@ -84,10 +84,10 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 			return virtual_server;
 		}
 		switch (_getIndexOfArg(trimmedStr[0], serverCurrentFields, 6)) {
-			case 0: // server_names
+			case server_names_d:
 				for (size_t i = 1; i < trimmedStr.size(); ++i)
 					virtual_server.add_server_name(trimmedStr[i]);
-			case 1: { // error_page
+			case error_page_d: {
 				if (trimmedStr.size() == 3)
 					virtual_server.add_error_page(trimmedStr[1], trimmedStr[2]);
 				else
@@ -95,20 +95,20 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 				// trimmedStr[1] - код
 				// trimmedStr[2] - адрес
 			}
-			case 2: { // limit_body_size
+			case limit_body_size_d: {
 				if (trimmedStr.size() == 2 && ONLY_DIGITS(trimmedStr[1])) {
 					virtual_server.set_limit_client_body_size(std::stoi(trimmedStr[1]));
 				}
 				else
 					throw std::exception(); // TODO error
 			}
-			case 3: { // host
+			case host_d: {
 				if (trimmedStr.size() == 2)
 					virtual_server.set_host(trimmedStr[1]);
 				else
 					throw std::exception(); // TODO error
 			}
-			case 4: { // port
+			case port_d: {
 				// TODO multiple ports
 				if (trimmedStr.size() > 1)
 					for (int i = 1; i < trimmedStr.size(); ++i)
@@ -116,7 +116,7 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 				else
 					throw std::exception(); // TODO error
 			}
-			case 5: { // location
+			case location_d: {
 				if (trimmedStr.size() == 2)
 					virtual_server.add_location(_parse_location_directive(trimmedStr[1]));
 				else
@@ -130,10 +130,9 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 }
 
 Location			ParseConfigFile::_parse_location_directive(std::string const &locationAttribute) {
-	/* Метод будет возвращать объект класса Route со всеми инициализированными полями */
+	Location        location;
+	std::string     line;
 
-	Location location;
-	std::string line;
 	location.set_path(locationAttribute);
 	while (ft_getline(_fd, line)) {
 		std::vector<std::string> trimmedStr = _getArgsFromLine(line);
@@ -144,7 +143,7 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 			return location;
 		}
 		switch (_getIndexOfArg(trimmedStr[0], locationCurrentFields, 7)) {
-			case 0: { // allow_methods
+			case allow_methods_d: {
 				if (trimmedStr.size() == 1)
 					throw std::exception(); // todo error
 				location.erase_accepted_methods();
@@ -165,12 +164,12 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 						throw std::exception(); // TODO error
 				}
 			}
-			case 1: { // root
+			case root_d: {
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
 				location.set_root(trimmedStr[1]);
 			}
-			case 2: { // autoindex
+			case autoindex_d: {
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
 				if (trimmedStr[1] == "on")
@@ -180,27 +179,21 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 				else
 					throw std::exception(); // todo error
 			}
-			case 3: { // index
+			case index_d: {
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
 				location.set_index(trimmedStr[1]);
 			}
-			case 4: { // cgi_pass
+			case cgi_pass_d: {
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
-				location.set_location_type(cgi);
+				location.set_location_type(cgi_location);
 				location.set_cgi_path(trimmedStr[1]);
 			}
-			case 5: { // extension
+			case extension_d: {
 				if (trimmedStr.size() != 2)
 					throw std::exception(); // todo error
 				location.set_extension(trimmedStr[1]);
-			}
-			case 6: { // proxy_pass
-				if (trimmedStr.size() != 2)
-					throw std::exception(); // todo error
-				location.set_location_type(proxy);
-				location.set_proxy_pass(trimmedStr[1]);
 			}
 			default:
 				throw std::exception(); // TODO error
