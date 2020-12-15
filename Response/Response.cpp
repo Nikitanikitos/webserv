@@ -13,7 +13,9 @@
 #include "Response.hpp"
 
 Response::Response() : _body() { }
-Response::Response(std::string& status_code) : _status_code(status_code), _body() { }
+Response::Response(const std::string& status_code, const std::string& message_phrase) :
+														_status_code(status_code), _message_phrase(message_phrase) { }
+
 Response::~Response() = default;
 
 void				Response::set_status_code(const std::string& status_code) { _status_code = status_code; }
@@ -54,3 +56,4 @@ void	Response::clear() {
 	_body.clear();
 	_message_phrase.clear();
 }
+

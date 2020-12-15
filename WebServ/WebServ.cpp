@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/15 01:32:22 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/15 21:14:46 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,17 @@ void	WebServ::_add_new_client(fd_set& readfd_set) {
 	int 	new_client;
 
 	for (int i = 0; i < _sockets.size(); ++i) {
+		struct sockaddr_in		sock_addr;
+		size_t					size;
+		size = sizeof (sock_addr);
+		ft_memset(&sock_addr, 0, sizeof(sock_addr));
 		if (FD_ISSET(_sockets[i], &readfd_set)) {
-			while ((new_client = accept(_sockets[i], nullptr, nullptr)) != -1)
+			while ((new_client = accept(_sockets[i], (struct sockaddr*) &sock_addr,
+										reinterpret_cast<socklen_t *>(&size)) != -1))
 				_clients.push_back(new Client(new_client, read_request_));
 		}
+		char *ip = inet_ntoa(sock_addr.sin_addr);
+		std::cout << ip << std::endl;
 	}
 }
 

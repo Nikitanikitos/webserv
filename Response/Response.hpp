@@ -29,7 +29,7 @@ protected:
 
 public:
 	Response();
-	explicit Response(std::string&);
+	explicit Response(const std::string& status_code, const std::string& message_phrase);
 	virtual ~Response();
 
 	const std::string&		get_header(const std::string& key);

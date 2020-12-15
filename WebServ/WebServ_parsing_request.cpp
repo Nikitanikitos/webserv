@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/15 20:06:14 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/15 20:06:14 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 20:07:05 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ void	WebServ::parsing_request(Client *client) {
 
 	try {
 		Request		request;
-
+		bool 		takeHost = false;
 		std::vector<std::string> args = _trimRequest(client->get_buffer());
 		if (!_checkCountSpace(args[0], 2))
 			throw ResponseException("400", "Bad Request", "400.html");
@@ -92,8 +92,12 @@ void	WebServ::parsing_request(Client *client) {
 				if (line.size() == 1 || line.size() > 2 || line[0].back() != ':')
 					throw ResponseException("400", "Bad Request", "400.html");
 				std::string key = line[0].substr(0, line[0].size() - 1);
+				if (key == "host")
+					takeHost = true;
 				request.add_header(std::make_pair(key, line[1]));
 			}
+			if (!takeHost)
+				throw ResponseException("400", "Bad Request", "400.html");
 		}
 		client->set_request(request);
 		client->next_stage();

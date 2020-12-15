@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/12 04:39:35 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/15 21:32:55 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,8 @@ int		VirtualServer::_create_socket(sockaddr_in& sock_addr) {
 	int		fd_socket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	int 	opt;
 
-	setsockopt(fd_socket, SOL_SOCKET,  SO_REUSEADDR, &opt, sizeof(opt));
+//	setsockopt(fd_socket, SOL_SOCKET,  SO_REUSEADDR, &opt, sizeof(opt));
+
 	if (bind(fd_socket, (struct sockaddr*) &sock_addr, sizeof(sock_addr)) < 0)
 		throw std::exception();
 	fcntl(fd_socket, F_SETFL, O_NONBLOCK);

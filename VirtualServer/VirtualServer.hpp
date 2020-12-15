@@ -33,7 +33,7 @@ private:
 	std::map<std::string, std::string>		_error_pages;
 	std::vector<Location>					_list_locations;
 
-	void	_init_sock_addr(struct sockaddr_in&, const std::string&);
+	void			_init_sock_addr(struct sockaddr_in&, const std::string&);
 
 	static int		_create_socket(struct sockaddr_in&);
 

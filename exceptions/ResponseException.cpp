@@ -13,7 +13,7 @@
 #include "ResponseException.hpp"
 
 ResponseException::ResponseException(const std::string& status_code, const std::string& message_phrase,
-									 const std::string& error_page) : _error_page(error_page) { }
+									 const std::string& error_page) : Response(status_code, message_phrase), _error_page(error_page) { }
 
 void ResponseException::generate_response() {
 	std::string			body_response = ft_getfile(_error_page.c_str());
