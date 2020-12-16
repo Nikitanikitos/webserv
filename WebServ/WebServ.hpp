@@ -57,7 +57,8 @@ private:
 	void		close_connection(Client*);
 
 	static std::string			_get_path_to_target(const Request&, const Location&);
-	std::vector<std::string>	_getArgs(std::string const& line) const;
+	std::vector<std::string>	_getArgs(const std::string &line, char separate) const;
+	std::vector<std::string>	_getKeyValue(const std::string &line) const;
 	std::vector<std::string>	_trimRequest(std::string const& buff) const;
 	bool						_checkCountSpace(std::string const& line, int numSpaces) const;
 	bool						_checkMethod(std::string method, int size) const;
