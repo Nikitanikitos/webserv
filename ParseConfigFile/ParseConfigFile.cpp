@@ -64,12 +64,16 @@ int 			ParseConfigFile::_GetIndexOfArg(std::string const &arg, std::string *arr,
 	return -1;
 }
 
-bool ParseConfigFile::_CheckTabulation(const std::string &line, int expectedTabCount) const {
+bool			ParseConfigFile::_CheckTabulation(const std::string &line, int expectedTabCount) const {
 	for (int i = 0; i < expectedTabCount; ++i) {
 		if (line.compare(TAB_SIZE * i, TAB_SIZE, TAB))
 			return false;
 	}
 	return line[expectedTabCount * TAB_SIZE] != ' ';
+}
+
+bool			ParseConfigFile::_checkPort(int port) {
+	return (port <= 262143 && port >= 1024);
 }
 
 VirtualServer	ParseConfigFile::_ParseVsDirective() {
@@ -85,6 +89,8 @@ VirtualServer	ParseConfigFile::_ParseVsDirective() {
 			continue;
 		else if (!_CheckTabulation(line, 1)) {
 			_line_surplus = line;
+			if (virtual_server.GetPort().empty() || virtual_server.GetIp().empty())
+				throw ParseConfigFileException("Port and Host can not be empty");
 			return virtual_server;
 		}
 		std::vector<std::string> trimmedStr = _GetArgsFromLine(line);
@@ -113,9 +119,8 @@ VirtualServer	ParseConfigFile::_ParseVsDirective() {
 					throw ParseConfigFileException("Wrong host parameter");
 				break;
 			case port_d:
-				if (trimmedStr.size() > 1)
-					for (int i = 1; i < trimmedStr.size(); ++i)
-						virtual_server.SetPort(trimmedStr[i]);
+				if (trimmedStr.size() == 2 && _checkPort(stoi(trimmedStr[1])))
+					virtual_server.SetPort(trimmedStr[1]);
 				else
 					throw ParseConfigFileException("Wrong port parameter");
 				break;
@@ -129,6 +134,8 @@ VirtualServer	ParseConfigFile::_ParseVsDirective() {
 				throw ParseConfigFileException("Unknown parameter");
 		}
 	}
+	if (virtual_server.GetPort().empty() || virtual_server.GetIp().empty())
+		throw ParseConfigFileException("Port and Host can not be empty");
 	return virtual_server;
 }
 
@@ -165,11 +172,17 @@ void				ParseConfigFile::_SetAutoindexInLocation(Location &location, const std::
 		throw ParseConfigFileException("Unknown option to autoindex");
 }
 
-Location			ParseConfigFile::_ParseLocationDirective(std::string const &locationAttribute) {
+std::string&		ParseConfigFile::_checkLocationPath(std::string &path) {
+	if (path[0] != '/')
+		path.insert(path.begin(), '/');
+	return path;
+}
+
+Location			ParseConfigFile::_ParseLocationDirective(std::string &locationAttribute) {
 	Location        location;
 	std::string     line;
 
-	location.SetPath(locationAttribute);
+	location.SetPath(_checkLocationPath(locationAttribute));
 	while (ft_getline(_fd, line)) {
 		if (line.empty() || line[0] == '#')
 			continue;

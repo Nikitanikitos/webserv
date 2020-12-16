@@ -46,7 +46,7 @@ private:
 
 	VirtualServer				_ParseVsDirective();
 
-	Location					_ParseLocationDirective(std::string const & locationAttribute);
+	Location					_ParseLocationDirective(std::string &locationAttribute);
 
 	std::vector<std::string>	_GetArgsFromLine(std::string &input) const;
 
@@ -55,6 +55,8 @@ private:
 	bool 						_CheckTabulation(std::string const &line, int expectedTabCount) const;
 	void 						_AddAllowMethodsToLocation(Location &location, std::vector<std::string> const& trimmedStr);
 	void 						_SetAutoindexInLocation(Location &location, std::vector<std::string> const& trimmedStr);
+	std::string&				_checkLocationPath(std::string &path);
+	bool 						_checkPort(int port);
 
 public:
 	explicit ParseConfigFile(char *filename);
