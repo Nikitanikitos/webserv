@@ -42,31 +42,28 @@ public:
 	Client(int socket, int stage, const std::string& ip, const std::string& port);
 	virtual ~Client();
 
-	const std::string&			get_buffer() const;
+	const std::string&			GetBuffer() const;
+	const std::string&			GetPort() const;
+	const std::string&			GetIp() const;
+	Request&					GetRequest();
+	Response&					GetResponse();
+	int							GetStage() const;
+	int							GetSocket() const;
 
-	const std::string& get_port() const;
+	void						SetProcessed(bool processed);
+	void						SetRequest(const Request &request);
+	void						SetResponse(const Response &response);
+	void						SetStage(int stage);
 
-	const std::string& get_ip() const;
+	void						AddToBuffer(char *data);
 
-	Request&					get_request();
-	Response&					get_response();
-	int							get_stage() const;
-	int							get_socket() const;
+	void						NextStage();
 
-	void						set_processed(bool processed);
-	void						set_request(const Request &request);
-	void						set_response(const Response &response);
-	void						set_stage(int stage);
+	bool						InTaskQueue();
 
-	void						add_to_buffer(char *);
-	void						clear_buffer();
-
-	void						next_stage();
-
-	bool						in_task_queue();
-
-	void						clear_response();
-	void						clear_request();
+	void						ClearBuffer();
+	void						ClearResponse();
+	void						ClearRequest();
 };
 
 #endif //WEBSERV_CLIENT_HPP

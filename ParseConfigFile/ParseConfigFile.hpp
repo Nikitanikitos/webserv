@@ -44,35 +44,35 @@ private:
 	char*           _filename;
 	int 			_fd;
 
-	VirtualServer				_parse_vs_directive();
+	VirtualServer				_ParseVsDirective();
 
-	Location					_parse_location_directive(std::string const &);
+	Location					_ParseLocationDirective(std::string const & locationAttribute);
 
-	std::vector<std::string>	_getArgsFromLine(std::string &input) const;
+	std::vector<std::string>	_GetArgsFromLine(std::string &input) const;
 
-	int 						_getIndexOfArg(std::string const &arg, std::string *arr, int size) const;
+	int 						_GetIndexOfArg(std::string const &arg, std::string *arr, int size) const;
 
-	bool 						_checkTabulation(std::string const &line, int expectedTabCount) const;
-
-	void 						_add_allow_methods_to_location(Location &location, std::vector<std::string> const& trimmedStr);
-
-	void 						_set_autoindex_in_location(Location &location, std::vector<std::string> const& trimmedStr);
+	bool 						_CheckTabulation(std::string const &line, int expectedTabCount) const;
+	void 						_AddAllowMethodsToLocation(Location &location, std::vector<std::string> const& trimmedStr);
+	void 						_SetAutoindexInLocation(Location &location, std::vector<std::string> const& trimmedStr);
 
 public:
 	explicit ParseConfigFile(char *filename);
 	~ParseConfigFile() = default;
 
-	std::vector<VirtualServer> parse_file(std::string &number_of_workers);
-	/* метод будет возвращать список виртуальных серверов, в которых есть список роутеров */
+	std::vector<VirtualServer> ParseFile(std::string &number_of_workers);
+
+	static std::string		server_current_fields[6];
+	static std::string		location_current_fields[7];
+
 	class ParseConfigFileException: public std::exception {
 	private:
 		std::string 			_message;
 	public:
 		ParseConfigFileException(std::string const &message);
-		virtual const char* what() const throw();
+
+		virtual const char*		what() const throw();
 	};
-	static std::string serverCurrentFields[6];
-	static std::string locationCurrentFields[7];
 };
 
 #endif //WEBSERV_PARSECONFIGFILE_HPP

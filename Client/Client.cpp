@@ -24,31 +24,31 @@ Client::~Client() {
 	free(_proccess_mutex);
 }
 
-void			Client::next_stage() { _stage++; }
+void			Client::NextStage() { _stage++; }
 
-void			Client::set_request(const Request &request) { _request = request; }
-void			Client::set_response(const Response &response) { _response = response; }
-void			Client::set_processed(bool processed) { _in_proccessed = processed; }
-void			Client::set_stage(int stage) { _stage = stage; }
+void			Client::SetRequest(const Request &request) { _request = request; }
+void			Client::SetResponse(const Response &response) { _response = response; }
+void			Client::SetProcessed(bool processed) { _in_proccessed = processed; }
+void			Client::SetStage(int stage) { _stage = stage; }
 
-Request&		Client::get_request() { return (_request); }
-Response&		Client::get_response() { return (_response); }
+Request&		Client::GetRequest() { return (_request); }
+Response&		Client::GetResponse() { return (_response); }
 
-int				Client::get_stage() const { return (_stage); }
-int				Client::get_socket() const { return (_socket); }
+int				Client::GetStage() const { return (_stage); }
+int				Client::GetSocket() const { return (_socket); }
 
-void			Client::add_to_buffer(char *data) { _buffer.append(data); }
+void			Client::AddToBuffer(char *data) { _buffer.append(data); }
 
-const std::string&	Client::get_buffer() const { return (_buffer); }
+const std::string&	Client::GetBuffer() const { return (_buffer); }
 
 
-bool			Client::in_task_queue() { return (_in_proccessed); }
+bool			Client::InTaskQueue() { return (_in_proccessed); }
 
-void			Client::clear_buffer() { _buffer.clear(); }
-void			Client::clear_response() { _response.clear(); }
-void			Client::clear_request() { _request.clear(); }
+void			Client::ClearBuffer() { _buffer.clear(); }
+void			Client::ClearResponse() { _response.Clear(); }
+void			Client::ClearRequest() { _request.Clear(); }
 
-const std::string& Client::get_ip() const { return (_ip);
+const std::string& Client::GetIp() const { return (_ip);
 }
 
-const std::string& Client::get_port() const { return _port; }
+const std::string& Client::GetPort() const { return _port; }

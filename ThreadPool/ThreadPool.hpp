@@ -26,13 +26,12 @@ public:
 	ThreadPool();
 	~ThreadPool();
 
-	bool					queue_is_empty() const;
+	bool					QueueIsEmpty() const;
 
-	void					lock_queue_mutex();
-	void					unlock_queue_mutex();
-	Client*					pop_task();
-	void 					push_task(Client*);
-
+	void					LockQueueMutex();
+	void					UnlockQueueMutex();
+	void 					PushTask(Client* client);
+	Client*					PopTask();
 };
 
 #endif //WEBSERV_THREADPOOL_HPP

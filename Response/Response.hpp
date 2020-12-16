@@ -32,17 +32,17 @@ public:
 	explicit Response(const std::string& status_code, const std::string& message_phrase);
 	virtual ~Response();
 
-	const std::string&		get_header(const std::string& key);
-	const std::string&		get_buffer();
+	const std::string&		GetHeader(const std::string& key);
+	const std::string&		GetBuffer();
 
-	void			add_header(const std::string& key, const std::string& value);
-	void			set_status_code(const std::string&);
-	void			set_body(const std::string& body);
+	void					AddHeader(const std::string& key, const std::string& value);
+	void					SetStatusCode(const std::string& status_code);
+	void					SetBody(const std::string& body);
 
-	virtual void generate_response();
-	virtual int		send_response(int);
+	virtual void			GenerateResponse();
+	virtual int				SendResponse(int client_socket);
 
-	virtual void	clear();
+	virtual void			Clear();
 };
 
 #endif //WEBSERV_RESPONSE_HPP

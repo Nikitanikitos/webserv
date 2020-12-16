@@ -6,63 +6,59 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/16 00:16:20 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 12:13:57 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 #include <iostream>
 
-void	WebServ::read_request(Client *client) {
+void	WebServ::ReadRequest(Client *client) {
 	char	buff[512];
 	int 	bytes;
 	static int	w;
 
 	ft_memset(buff, 0, 512);
-	bytes = recv(client->get_socket(), buff, 512, 0);
-	client->add_to_buffer(buff);
-	if (client->get_buffer().rfind("\r\n\r\n") != std::string::npos)
-		client->next_stage();
+	bytes = recv(client->GetSocket(), buff, 512, 0);
+	client->AddToBuffer(buff);
+	if (client->GetBuffer().rfind("\r\n\r\n") != std::string::npos)
+		client->NextStage();
 }
 
-void	WebServ::generate_response(Client *client) {
-	Response*	response = new Response();
-
+void	WebServ::GenerateResponse(Client *client) {
 	try {
-		const VirtualServer&	virtual_server = _get_virtual_server(client);
-		const Location&			location = virtual_server.get_location(client->get_request());
+		const VirtualServer&	virtual_server = _GetVirtualServer(client);
+		const Location&			location = virtual_server.GetLocation(client->GetRequest());
 
-		chdir(location.get_root().c_str());
-//		if (location.get_location_type() == default_location)
-				_default_handler(client, virtual_server, location);
-//		else
-//			_cgi_handler(request, virtual_server, location, client_socket);
+		chdir(location.GetRoot().c_str());
+		_DefaultHandler(client, virtual_server, location);
 	}
 	catch (Request301Redirect& redirect_301) {
-		client->set_response(redirect_301);
+		client->SetResponse(redirect_301);
 	}
 	catch (ResponseException& request_error) {
-		client->set_response(request_error);
+		client->SetResponse(request_error);
 	}
-	client->next_stage();
+	client->GetResponse().GenerateResponse();
+	client->NextStage();
 }
 
-void	WebServ::send_response(Client* client) {
-	Response&	response = client->get_response();
+void	WebServ::SendResponse(Client* client) {
+	Response&	response = client->GetResponse();
 
-	response.send_response(client->get_socket());
-	if (response.get_buffer().empty()) {
-		if (response.get_header("Connection") == "close")
-			client->set_stage(close_connection_);
+	response.SendResponse(client->GetSocket());
+	if (response.GetBuffer().empty()) {
+		if (response.GetHeader("Connection") == "close")
+			client->SetStage(close_connection_);
 		else
-			client->set_stage(read_request_);
+			client->SetStage(read_request_);
 
-		client->clear_response();
-		client->clear_request();
-		client->clear_buffer();
+		client->ClearResponse();
+		client->ClearRequest();
+		client->ClearBuffer();
 	}
 }
 
-void	WebServ::close_connection(Client* client) {
-	close(client->get_socket());
+void	WebServ::CloseConnection(Client* client) {
+	close(client->GetSocket());
 }

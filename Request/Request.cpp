@@ -15,23 +15,22 @@
 Request::~Request() = default;
 Request::Request() = default;
 
-void	Request::set_method(const std::string& method) { _method = method; }
-void	Request::set_target(const std::string& target) { _target = target; }
-void	Request::set_host(const std::string& host) { _host = host; }
-void	Request::set_port(const std::string& port) { _port = port; }
+void	Request::SetMethod(const std::string& method) { _method = method; }
+void	Request::SetTarget(const std::string& target) { _target = target; }
+void	Request::SetHost(const std::string& host) { _host = host; }
+void	Request::SetPort(const std::string& port) { _port = port; }
 
-void	Request::add_header(const std::pair<std::string, std::string>& header) {
-	_headers[header.first] = header.second;
-}
+void Request::AddHeader(const std::string& key, const std::string& value)
+	{ _headers.insert(std::make_pair(key, value)); }
 
-const std::string&	Request::get_header(const std::string& header) { return (_headers[header]); }
-const std::string&	Request::get_method() const { return (_method); }
-const std::string&	Request::get_target() const { return (_target); }
-const std::string&	Request::get_host() const { return (_host); }
-const std::string&	Request::get_port() const { return (_port); }
-const std::string&	Request::get_body() const { return (_body); }
+const std::string&	Request::GetHeader(const std::string& header) { return (_headers[header]); }
+const std::string&	Request::GetMethod() const { return (_method); }
+const std::string&	Request::GetTarget() const { return (_target); }
+const std::string&	Request::GetHost() const { return (_host); }
+const std::string&	Request::GetPort() const { return (_port); }
+const std::string&	Request::GetBody() const { return (_body); }
 
-void Request::clear() {
+void Request::Clear() {
 	_body.clear();
 	_headers.clear();
 	_arguments.clear();
