@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/15 23:00:02 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 20:40:25 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ private:
 	void						_CgiHandler(const Request&, const VirtualServer&, const Location&, int);
 
 	static void					_PostMethodHandler(const Request& request, struct stat* buff, const VirtualServer& virtual_server);
-	static void					_GetHeadMethodsHandler(Client *http_object, struct stat* buff, const Location& location);
+	static void					_GetHeadMethodsHandler(Client *client, struct stat* buff, const Location& location);
 
 	static Response				_StaticFileHandler(const Request& request, const std::string& path_to_file);
 	static Response				_AutoindexHandler(const Request& request, const std::string& path_to_target);
@@ -66,6 +66,12 @@ private:
 	void						_AddClientInTaskQueue(fd_set &readfd_set);
 	void						_InitSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
 	std::vector<std::string>	_GetKeyValue(const std::string &line) const;
+
+	bool						_CheckError(Response& response, Client *client, const VirtualServer& virtual_server, struct stat& buff,
+					 																	std::string& path_to_target);
+	void						_SetErrorPage(Response& response, const Location& location, const VirtualServer& virtual_server,
+					   const Request& request);
+	std::string 				_GenerateErrorPage(const std::string& code) const;
 
 public:
 	explicit WebServ(int number_of_workers);

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/15 23:00:02 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 17:58:06 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,14 @@
 
 class	VirtualServer {
 private:
+	typedef std::map<std::string, std::string>		error_pages_t;
+
 	int										_socket;
 	std::string								_ip;
 	std::string								_port;
 	int										_limit_client_body_size;
 	std::vector<std::string>				_server_names;
-	std::map<std::string, std::string>		_error_pages;
+	error_pages_t							_error_pages;
 	std::vector<Location>					_list_locations;
 
 public:

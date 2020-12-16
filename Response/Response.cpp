@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/16 14:00:28 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 20:58:34 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,16 @@ void				Response::GenerateResponse() {
 		"Server:" + SP + SERVER_VERSION + CRLF
 		"Date:" + SP + ft_getdate() + CRLF);
 
+	_buffer.append("Content-length: " + std::to_string(_body.size()));
+	_buffer.append(CRLF);
 	for (const auto& header : _headers)
 		_buffer.append(header.first + ":" + SP + header.second + CRLF);
 	_buffer.append(CRLF);
-	_buffer.append(_body);
+	if (_body.size()) {
+		_buffer.append(_body);
+		_buffer.append(CRLF);
+		_buffer.append(CRLF);
+	}
 }
 
 int					Response::SendResponse(int client_socket) {
@@ -56,5 +62,13 @@ void	Response::Clear() {
 	_headers.clear();
 	_body.clear();
 	_message_phrase.clear();
+}
+
+void Response::SetLocationUri(const std::string& location_uri) {
+	_location_uri = location_uri;
+}
+
+const std::string& Response::GetStatusCode() const {
+	return _status_code;
 }
 

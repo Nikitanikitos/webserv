@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/16 13:50:34 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 13:51:14 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ void	WebServ::_AddNewClient(fd_set& readfd_set) {
 
 	for (int i = 0; i < _virtual_servers.size(); ++i) {
 		if (FD_ISSET(_virtual_servers[i].GetSocket(), &readfd_set)) {
-			while ((new_client = accept(_virtual_servers[i].GetSocket(), NULL, NULL)) != -1)
+			new_client = accept(_virtual_servers[i].GetSocket(), 0, 0);
+			if (new_client > 0)
 				_clients.push_back(new Client(new_client, read_request_, _virtual_servers[i].GetIp(),
 											  _virtual_servers[i].GetPort()));
 		}

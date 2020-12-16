@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/16 13:42:53 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 19:40:36 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,15 +50,6 @@ const std::string&					VirtualServer::GetIp() const { return (_ip); }
 const std::string&					VirtualServer::GetPort() const { return (_port); }
 const std::vector<std::string>&		VirtualServer::GetServerNames() const { return (_server_names); }
 
-const std::string&	VirtualServer::GetErrorPage(const std::string& status_code) const {
-	try {
-		return _error_pages.at(status_code);
-	}
-	catch (std::exception&) {
-		return ("");
-	}
-}
-
 int 		priority_compare(const std::string &string1, const std::string& string2) {
 	int 	result;
 
@@ -73,15 +64,20 @@ int 		priority_compare(const std::string &string1, const std::string& string2) {
 	return (result);
 }
 
-Location	VirtualServer::GetLocation(const Request& request) const {
+Location				VirtualServer::GetLocation(const Request& request) const {
 	for (int i = 0; i < _list_locations.size(); ++i) {
 		if (request.GetTarget().find(_list_locations[i].GetPath()) == 0)
 			return (_list_locations[i]);
 	}
-	throw ResponseException("404", "Not found", "404");
+	throw std::exception();
 }
 
-void	VirtualServer::AddErrorPage(const std::string& key, const std::string& value) { }
-void	VirtualServer::SetSocket(int socket) { _socket = socket; }
+void					VirtualServer::AddErrorPage(const std::string& key, const std::string& value)
+	{ _error_pages.insert(std::make_pair(key, value)); }
 
-int		VirtualServer::GetSocket() const { return (_socket); }
+const std::string&		VirtualServer::GetErrorPage(const std::string& status_code) const
+{ return _error_pages.at(status_code); }
+
+void					VirtualServer::SetSocket(int socket) { _socket = socket; }
+
+int						VirtualServer::GetSocket() const { return (_socket); }

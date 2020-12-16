@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exceptions.cpp                                     :+:      :+:    :+:   */
+/*   ResponseException.cpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 16:20:35 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/06 02:26:19 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/16 15:21:36 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,17 +32,4 @@ void ResponseException::GenerateResponse() {
 void	ResponseException::Clear() {
 	Response::Clear();
 	_error_page.clear();
-}
-
-Request301Redirect::Request301Redirect(const std::string& location)  : _location(location) { }
-
-void	Request301Redirect::GenerateResponse(int client_socket) const {
-	std::string			response;
-
-	response =
-			HTTP_VERSION + SP + _status_code + SP + _message_phrase + CRLF
-			"Server:" + SP + SERVER_VERSION + CRLF
-			"Date:" + SP + ft_getdate() + CRLF
-			"Location:" + SP + _location + CRLF
-			"Connection:" + SP + "close" + CRLF CRLF;
 }

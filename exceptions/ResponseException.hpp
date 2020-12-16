@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exceptions.hpp                                     :+:      :+:    :+:   */
+/*   ResponseException.hpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 16:04:10 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/06 02:10:36 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/16 15:22:25 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,27 +19,16 @@
 #include <Response.hpp>
 # include "libft.hpp"
 
-class	ResponseException : public std::exception, public Response {
+class	ResponseException : public Response {
 private:
 	std::string		_error_page;
 
 public:
 	ResponseException(const std::string& status_code, const std::string& message_phrase, const std::string &error_page);
-	~ResponseException() override = default;
+	virtual ~ResponseException() = default;
 
 	virtual void	GenerateResponse();
 	virtual void	Clear();
-};
-
-class	Request301Redirect : public std::exception, public Response  {
-private:
-	const std::string	_location;
-
-public:
-	explicit Request301Redirect(const std::string& location);
-	virtual ~Request301Redirect() = default;
-
-	virtual void	GenerateResponse(int) const;
 };
 
 #endif //WEBSERV_RESPONSEEXCEPTION_HPP
