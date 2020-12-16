@@ -60,7 +60,7 @@ private:
 	std::vector<std::string>	_getArgs(const std::string &line, char separate) const;
 	std::vector<std::string>	_getKeyValue(const std::string &line) const;
 	std::vector<std::string>	_trimRequest(std::string const& buff) const;
-	bool						_checkCountSpace(std::string const& line, int numSpaces) const;
+	bool						_checkCountSpace(std::string const& line, int num_spaces) const;
 	bool						_checkMethod(std::string method, int size) const;
 	void						_strToLower(std::string& str) const;
 

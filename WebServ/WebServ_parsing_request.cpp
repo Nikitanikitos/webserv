@@ -69,13 +69,13 @@ std::vector<std::string> WebServ::_trimRequest(std::string const& buff) const {
 	return (result);
 }
 
-bool	WebServ::_checkCountSpace(std::string const& line, int numSpaces) const { //TODO добавить в хедер
-	int countSpace = 0;
+bool	WebServ::_checkCountSpace(std::string const& line, int num_spaces) const { //TODO добавить в хедер
+	int count_space = 0;
 
 	for (int i = 0; i < line.size(); ++i)
 		if (line[i] == ' ')
-			++countSpace;
-	return countSpace == numSpaces;
+			++count_space;
+	return count_space == num_spaces;
 }
 
 bool	WebServ::_checkMethod(std::string method, int size) const { //TODO добавить в хедер
@@ -95,11 +95,11 @@ void	WebServ::parsing_request(Client *client) {
 
 	try {
 		Request						request;
-		bool						takeHost;
+		bool						take_host;
 		std::vector<std::string>	line;
 		std::vector<std::string>	args;
 
-		takeHost = false;
+		take_host = false;
 		args = _trimRequest(client->get_buffer());
 		if (!_checkCountSpace(args[0], 2))
 			throw ResponseException("400", "Bad Request", "400.html");
@@ -116,10 +116,10 @@ void	WebServ::parsing_request(Client *client) {
 					throw ResponseException("400", "Bad Request", "400.html");
 				std::string key = line[0].substr(0, line[0].size());
 				if (key == "host")
-					takeHost = true;
+					take_host = true;
 				request.add_header(std::make_pair(key, line[1]));
 			}
-			if (!takeHost)
+			if (!take_host)
 				throw ResponseException("400", "Bad Request", "400.html");
 		}
 		client->set_request(request);
