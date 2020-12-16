@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/15 23:17:23 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 13:50:34 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,17 +98,10 @@ const VirtualServer& WebServ::_GetVirtualServer(Client *client) const {
 }
 
 std::string		WebServ::_GetPathToTarget(const Request& request, const Location& location) {
-	std::string 	result = request.GetTarget().substr(0, location.GetPath().size());
+	std::string 	result = request.GetTarget();
 
-	if (result.empty()) {
-		if (int fd = open(location.GetIndex().c_str(), O_RDONLY) > 0) {
-			close(fd);
-			result.append(location.GetIndex());
-		}
-		else
-			result.append(".");
-	}
-	return (result);
+	result.erase(0, location.GetPath().size());
+	return (location.GetRoot() + "/" + result);
 }
 
 void WebServ::AddVirtualServer(VirtualServer &virtual_server) {

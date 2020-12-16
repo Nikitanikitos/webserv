@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/15 20:06:14 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/15 20:07:05 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 11:56:33 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void	WebServ::ParsingRequest(Client *client) {
 				std::string key = line[0].substr(0, line[0].size() - 1);
 				if (key == "host")
 					takeHost = true;
-				request.AddHeader(std::make_pair(key, line[1]), <#initializer#>);
+				request.AddHeader(key, line[1]);
 			}
 			if (!takeHost)
 				throw ResponseException("400", "Bad Request", "400.html");

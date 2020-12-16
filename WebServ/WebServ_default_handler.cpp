@@ -6,14 +6,14 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/03 23:04:25 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/12 08:05:39 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 12:09:08 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
 void WebServ::_DefaultHandler(Client *client, const VirtualServer& virtual_server, const Location& location) {
-	Request&			request = client->get_request();
+	Request&			request = client->GetRequest();
 	const std::string&	path_to_target = _GetPathToTarget(request, location);
 	struct stat			buff;
 
@@ -21,9 +21,9 @@ void WebServ::_DefaultHandler(Client *client, const VirtualServer& virtual_serve
 		throw ResponseException("404", "Not Found", virtual_server.GetErrorPage("404"));
 	else if (S_ISDIR(buff.st_mode) && request.GetTarget().back() != '/')
 		throw Request301Redirect("http://" + request.GetHost() + ":" + request.GetPort() + "/" + request.GetTarget() + "/");
-	else if (!location.is_allow_method(request.GetMethod()))
+	else if (!location.IsAllowMethod(request.GetMethod()))
 		throw ResponseException("405", "Method Not Allowed", virtual_server.GetErrorPage("405"));
-	else if (S_ISDIR(buff.st_mode) && !location.get_autoindex())
+	else if (S_ISDIR(buff.st_mode) && !location.GetAutoindex())
 		throw ResponseException("403", "Forbidden", virtual_server.GetErrorPage("403"));
 
 	if (request.GetMethod() == "POST")
@@ -41,13 +41,13 @@ void		WebServ::_PostMethodHandler(const Request& request, struct stat* buff,
 }
 
 void		WebServ::_GetHeadMethodsHandler(Client *http_object, struct stat* buff, const Location& location) {
-	Request&			request = http_object->get_request();
+	Request&			request = http_object->GetRequest();
 	const std::string&	path_to_target = _GetPathToTarget(request, location);
 
 	if (S_ISREG(buff->st_mode) || S_ISLNK(buff->st_mode))
-		http_object->set_response(_StaticFileHandler(request, path_to_target));
-	else if (S_ISDIR(buff->st_mode) && location.get_autoindex())
-		http_object->set_response(_AutoindexHandler(request, path_to_target));
+		http_object->SetResponse(_StaticFileHandler(request, path_to_target));
+	else if (S_ISDIR(buff->st_mode) && location.GetAutoindex())
+		http_object->SetResponse(_AutoindexHandler(request, path_to_target));
 }
 
 Response WebServ::_StaticFileHandler(const Request& request, const std::string& path_to_file) {

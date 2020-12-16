@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/15 02:28:59 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/16 14:00:28 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@ void				Response::SetBody(const std::string& body) { _body = body; }
 
 void				Response::AddHeader(const std::string& key, const std::string& value) {
 	_headers.insert(std::make_pair(key, value));
+	_headers[key] = value; // TODO каково хера...
 }
 
 const std::string&	Response::GetHeader(const std::string& key) { return (_headers[key]); }

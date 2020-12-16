@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/16 00:16:20 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 12:13:57 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,17 +26,12 @@ void	WebServ::ReadRequest(Client *client) {
 }
 
 void	WebServ::GenerateResponse(Client *client) {
-	Response*	response = new Response();
-
 	try {
 		const VirtualServer&	virtual_server = _GetVirtualServer(client);
 		const Location&			location = virtual_server.GetLocation(client->GetRequest());
 
 		chdir(location.GetRoot().c_str());
-//		if (location.get_location_type() == default_location)
 		_DefaultHandler(client, virtual_server, location);
-//		else
-//			_CgiHandler(request, virtual_server, location, client_socket);
 	}
 	catch (Request301Redirect& redirect_301) {
 		client->SetResponse(redirect_301);
@@ -44,6 +39,7 @@ void	WebServ::GenerateResponse(Client *client) {
 	catch (ResponseException& request_error) {
 		client->SetResponse(request_error);
 	}
+	client->GetResponse().GenerateResponse();
 	client->NextStage();
 }
 

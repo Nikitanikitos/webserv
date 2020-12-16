@@ -6,12 +6,13 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/15 23:11:02 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 13:42:53 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <errno.h>
 #include <iostream>
+#include <ResponseException.hpp>
 #include "VirtualServer.hpp"
 
 VirtualServer::VirtualServer() : _limit_client_body_size(0) { }
@@ -73,23 +74,14 @@ int 		priority_compare(const std::string &string1, const std::string& string2) {
 }
 
 Location	VirtualServer::GetLocation(const Request& request) const {
-	int 				priority;
-	const Location*		result;
-
-	priority = 0;
-	result = nullptr;
-	for (const auto& location : _list_locations)
-		if (request.GetTarget().find(location.GetPath().c_str(), 0, location.GetPath().size()) == 0) {
-			if (priority < location.GetPath().size()) {
-				priority = location.GetPath().size();
-				result = &location;
-			}
-		}
-	return (*result);
+	for (int i = 0; i < _list_locations.size(); ++i) {
+		if (request.GetTarget().find(_list_locations[i].GetPath()) == 0)
+			return (_list_locations[i]);
+	}
+	throw ResponseException("404", "Not found", "404");
 }
 
-void VirtualServer::AddErrorPage(const std::string& key, const std::string& value) { }
+void	VirtualServer::AddErrorPage(const std::string& key, const std::string& value) { }
+void	VirtualServer::SetSocket(int socket) { _socket = socket; }
 
-int VirtualServer::GetSocket() const { return (_socket); }
-
-void VirtualServer::SetSocket(int socket) { _socket = socket; }
+int		VirtualServer::GetSocket() const { return (_socket); }
