@@ -53,29 +53,26 @@ public:
 	Location();
 	~Location() = default;
 
-	void						set_location_type(bool location_type);
-	void						set_root(const std::string&);
-	void						set_index(const std::string&);
-	void						set_cgi_path(const std::string&);
+	void						AddAllowMethod(bool method);
+	void 						EraseAcceptedMethods();
+	bool						IsAllowMethod(const std::string& method) const;
 
-	void						set_autoindex(bool);
-	void						set_path(const std::string& path);
-	void 						set_extension(const std::string &extension);
+	void						SetLocationType(bool location_type);
+	void						SetRoot(const std::string& root);
+	void						SetIndex(const std::string& index);
+	void						SetCgiPath(const std::string& cgi_path);
+	void						SetAutoindex(bool autoindex);
+	void						SetPath(const std::string& path);
+	void 						SetExtension(const std::string &extension);
 
-	void						add_accepted_method(uint8_t);
-	void 						erase_accepted_methods();
+	const std::string&			GetIndex() const;
+	const std::string&			GetPath() const;
+	const std::string&			GetExtension() const;
+	const std::string&			GetRoot() const;
+	const std::vector<bool>&	GetAllowMethods() const;
+	bool						GetLocationType() const;
+	bool						GetAutoindex() const;
 
-	const std::string&			get_index() const;
-	const std::string&			get_path() const;
-	const std::string&			get_extension() const;
-
-
-	const	std::string&		get_root() const;
-	const	std::vector<bool>&	get_allow_methods() const;
-	bool get_location_type() const;
-
-	bool						is_allow_method(const std::string&) const;
-	bool						get_autoindex() const;
 };
 
 #endif //WEBSERV_LOCATION_HPP

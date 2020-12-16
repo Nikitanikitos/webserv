@@ -18,39 +18,39 @@ void*	worker(void* arg) {
 	ThreadPool&		thread_pool = web_serv._thread_pool;
 
 	while (true) {
-		thread_pool.lock_queue_mutex();
-		if (!thread_pool.queue_is_empty()) {
-			Client*		client = thread_pool.pop_task();
-			thread_pool.unlock_queue_mutex();
-			switch (client->get_stage()) {
+		thread_pool.LockQueueMutex();
+		if (!thread_pool.QueueIsEmpty()) {
+			Client*		client = thread_pool.PopTask();
+			thread_pool.UnlockQueueMutex();
+			switch (client->GetStage()) {
 				case read_request_:
-					web_serv.read_request(client);
+					web_serv.ReadRequest(client);
 					break;
 				case parsing_request_:
-					web_serv.parsing_request(client);
+					web_serv.ParsingRequest(client);
 					break;
 				case generate_response_:
-					web_serv.generate_response(client);
+					web_serv.GenerateResponse(client);
 					break;
 				case send_response_:
-					web_serv.send_response(client);
+					web_serv.SendResponse(client);
 					break;
 				case close_connection_:
-					web_serv.close_connection(client);
+					web_serv.CloseConnection(client);
 					break;
 			}
-			if (client->get_stage() != read_request_ && client->get_stage() != close_connection_)
-				thread_pool.push_task(client);
+			if (client->GetStage() != read_request_ && client->GetStage() != close_connection_)
+				thread_pool.PushTask(client);
 			else
-				client->set_processed(false);
+				client->SetProcessed(false);
 		}
 		else
-			thread_pool.unlock_queue_mutex();
+			thread_pool.UnlockQueueMutex();
 		usleep(500);
 	}
 }
 
-void		WebServ::_create_workers() {
+void		WebServ::_CreateWorkers() {
 	pthread_t		worker_thread;
 
 	for (int i = 0; i < _number_workers; ++i) {

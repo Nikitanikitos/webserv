@@ -51,21 +51,21 @@ public:
 	Request();
 	virtual ~Request();
 
-	void							add_header(const std::pair<std::string, std::string>&);
+	void							AddHeader(const std::string& key, const std::string& value);
 
-	void							set_port(const std::string&);
-	void						 	set_host(const std::string&);
-	void							set_target(const std::string&);
-	void							set_method(const std::string&);
+	void							SetPort(const std::string& port);
+	void						 	SetHost(const std::string& host);
+	void							SetTarget(const std::string& target);
+	void							SetMethod(const std::string& method);
 
-	const std::string&				get_host() const;
-	const std::string&				get_method() const;
-	const std::string&				get_target() const;
-	const std::string&				get_port() const;
-	const std::string&				get_body() const;
-	const std::string&				get_header(const std::string&);
+	const std::string&				GetHost() const;
+	const std::string&				GetMethod() const;
+	const std::string&				GetTarget() const;
+	const std::string&				GetPort() const;
+	const std::string&				GetBody() const;
+	const std::string&				GetHeader(const std::string& header);
 
-	void							clear();
+	void							Clear();
 };
 
 #endif //WEBSERV_REQUEST_HPP

@@ -16,7 +16,7 @@
 # define TAB "    "
 # define TAB_SIZE 4
 
-std::string ParseConfigFile::serverCurrentFields[6] = {
+std::string ParseConfigFile::server_current_fields[6] = {
 		"server_names",
 		"error_page",
 		"limit_body_size",
@@ -25,7 +25,7 @@ std::string ParseConfigFile::serverCurrentFields[6] = {
 		"location"
 };
 
-std::string ParseConfigFile::locationCurrentFields[7] = {
+std::string ParseConfigFile::location_current_fields[7] = {
 		"allow_methods",
 		"root",
 		"autoindex",
@@ -43,7 +43,7 @@ const char*					ParseConfigFile::ParseConfigFileException::what() const throw() 
 	return _message.c_str();
 }
 
-std::vector<std::string>	ParseConfigFile::_getArgsFromLine(std::string &input) const {
+std::vector<std::string>	ParseConfigFile::_GetArgsFromLine(std::string &input) const {
 	std::vector<std::string>	result;
 	size_t						pos_find;
 
@@ -57,14 +57,14 @@ std::vector<std::string>	ParseConfigFile::_getArgsFromLine(std::string &input) c
 	return (result);
 }
 
-int 			ParseConfigFile::_getIndexOfArg(std::string const &arg, std::string *arr, int size) const {
+int 			ParseConfigFile::_GetIndexOfArg(std::string const &arg, std::string *arr, int size) const {
 	for (int index = 0; index < size; ++index)
 		if (arr[index] == arg)
 			return index;
 	return -1;
 }
 
-bool ParseConfigFile::_checkTabulation(const std::string &line, int expectedTabCount) const {
+bool ParseConfigFile::_CheckTabulation(const std::string &line, int expectedTabCount) const {
 	for (int i = 0; i < expectedTabCount; ++i) {
 		if (line.compare(TAB_SIZE * i, TAB_SIZE, TAB))
 			return false;
@@ -72,7 +72,7 @@ bool ParseConfigFile::_checkTabulation(const std::string &line, int expectedTabC
 	return line[expectedTabCount * TAB_SIZE] != ' ';
 }
 
-VirtualServer	ParseConfigFile::_parse_vs_directive() {
+VirtualServer	ParseConfigFile::_ParseVsDirective() {
 	VirtualServer virtual_server;
 	std::string line;
 
@@ -83,45 +83,45 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 		}
 		if (line.empty() || line[0] == '#')
 			continue;
-		else if (!_checkTabulation(line, 1)) {
+		else if (!_CheckTabulation(line, 1)) {
 			_line_surplus = line;
 			return virtual_server;
 		}
-		std::vector<std::string> trimmedStr = _getArgsFromLine(line);
+		std::vector<std::string> trimmedStr = _GetArgsFromLine(line);
 
-		switch (_getIndexOfArg(trimmedStr[0], serverCurrentFields, 6)) {
+		switch (_GetIndexOfArg(trimmedStr[0], server_current_fields, 6)) {
 			case server_names_d:
 				for (size_t i = 1; i < trimmedStr.size(); ++i)
-					virtual_server.add_server_name(trimmedStr[i]);
+					virtual_server.AddServerName(trimmedStr[i]);
 				break;
 			case error_page_d:
 				if (trimmedStr.size() == 3)
-					virtual_server.add_error_page(trimmedStr[1], trimmedStr[2]);
+					virtual_server.AddErrorPage(trimmedStr[1], trimmedStr[2]);
 				else
 					throw ParseConfigFileException("Wrong error page parameter");
 				break;
 			case limit_body_size_d:
 				if (trimmedStr.size() == 2 && ONLY_DIGITS(trimmedStr[1]))
-					virtual_server.set_limit_client_body_size(std::stoi(trimmedStr[1]));
+					virtual_server.SetLimitClientBodySize(std::stoi(trimmedStr[1]));
 				else
 					throw ParseConfigFileException("Wrong limit body size parameter");
 				break;
 			case host_d:
 				if (trimmedStr.size() == 2)
-					virtual_server.set_ip(trimmedStr[1]);
+					virtual_server.SetIp(trimmedStr[1]);
 				else
 					throw ParseConfigFileException("Wrong host parameter");
 				break;
 			case port_d:
 				if (trimmedStr.size() > 1)
 					for (int i = 1; i < trimmedStr.size(); ++i)
-						virtual_server.set_port(trimmedStr[i]);
+						virtual_server.SetPort(trimmedStr[i]);
 				else
 					throw ParseConfigFileException("Wrong port parameter");
 				break;
 			case location_d:
 				if (trimmedStr.size() == 2)
-					virtual_server.add_location(_parse_location_directive(trimmedStr[1]));
+					virtual_server.AddLocation(_ParseLocationDirective(trimmedStr[1]));
 				else
 					throw ParseConfigFileException("Wrong location path parameter");
 				break;
@@ -132,80 +132,80 @@ VirtualServer	ParseConfigFile::_parse_vs_directive() {
 	return virtual_server;
 }
 
-void				ParseConfigFile::_add_allow_methods_to_location(Location &location, const std::vector<std::string> &trimmedStr) {
+void				ParseConfigFile::_AddAllowMethodsToLocation(Location &location, const std::vector<std::string> &trimmedStr) {
 	if (trimmedStr.size() == 1)
 		throw ParseConfigFileException("Allow methods must contain at least 1 parameter");
-	location.erase_accepted_methods();
+	location.EraseAcceptedMethods();
 	for (int i = 1; i < trimmedStr.size(); ++i) {
 		if (trimmedStr[i] == "GET")
-			location.add_accepted_method(GET);
+			location.AddAllowMethod(GET);
 		else if (trimmedStr[i] == "HEAD")
-			location.add_accepted_method(HEAD);
+			location.AddAllowMethod(HEAD);
 		else if (trimmedStr[i] == "POST")
-			location.add_accepted_method(POST);
+			location.AddAllowMethod(POST);
 		else if (trimmedStr[i] == "PUT")
-			location.add_accepted_method(PUT);
+			location.AddAllowMethod(PUT);
 		else if (trimmedStr[i] == "DELETE")
-			location.add_accepted_method(DELETE);
+			location.AddAllowMethod(DELETE);
 		else if (trimmedStr[i] == "OPTIONS")
-			location.add_accepted_method(OPTIONS);
+			location.AddAllowMethod(OPTIONS);
 		else
 			throw ParseConfigFileException("Unknown allow method parameter");
 	}
 }
 
-void				ParseConfigFile::_set_autoindex_in_location(Location &location, const std::vector<std::string> &trimmedStr) {
+void				ParseConfigFile::_SetAutoindexInLocation(Location &location, const std::vector<std::string> &trimmedStr) {
 	if (trimmedStr.size() != 2)
 		throw ParseConfigFileException("Autoindex has no parameter");
 	if (trimmedStr[1] == "on")
-		location.set_autoindex(true);
+		location.SetAutoindex(true);
 	else if (trimmedStr[1] == "off")
-		location.set_autoindex(false);
+		location.SetAutoindex(false);
 	else
 		throw ParseConfigFileException("Unknown option to autoindex");
 }
 
-Location			ParseConfigFile::_parse_location_directive(std::string const &locationAttribute) {
+Location			ParseConfigFile::_ParseLocationDirective(std::string const &locationAttribute) {
 	Location        location;
 	std::string     line;
 
-	location.set_path(locationAttribute);
+	location.SetPath(locationAttribute);
 	while (ft_getline(_fd, line)) {
 		if (line.empty() || line[0] == '#')
 			continue;
-		else if (!_checkTabulation(line, 2)) {
+		else if (!_CheckTabulation(line, 2)) {
 			_line_surplus = line;
 			return location;
 		}
-		std::vector<std::string> trimmedStr = _getArgsFromLine(line);
+		std::vector<std::string> trimmedStr = _GetArgsFromLine(line);
 
-		switch (_getIndexOfArg(trimmedStr[0], locationCurrentFields, 7)) {
+		switch (_GetIndexOfArg(trimmedStr[0], location_current_fields, 7)) {
 			case allow_methods_d:
-				_add_allow_methods_to_location(location, trimmedStr);
+				_AddAllowMethodsToLocation(location, trimmedStr);
 				break;
 			case root_d:
 				if (trimmedStr.size() != 2)
 					throw ParseConfigFileException("Location root has no parameter");
-				location.set_root(trimmedStr[1]);
+				location.SetRoot(trimmedStr[1]);
 				break;
 			case autoindex_d:
-				_set_autoindex_in_location(location, trimmedStr);
+				_SetAutoindexInLocation(location, trimmedStr);
 				break;
 			case index_d:
 				if (trimmedStr.size() != 2)
 					throw ParseConfigFileException("Index has no parameter");
-				location.set_index(trimmedStr[1]);
+				location.SetIndex(trimmedStr[1]);
 				break;
 			case cgi_pass_d:
 				if (trimmedStr.size() != 2)
 					throw ParseConfigFileException("Cgi_pass has no parameter");
-				location.set_location_type(cgi_location);
-				location.set_cgi_path(trimmedStr[1]);
+				location.SetLocationType(cgi_location);
+				location.SetCgiPath(trimmedStr[1]);
 				break;
 			case extension_d:
 				if (trimmedStr.size() != 2)
 					throw ParseConfigFileException("Extension has no parameter");
-				location.set_extension(trimmedStr[1]);
+				location.SetExtension(trimmedStr[1]);
 				break;
 			default:
 				throw ParseConfigFileException("Unknown parameter " + trimmedStr[0]);
@@ -214,7 +214,7 @@ Location			ParseConfigFile::_parse_location_directive(std::string const &locatio
 	return (location);
 }
 
-std::vector<VirtualServer>		ParseConfigFile::parse_file(std::string& number_of_workers) {
+std::vector<VirtualServer>		ParseConfigFile::ParseFile(std::string& number_of_workers) {
 	if ((_fd = open(_filename, O_RDONLY)) < 0)
 		throw ParseConfigFileException("Config file can not be opened");
 	std::string line;
@@ -229,7 +229,7 @@ std::vector<VirtualServer>		ParseConfigFile::parse_file(std::string& number_of_w
 		else if (!line.compare(0, 7, "worker "))
 			number_of_workers.append(&line[7]);
 		else if (line == "server")
-				virtual_servers.push_back(_parse_vs_directive());
+				virtual_servers.push_back(_ParseVsDirective());
 		else if (line.length() > 0)
 			throw ParseConfigFileException("Unknown parameter " + line);
 	}

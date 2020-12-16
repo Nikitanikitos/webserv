@@ -20,90 +20,90 @@ WebServ::~WebServ() {
 		delete _clients[i];
 };
 
-void WebServ::_init_sets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd) {
-	max_fd = _virtual_servers.back().get_socket();
+void WebServ::_InitSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd) {
+	max_fd = _virtual_servers.back().GetSocket();
 	FD_ZERO(&readfd_set);
 	FD_ZERO(&writefd_set);
 
 	for (int i = 0; i < _virtual_servers.size(); ++i)
-		FD_SET(_virtual_servers[i].get_socket(), &readfd_set);
+		FD_SET(_virtual_servers[i].GetSocket(), &readfd_set);
 }
 
-void	WebServ::_add_client_in_task_queue(fd_set &readfd_set) {
+void	WebServ::_AddClientInTaskQueue(fd_set &readfd_set) {
 	for (std::vector<Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-		if ((*it)->get_stage() == close_connection_) {
+		if ((*it)->GetStage() == close_connection_) {
 			delete *it;
 			_clients.erase(it);
 		}
-		else if (!(*it)->in_task_queue() && FD_ISSET((*it)->get_socket(), &readfd_set))
-			_thread_pool.push_task((*it));
+		else if (!(*it)->InTaskQueue() && FD_ISSET((*it)->GetSocket(), &readfd_set))
+			_thread_pool.PushTask((*it));
 	}
 }
 
-void	WebServ::_add_client_socket_in_set(fd_set &readfd_set, int &max_fd) {
+void	WebServ::_AddClientSocketInSet(fd_set &readfd_set, int &max_fd) {
 	for (int i = 0; i < _clients.size(); ++i) {
-		const int		client_socket = _clients[i]->get_socket();
-		if (_clients[i]->get_stage() == read_request_)
+		const int		client_socket = _clients[i]->GetSocket();
+		if (_clients[i]->GetStage() == read_request_)
 			FD_SET(client_socket, &readfd_set);
 		if (client_socket > max_fd)
 			max_fd = client_socket;
 	}
 }
 
-void	WebServ::_add_new_client(fd_set& readfd_set) {
+void	WebServ::_AddNewClient(fd_set& readfd_set) {
 	int 	new_client;
 
 	for (int i = 0; i < _virtual_servers.size(); ++i) {
-		if (FD_ISSET(_virtual_servers[i].get_socket(), &readfd_set)) {
-			while ((new_client = accept(_virtual_servers[i].get_socket(), NULL, NULL)) != -1)
-				_clients.push_back(new Client(new_client, read_request_, _virtual_servers[i].get_ip(),
-																					_virtual_servers[i].get_port()));
+		if (FD_ISSET(_virtual_servers[i].GetSocket(), &readfd_set)) {
+			while ((new_client = accept(_virtual_servers[i].GetSocket(), NULL, NULL)) != -1)
+				_clients.push_back(new Client(new_client, read_request_, _virtual_servers[i].GetIp(),
+											  _virtual_servers[i].GetPort()));
 		}
 	}
 }
 
-void		WebServ::run_server() {
-	_create_workers();
+void		WebServ::RunServer() {
+	_CreateWorkers();
 
 	fd_set		writefd_set;
 	fd_set		readfd_set;
 	int 		max_fd;
 
 	while (true) {
-		_init_sets(writefd_set, readfd_set, max_fd);
-		_add_client_socket_in_set(readfd_set, max_fd);
+		_InitSets(writefd_set, readfd_set, max_fd);
+		_AddClientSocketInSet(readfd_set, max_fd);
 
 		select(max_fd + 1, &readfd_set, &writefd_set,  nullptr, nullptr);
 
-		_add_new_client(readfd_set);
-		_add_client_in_task_queue(readfd_set);
+		_AddNewClient(readfd_set);
+		_AddClientInTaskQueue(readfd_set);
 	}
 }
 
-const VirtualServer& WebServ::_get_virtual_server(Client *client) const {
+const VirtualServer& WebServ::_GetVirtualServer(Client *client) const {
 	const VirtualServer		*default_vs = NULL;
-	Request&				request = client->get_request();
+	Request&				request = client->GetRequest();
 
 	for (int i = 0; i < _virtual_servers.size(); ++i) {
 		const VirtualServer&	virtual_server = _virtual_servers[i];
-		if (client->get_ip() == virtual_server.get_ip() && client->get_port() == virtual_server.get_port()) {
+		if (client->GetIp() == virtual_server.GetIp() && client->GetPort() == virtual_server.GetPort()) {
 			if (!default_vs)
 				default_vs = &virtual_server;
-			for (int j = 0; j < virtual_server.get_server_names().size(); ++j)
-				if (request.get_header(HOST) == virtual_server.get_server_names()[j])
+			for (int j = 0; j < virtual_server.GetServerNames().size(); ++j)
+				if (request.GetHeader(HOST) == virtual_server.GetServerNames()[j])
 					return (virtual_server);
 		}
 	}
 	return (*default_vs);
 }
 
-std::string		WebServ::_get_path_to_target(const Request& request, const Location& location) {
-	std::string 	result = request.get_target().substr(0, location.get_path().size());
+std::string		WebServ::_GetPathToTarget(const Request& request, const Location& location) {
+	std::string 	result = request.GetTarget().substr(0, location.GetPath().size());
 
 	if (result.empty()) {
-		if (int fd = open(location.get_index().c_str(), O_RDONLY) > 0) {
+		if (int fd = open(location.GetIndex().c_str(), O_RDONLY) > 0) {
 			close(fd);
-			result.append(location.get_index());
+			result.append(location.GetIndex());
 		}
 		else
 			result.append(".");
@@ -111,14 +111,15 @@ std::string		WebServ::_get_path_to_target(const Request& request, const Location
 	return (result);
 }
 
-void WebServ::add_virtual_server(VirtualServer &virtual_server) {
+void WebServ::AddVirtualServer(VirtualServer &virtual_server) {
 	for (int i = 0; i < _virtual_servers.size(); ++i) {
-		if (virtual_server.get_ip() == _virtual_servers[i].get_ip() && virtual_server.get_port() == _virtual_servers[i].get_port()) {
-			virtual_server.set_socket(_virtual_servers[i].get_socket());
+		if (virtual_server.GetIp() == _virtual_servers[i].GetIp() && virtual_server.GetPort() ==
+																	 _virtual_servers[i].GetPort()) {
+			virtual_server.SetSocket(_virtual_servers[i].GetSocket());
 			_virtual_servers.push_back(virtual_server);
 			return ;
 		}
 	}
-	virtual_server.init_socket();
+	virtual_server.InitSocket();
 	_virtual_servers.push_back(virtual_server);
 }

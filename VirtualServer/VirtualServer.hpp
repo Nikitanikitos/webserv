@@ -36,22 +36,22 @@ public:
 
 	virtual ~VirtualServer();
 
-	void								init_socket();
+	void								InitSocket();
 
-	int									get_socket() const;
-	const std::string&					get_error_page(const std::string& status_code) const;
-	Location							get_location(const Request& request) const;
-	const std::vector<std::string>&		get_server_names() const;
-	const std::string&					get_port() const;
-	const std::string&					get_ip() const;
+	int									GetSocket() const;
+	const std::string&					GetErrorPage(const std::string& status_code) const;
+	Location							GetLocation(const Request& request) const;
+	const std::vector<std::string>&		GetServerNames() const;
+	const std::string&					GetPort() const;
+	const std::string&					GetIp() const;
 
-	void								add_server_name(const std::string&);
-	void								add_error_page(const std::string&, const std::string&);
-	void								add_location(const Location& list_locations);
-	void								set_port(const std::string &port);
-	void								set_limit_client_body_size(int);
-	void								set_ip(const std::string& ip);
-	void								set_socket(int socket);
+	void								AddServerName(const std::string& server_name);
+	void								AddErrorPage(const std::string& key, const std::string& value);
+	void								AddLocation(const Location& location);
+	void								SetPort(const std::string &port);
+	void								SetLimitClientBodySize(int limit_client_body_size);
+	void								SetIp(const std::string& ip);
+	void								SetSocket(int socket);
 };
 
 #endif //WEBSERV_VIRTUALSERVER_HPP

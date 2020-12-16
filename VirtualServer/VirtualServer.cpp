@@ -16,12 +16,12 @@
 
 VirtualServer::VirtualServer() : _limit_client_body_size(0) { }
 
-void	VirtualServer::set_ip(const std::string& ip) { _ip = ip; }
-void	VirtualServer::set_port(const std::string& port) { _port = port; }
-void	VirtualServer::add_server_name(const std::string& server_name) { _server_names.push_back(server_name); }
-void	VirtualServer::add_location(const Location& list_locations) { _list_locations.push_back(list_locations); }
+void	VirtualServer::SetIp(const std::string& ip) { _ip = ip; }
+void	VirtualServer::SetPort(const std::string& port) { _port = port; }
+void	VirtualServer::AddServerName(const std::string& server_name) { _server_names.push_back(server_name); }
+void	VirtualServer::AddLocation(const Location& location) { _list_locations.push_back(location); }
 
-void	VirtualServer::init_socket() {
+void	VirtualServer::InitSocket() {
 	struct sockaddr_in	sock_addr;
 	int 				opt;
 
@@ -41,15 +41,15 @@ void	VirtualServer::init_socket() {
 
 VirtualServer::~VirtualServer() { close(_socket); }
 
-void	VirtualServer::set_limit_client_body_size(int limit_client_body_size) {
+void	VirtualServer::SetLimitClientBodySize(int limit_client_body_size) {
 	_limit_client_body_size = limit_client_body_size;
 }
 
-const std::string&					VirtualServer::get_ip() const { return (_ip); }
-const std::string&					VirtualServer::get_port() const { return (_port); }
-const std::vector<std::string>&		VirtualServer::get_server_names() const { return (_server_names); }
+const std::string&					VirtualServer::GetIp() const { return (_ip); }
+const std::string&					VirtualServer::GetPort() const { return (_port); }
+const std::vector<std::string>&		VirtualServer::GetServerNames() const { return (_server_names); }
 
-const std::string&	VirtualServer::get_error_page(const std::string& status_code) const {
+const std::string&	VirtualServer::GetErrorPage(const std::string& status_code) const {
 	try {
 		return _error_pages.at(status_code);
 	}
@@ -72,24 +72,24 @@ int 		priority_compare(const std::string &string1, const std::string& string2) {
 	return (result);
 }
 
-Location	VirtualServer::get_location(const Request& request) const {
+Location	VirtualServer::GetLocation(const Request& request) const {
 	int 				priority;
 	const Location*		result;
 
 	priority = 0;
 	result = nullptr;
 	for (const auto& location : _list_locations)
-		if (request.get_target().find(location.get_path().c_str(), 0, location.get_path().size()) == 0) {
-			if (priority < location.get_path().size()) {
-				priority = location.get_path().size();
+		if (request.GetTarget().find(location.GetPath().c_str(), 0, location.GetPath().size()) == 0) {
+			if (priority < location.GetPath().size()) {
+				priority = location.GetPath().size();
 				result = &location;
 			}
 		}
 	return (*result);
 }
 
-void VirtualServer::add_error_page(const std::string&, const std::string&) { }
+void VirtualServer::AddErrorPage(const std::string& key, const std::string& value) { }
 
-int VirtualServer::get_socket() const { return (_socket); }
+int VirtualServer::GetSocket() const { return (_socket); }
 
-void VirtualServer::set_socket(int socket) { _socket = socket; }
+void VirtualServer::SetSocket(int socket) { _socket = socket; }

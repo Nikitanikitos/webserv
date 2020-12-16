@@ -32,14 +32,14 @@ int main(int ac, char **av, char **env) {
 
 	std::vector<VirtualServer>	list_virtual_server;
 
-	list_virtual_server = parse.parse_file(number_of_workers);
+	list_virtual_server = parse.ParseFile(number_of_workers);
 
 	WebServ			server(std::stoi(number_of_workers));
 
 	for (int i = 0; i < list_virtual_server.size(); ++i)
-		server.add_virtual_server(list_virtual_server[i]);
+		server.AddVirtualServer(list_virtual_server[i]);
 
-	server.run_server();
+	server.RunServer();
 //	std::cout << __DATE__ << std::endl;
 //	std::cout << __TIME__ << std::endl;
 //	location.set_location_type(default_location);
@@ -57,7 +57,7 @@ int main(int ac, char **av, char **env) {
 //	WebServ		web_server(list_virtual_server);
 //	web_server.set_number_workers(1);
 //
-//	web_server.run_server();
+//	web_server.RunServer();
 	//	fd_set				sockets_set;
 //	int					fd_socket_80 = 1;
 //	int					fd_socket_8080;

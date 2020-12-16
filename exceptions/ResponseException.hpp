@@ -27,8 +27,8 @@ public:
 	ResponseException(const std::string& status_code, const std::string& message_phrase, const std::string &error_page);
 	~ResponseException() override = default;
 
-	virtual void generate_response();
-	virtual void	clear();
+	virtual void	GenerateResponse();
+	virtual void	Clear();
 };
 
 class	Request301Redirect : public std::exception, public Response  {
@@ -37,10 +37,9 @@ private:
 
 public:
 	explicit Request301Redirect(const std::string& location);
-
 	virtual ~Request301Redirect() = default;
 
-	virtual void			generate_response(int) const;
+	virtual void	GenerateResponse(int) const;
 };
 
 #endif //WEBSERV_RESPONSEEXCEPTION_HPP

@@ -23,26 +23,26 @@ ThreadPool::~ThreadPool() {
 	free(_queue_mutex);
 }
 
-Client*		ThreadPool::pop_task() {
+Client*		ThreadPool::PopTask() {
 	Client*		client = _tasks_queue.front();
 
 	_tasks_queue.pop();
 	return (client);
 }
 
-void				ThreadPool::push_task(Client* client) {
+void				ThreadPool::PushTask(Client* client) {
 	pthread_mutex_lock(_queue_mutex);
-	client->set_processed(true);
+	client->SetProcessed(true);
 	_tasks_queue.push(client);
 	pthread_mutex_unlock(_queue_mutex);
 }
 
-bool				ThreadPool::queue_is_empty() const { return (_tasks_queue.empty()); }
+bool				ThreadPool::QueueIsEmpty() const { return (_tasks_queue.empty()); }
 
-void ThreadPool::lock_queue_mutex() {
+void ThreadPool::LockQueueMutex() {
 	pthread_mutex_lock(_queue_mutex);
 }
 
-void ThreadPool::unlock_queue_mutex() {
+void ThreadPool::UnlockQueueMutex() {
 	pthread_mutex_unlock(_queue_mutex);
 }

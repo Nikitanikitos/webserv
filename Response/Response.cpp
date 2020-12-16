@@ -18,16 +18,16 @@ Response::Response(const std::string& status_code, const std::string& message_ph
 
 Response::~Response() = default;
 
-void				Response::set_status_code(const std::string& status_code) { _status_code = status_code; }
-void				Response::set_body(const std::string& body) { _body = body; }
+void				Response::SetStatusCode(const std::string& status_code) { _status_code = status_code; }
+void				Response::SetBody(const std::string& body) { _body = body; }
 
-void				Response::add_header(const std::string& key, const std::string& value) {
+void				Response::AddHeader(const std::string& key, const std::string& value) {
 	_headers.insert(std::make_pair(key, value));
 }
 
-const std::string&	Response::get_header(const std::string& key) { return (_headers[key]); }
+const std::string&	Response::GetHeader(const std::string& key) { return (_headers[key]); }
 
-void				Response::generate_response() {
+void				Response::GenerateResponse() {
 	_buffer.append(
 		HTTP_VERSION + SP + _status_code + SP + _message_phrase + CRLF
 		"Server:" + SP + SERVER_VERSION + CRLF
@@ -39,7 +39,7 @@ void				Response::generate_response() {
 	_buffer.append(_body);
 }
 
-int					Response::send_response(int client_socket) {
+int					Response::SendResponse(int client_socket) {
 	int 	bytes;
 
 	bytes = send(client_socket, _buffer.c_str(), _buffer.size(), 0);
@@ -47,9 +47,9 @@ int					Response::send_response(int client_socket) {
 	return (bytes);
 }
 
-const std::string& Response::get_buffer() { return (_buffer); }
+const std::string& Response::GetBuffer() { return (_buffer); }
 
-void	Response::clear() {
+void	Response::Clear() {
 	_status_code.clear();
 	_buffer.clear();
 	_headers.clear();
