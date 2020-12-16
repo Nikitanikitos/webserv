@@ -55,7 +55,7 @@ private:
 	void						CloseConnection(Client* client);
 
 	static std::string			_GetPathToTarget(const Request& request, const Location& location);
-	std::vector<std::string>	_GetArgs(const std::string& line) const;
+	std::vector<std::string>	_GetArgs(const std::string& line, char separate) const;
 	std::vector<std::string>	_TrimRequest(const std::string& buff) const;
 	bool						_CheckCountSpace(const std::string& line, int numSpaces) const;
 	bool						_CheckMethod(std::string method, int size) const;
@@ -65,6 +65,7 @@ private:
 	void						_AddClientSocketInSet(fd_set &readfd_set, int &max_fd);
 	void						_AddClientInTaskQueue(fd_set &readfd_set);
 	void						_InitSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
+	std::vector<std::string>	_GetKeyValue(const std::string &line) const;
 
 public:
 	explicit WebServ(int number_of_workers);

@@ -22,18 +22,35 @@ std::string WebServ::methods[6] = {
 		"OPTIONS"
 };
 
-std::vector<std::string>	WebServ::_GetArgs(const std::string &line) const {
+std::vector<std::string> WebServ::_GetArgs(const std::string &line, char separate) const {
 	std::vector<std::string>	result;
 	size_t						pos_find;
+	std::string					input(line);
 
-	std::string input(line);
 	while (!input.empty()){
-		pos_find = input.find(' ');
-		input.erase(pos_find, input.find_first_not_of(' '));
-		pos_find = input.find(' ');
+		pos_find = input.find(separate);
+		input.erase(pos_find, input.find_first_not_of(separate));
+		pos_find = input.find(separate);
 		result.push_back(input.substr(0, pos_find));
 		input.erase(0, pos_find);
 	}
+	return (result);
+}
+
+std::vector<std::string>	WebServ::_GetKeyValue(const std::string &line) const {
+	size_t						pos_find;
+	size_t						start;
+	size_t						end;
+	std::vector<std::string>	result;
+	std::string					clear_line;
+
+	if((pos_find = line.find(':')) == std::string::npos)
+		return (result);
+	result.push_back(line.substr(0, pos_find));
+	clear_line = line.substr(pos_find + 1);
+	start = clear_line.find_first_not_of(' ');
+	end = clear_line.find_last_not_of(' ');
+	result.push_back(clear_line.substr(start, end));
 	return (result);
 }
 
@@ -41,6 +58,7 @@ std::vector<std::string> WebServ::_TrimRequest(std::string const& buff) const {
 	std::vector<std::string> result;
 	std::string::size_type start = 0;
 	std::string::size_type pos = 0;
+
 	while (true) {
 		pos = buff.find("\r\n", start);
 		result.push_back(buff.substr(start, pos - start));
@@ -48,23 +66,24 @@ std::vector<std::string> WebServ::_TrimRequest(std::string const& buff) const {
 			break ;
 		start = pos + 2;
 	}
-	return result;
+	return (result);
 }
 
-bool	WebServ::_CheckCountSpace(std::string const& line, int numSpaces) const { //TODO добавить в хедер
-	int countSpace = 0;
+bool	WebServ::_CheckCountSpace(std::string const& line, int num_spaces) const { //TODO добавить в хедер
+	int count_space = 0;
+
 	for (int i = 0; i < line.size(); ++i)
 		if (line[i] == ' ')
-			++countSpace;
-	return countSpace == numSpaces;
+			++count_space;
+	return count_space == num_spaces;
 }
 
 bool	WebServ::_CheckMethod(std::string method, int size) const { //TODO добавить в хедер
 	for (int i = 0; i < size; ++i) {
 		if (WebServ::methods[i] == method)
-			return true;
+			return (true);
 	}
-	return false;
+	return (false);
 }
 
 void 	WebServ::_StrToLower(std::string& str) const {
@@ -75,28 +94,32 @@ void 	WebServ::_StrToLower(std::string& str) const {
 void	WebServ::ParsingRequest(Client *client) {
 
 	try {
-		Request		request;
-		bool 		takeHost = false;
-		std::vector<std::string> args = _TrimRequest(client->GetBuffer());
+		Request						request;
+		bool						take_host;
+		std::vector<std::string>	line;
+		std::vector<std::string>	args;
+
+		take_host = false;
+		args = _TrimRequest(client->GetBuffer());
 		if (!_CheckCountSpace(args[0], 2))
 			throw ResponseException("400", "Bad Request", "400.html");
 		else {
-			std::vector<std::string> line = _GetArgs(args[0]);
+			line = _GetArgs(args[0], ' ');
 			if (line.size() != 3 || _CheckMethod(args[0], 6) || line[2] != HTTP_VERSION)
 				throw ResponseException("400", "Bad Request", "400.html");
 			request.SetMethod(line[0]);
 			request.SetTarget(line[1]);
 			for (size_t i = 1; i < args.size(); ++i) {
-				line = _GetArgs(args[i]);
+				line = _GetKeyValue(args[i]);
 				_StrToLower(line[0]);
-				if (line.size() == 1 || line.size() > 2 || line[0].back() != ':')
+				if (line.empty() || line.size() == 1 || line.size() > 2)
 					throw ResponseException("400", "Bad Request", "400.html");
-				std::string key = line[0].substr(0, line[0].size() - 1);
+				std::string key = line[0].substr(0, line[0].size());
 				if (key == "host")
-					takeHost = true;
+					take_host = true;
 				request.AddHeader(key, line[1]);
 			}
-			if (!takeHost)
+			if (!take_host)
 				throw ResponseException("400", "Bad Request", "400.html");
 		}
 		client->SetRequest(request);
