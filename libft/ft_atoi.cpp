@@ -8,9 +8,9 @@
 /*   Created: 2020/11/22 15:38:35 by imicah            #+#    #+#             */
 /*   Updated: 2020/11/22 15:49:23 by imicah           ###   ########.fr       */
 /*                                                                            */
-#include <cstdint>
-
 /* ************************************************************************** */
+
+#include <cstdint>
 
 static bool		ft_isspace(char c)
 { return ((c == '\n' || c == '\t' || c == '\r' || c == '\v' || c == '\f' || c == ' ')); }
