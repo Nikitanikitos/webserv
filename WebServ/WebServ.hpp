@@ -34,10 +34,11 @@ private:
 	int 									_number_workers;
 	ThreadPool								_thread_pool;
 
-	static void					_DefaultHandler(Client *client, const VirtualServer& virtual_server, const Location& location);
+	static void
+	_DefaultHandler(Response& response, Client *client, const VirtualServer& virtual_server, struct stat& buff,
+					std::string& path_to_target, const Location& location);
 	void						_CgiHandler(const Request&, const VirtualServer&, const Location&, int);
 
-	static void					_PostMethodHandler(const Request& request, struct stat* buff, const VirtualServer& virtual_server);
 	static void					_GetHeadMethodsHandler(Client *client, struct stat* buff, const Location& location);
 
 	static Response				_StaticFileHandler(const Request& request, const std::string& path_to_file);

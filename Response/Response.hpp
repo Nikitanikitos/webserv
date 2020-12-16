@@ -26,7 +26,6 @@ protected:
 	std::string 							_body;
 	std::string 							_buffer;
 	std::string								_message_phrase;
-	std::string								_location_uri;
 
 public:
 	Response();
@@ -42,12 +41,10 @@ public:
 	void					SetStatusCode(const std::string& status_code);
 	void					SetBody(const std::string& body);
 
-	virtual void			GenerateResponse();
-	virtual int				SendResponse(int client_socket);
+	void					GenerateResponse();
+	int						SendResponse(int client_socket);
 
-	virtual void			Clear();
-
-	void SetLocationUri(const std::string& location_uri);
+	void					Clear();
 };
 
 #endif //WEBSERV_RESPONSE_HPP

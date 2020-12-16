@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/16 20:58:34 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 22:55:14 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,6 @@ void	Response::Clear() {
 	_headers.clear();
 	_body.clear();
 	_message_phrase.clear();
-}
-
-void Response::SetLocationUri(const std::string& location_uri) {
-	_location_uri = location_uri;
 }
 
 const std::string& Response::GetStatusCode() const {

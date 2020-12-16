@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/16 22:46:01 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/16 22:49:16 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,14 @@ bool WebServ::_CheckError(Response& response, Client *client, const VirtualServe
 		response.SetStatusCode("403");
 		return (true);
 	}
+	else if (request.GetMethod() == "POST" && S_ISDIR(buff.st_mode)) {
+		response.SetStatusCode("403");
+		return (true);
+	}
+	else if (request.GetMethod() == "POST") {
+		response.SetStatusCode("405");
+		return (true);
+	}
 	return (false);
 }
 
@@ -78,6 +86,23 @@ void WebServ::_SetErrorPage(Response& response, const Location& location, const 
 	}
 }
 
+void
+WebServ::_DefaultHandler(Response& response, Client *client, const VirtualServer& virtual_server, struct stat& buff,
+						 std::string& path_to_target, const Location& location) {
+	Request&			request = client->GetRequest();
+	std::string			body;
+
+	if (S_ISREG(buff.st_mode) || S_ISLNK(buff.st_mode))
+		body = ft_getfile(path_to_target.c_str());
+	else if (S_ISDIR(buff.st_mode) && location.GetAutoindex())
+		body = _AutoindexGenerate(request, path_to_target);
+
+	response.SetStatusCode("200");
+	response.AddHeader("Content-Length", std::to_string(body.length()));
+	if (request.GetMethod() == "GET")
+		response.SetBody(body);
+}
+
 void	WebServ::GenerateResponse(Client *client) {
 	const VirtualServer&	virtual_server = _GetVirtualServer(client);
 	const Location&			location = virtual_server.GetLocation(client->GetRequest());
@@ -89,8 +114,10 @@ void	WebServ::GenerateResponse(Client *client) {
 	if (_CheckError(response, client, virtual_server, buff, path_to_target))
 		_SetErrorPage(response, location, virtual_server, request);
 	else
-		std::cout << "KU";
+		_DefaultHandler(response, client, virtual_server, buff, path_to_target, location);
 
+	if (response.GetHeader("Connection") == "close")
+		response.AddHeader("Connection", "Close");
 	client->SetResponse(response);
 	client->GetResponse().GenerateResponse();
 	client->NextStage();
