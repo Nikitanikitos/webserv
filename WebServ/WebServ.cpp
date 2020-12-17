@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/17 17:06:48 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 19:38:36 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,3 +119,5 @@ void WebServ::AddVirtualServer(VirtualServer &virtual_server) {
 	virtual_server.InitSocket();
 	_virtual_servers.push_back(virtual_server);
 }
+
+void WebServ::ReserveSize(const int capacity) { _virtual_servers.reserve(capacity); }

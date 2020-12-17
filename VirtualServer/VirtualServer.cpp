@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/16 19:40:36 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 21:26:41 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,8 @@ void	VirtualServer::InitSocket() {
 	listen(_socket, 10);
 }
 
-VirtualServer::~VirtualServer() { close(_socket); }
-
-void	VirtualServer::SetLimitClientBodySize(int limit_client_body_size) {
-	_limit_client_body_size = limit_client_body_size;
-}
+void	VirtualServer::SetLimitClientBodySize(int limit_client_body_size)
+	{ _limit_client_body_size = limit_client_body_size; }
 
 const std::string&					VirtualServer::GetIp() const { return (_ip); }
 const std::string&					VirtualServer::GetPort() const { return (_port); }
@@ -65,3 +62,11 @@ const std::string&		VirtualServer::GetErrorPage(const std::string& status_code) 
 void					VirtualServer::SetSocket(int socket) { _socket = socket; }
 
 int						VirtualServer::GetSocket() const { return (_socket); }
+
+void					VirtualServer::SortServerNames() { std::sort(_server_names.begin(), _server_names.end()); }
+
+
+bool					operator==(const VirtualServer& virtual_server_l, const VirtualServer& virtual_server_r) {
+	return (virtual_server_l.GetPort() == virtual_server_r.GetPort() && virtual_server_l.GetIp() == virtual_server_r.GetIp() &&
+			virtual_server_l.GetServerNames() == virtual_server_r.GetServerNames());
+}

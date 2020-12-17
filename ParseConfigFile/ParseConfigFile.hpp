@@ -58,6 +58,7 @@ private:
 	std::string&				_CheckLocationPath(std::string &path) const;
 	bool 						_CheckPort(int port) const;
 
+	bool						_CheckCorrectVS(const VirtualServer& virtual_server, const std::vector<VirtualServer> list_virtual_server);
 public:
 	explicit ParseConfigFile(char *filename)  : _filename(filename) { }
 	~ParseConfigFile() { }

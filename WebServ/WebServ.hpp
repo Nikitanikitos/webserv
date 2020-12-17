@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/17 14:10:31 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 19:43:22 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ class WebServ {
 private:
 	friend void*	worker(void*);
 
-	static std::string						methods[6];
+	static std::string				methods[6];
 
-	std::vector<Client*>					_clients;
-	std::vector<VirtualServer>				_virtual_servers;
+	std::vector<Client*>			_clients;
+	std::vector<VirtualServer>		_virtual_servers;
 
-	int 									_number_workers;
-	ThreadPool								_thread_pool;
+	int 							_number_workers;
+	ThreadPool						_thread_pool;
 
 	static void					_DefaultHandler(Response& response, Client *client, const VirtualServer& virtual_server,
 								 			struct stat& buff, std::string& path_to_target, const Location& location);
@@ -68,12 +68,14 @@ private:
 						 								const VirtualServer& virtual_server, const Request& request);
 	std::string 				_GenerateErrorPage(const std::string& code) const;
 
+
 public:
 	explicit WebServ(int number_of_workers);
 	virtual ~WebServ();
 
 	void	RunServer();
 	void	AddVirtualServer(VirtualServer &virtual_server);
+	void	ReserveSize(const int capacity);
 };
 
 #endif //WEBSERV_WEBSERV_HPP

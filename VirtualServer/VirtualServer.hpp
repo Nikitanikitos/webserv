@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/16 17:58:06 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 21:27:27 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,10 @@ private:
 public:
 	VirtualServer();
 
-	virtual ~VirtualServer();
+	virtual ~VirtualServer()  { close(_socket); }
 
 	void								InitSocket();
+	void								SortServerNames();
 
 	int									GetSocket() const;
 	const std::string&					GetErrorPage(const std::string& status_code) const;
@@ -54,6 +55,9 @@ public:
 	void								SetLimitClientBodySize(int limit_client_body_size);
 	void								SetIp(const std::string& ip);
 	void								SetSocket(int socket);
+
 };
+
+bool					operator==(const VirtualServer& virtual_server_l, const VirtualServer& virtual_server_r); // TODO доделать сравнение
 
 #endif //WEBSERV_VIRTUALSERVER_HPP
