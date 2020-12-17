@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:25:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/03 19:09:17 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 10:49:43 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	Request::SetPort(const std::string& port) { _port = port; }
 void Request::AddHeader(const std::string& key, const std::string& value)
 	{ _headers.insert(std::make_pair(key, value)); }
 
-const std::string&	Request::GetHeader(const std::string& header) { return (_headers[header]); }
+const std::string&	Request::GetHeader(const std::string& header) const { return (_headers.at(header)); }
 const std::string&	Request::GetMethod() const { return (_method); }
 const std::string&	Request::GetTarget() const { return (_target); }
 const std::string&	Request::GetHost() const { return (_host); }

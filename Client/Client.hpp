@@ -45,8 +45,8 @@ public:
 	const std::string&			GetBuffer() const;
 	const std::string&			GetPort() const;
 	const std::string&			GetIp() const;
-	Request&					GetRequest();
-	Response&					GetResponse();
+	const Request&				GetRequest() const;
+	const Response&				GetResponse() const;
 	int							GetStage() const;
 	int							GetSocket() const;
 
@@ -64,6 +64,9 @@ public:
 	void						ClearBuffer();
 	void						ClearResponse();
 	void						ClearRequest();
+
+	void						SendResponse();
+	void 						GenerateResponse();
 };
 
 #endif //WEBSERV_CLIENT_HPP

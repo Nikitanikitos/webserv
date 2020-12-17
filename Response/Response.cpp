@@ -26,7 +26,7 @@ void				Response::AddHeader(const std::string& key, const std::string& value) {
 	_headers[key] = value; // TODO каково хера...
 }
 
-const std::string&	Response::GetHeader(const std::string& key) { return (_headers[key]); }
+const std::string&	Response::GetHeader(const std::string& key) const { return (_headers.at(key)); }
 
 void				Response::GenerateResponse() {
 	_buffer.append(
@@ -54,7 +54,7 @@ int					Response::SendResponse(int client_socket) {
 	return (bytes);
 }
 
-const std::string& Response::GetBuffer() { return (_buffer); }
+const std::string& Response::GetBuffer() const { return (_buffer); }
 
 void	Response::Clear() {
 	_status_code.clear();

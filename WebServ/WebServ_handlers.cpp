@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/16 22:49:16 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 11:04:10 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	WebServ::ReadRequest(Client *client) {
 	if (client->GetBuffer().rfind("\r\n\r\n") != std::string::npos)
 		client->NextStage();
 }
-
 
 bool WebServ::_CheckError(Response& response, Client *client, const VirtualServer& virtual_server, struct stat& buff,
 																					  std::string& path_to_target) {
@@ -86,10 +85,9 @@ void WebServ::_SetErrorPage(Response& response, const Location& location, const 
 	}
 }
 
-void
-WebServ::_DefaultHandler(Response& response, Client *client, const VirtualServer& virtual_server, struct stat& buff,
-						 std::string& path_to_target, const Location& location) {
-	Request&			request = client->GetRequest();
+void	WebServ::_DefaultHandler(Response& response, Client *client, const VirtualServer& virtual_server,
+							  				struct stat& buff, std::string& path_to_target, const Location& location) {
+	const Request&		request = client->GetRequest();
 	std::string			body;
 
 	if (S_ISREG(buff.st_mode) || S_ISLNK(buff.st_mode))
@@ -116,22 +114,35 @@ void	WebServ::GenerateResponse(Client *client) {
 	else
 		_DefaultHandler(response, client, virtual_server, buff, path_to_target, location);
 
-	if (response.GetHeader("Connection") == "close")
-		response.AddHeader("Connection", "Close");
+	try {
+		if (response.GetHeader("connection") == "close")
+			response.AddHeader("Connection", "Close");
+		else
+			throw std::out_of_range("");
+	}
+	catch (std::out_of_range&) {
+		response.AddHeader("Connection", "Keep-alive");
+	}
 	client->SetResponse(response);
-	client->GetResponse().GenerateResponse();
+	client->GenerateResponse();
 	client->NextStage();
 }
 
 void	WebServ::SendResponse(Client* client) {
-	Response&	response = client->GetResponse();
+	const Response&		response = client->GetResponse();
+	const Request&		request = client->GetRequest();
 
-	response.SendResponse(client->GetSocket());
+	client->SendResponse();
 	if (response.GetBuffer().empty()) {
-		if (response.GetHeader("Connection") == "close")
-			client->SetStage(close_connection_);
-		else
+		try {
+			if (request.GetHeader("connection") == "close")
+				client->SetStage(close_connection_);
+			else
+				throw std::out_of_range("");
+		}
+		catch (std::out_of_range&) {
 			client->SetStage(read_request_);
+		}
 
 		client->ClearResponse();
 		client->ClearRequest();

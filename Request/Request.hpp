@@ -6,31 +6,32 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 18:03:37 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/01 17:02:33 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 10:54:55 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WEBSERV_REQUEST_HPP
 # define WEBSERV_REQUEST_HPP
 
-# define ACCEPT_CHARSET		"Accept-Charsets"
-# define ACCEPT_LANGUAGE	"Accept-Language"
-# define ALLOW				"Allow"
-# define AUTHORIZATION		"Authorization"
-# define CONTENT_LANGUAGE	"Content-Language"
-# define CONTENT_LENGTH		"Content-Length"
-# define CONTENT_LOCATION	"Content-Location"
-# define CONTENT_TYPE		"Content-Type"
-# define DATE				"Date"
-# define HOST				"Host"
-# define LAST_MODIFIED		"Last-Modified"
-# define LOCATION			"Location"
-# define REFER				"Referer"
-# define RETRY_AFTER		"Retry-After"
-# define SERVER				"Server"
-# define TRANSFER_ENCODING	"Transfer-Encoding"
-# define USER_AGENT			"User-Agent"
-# define WWW_AUTHENTICATE	"WWW-Authenticate"
+# define ACCEPT_CHARSET		"accept-charsets"
+# define ACCEPT_LANGUAGE	"accept-language"
+# define ALLOW				"allow"
+# define AUTHORIZATION		"authorization"
+# define CONTENT_LANGUAGE	"content-language"
+# define CONTENT_LENGTH		"content-length"
+# define CONTENT_LOCATION	"content-location"
+# define CONTENT_TYPE		"content-type"
+# define DATE				"date"
+//# define HOST				"host"
+# define CONNECTION			"connection"
+# define LAST_MODIFIED		"last-modified"
+# define LOCATION			"location"
+# define REFER				"referer"
+# define RETRY_AFTER		"retry-after"
+# define SERVER				"server"
+# define TRANSFER_ENCODING	"transfer-encoding"
+# define USER_AGENT			"user-agent"
+# define WWW_AUTHENTICATE	"www-authenticate"
 
 # include <string>
 # include <map>
@@ -63,7 +64,7 @@ public:
 	const std::string&				GetTarget() const;
 	const std::string&				GetPort() const;
 	const std::string&				GetBody() const;
-	const std::string&				GetHeader(const std::string& header);
+	const std::string&				GetHeader(const std::string& header) const;
 
 	void							Clear();
 };

@@ -13,10 +13,10 @@
 #include "Client.hpp"
 
 Client::Client(int socket, int stage, const std::string& ip, const std::string& port)
-		: _socket(socket), _ip(ip), _port(port), _stage(stage), _in_proccessed(false) {
+										: _socket(socket), _ip(ip), _port(port), _stage(stage), _in_proccessed(false) {
 	if ((_proccess_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == nullptr)
 		throw std::exception();
-	pthread_mutex_init(_proccess_mutex, NULL);
+	pthread_mutex_init(_proccess_mutex, 0);
 }
 
 Client::~Client() {
@@ -31,8 +31,8 @@ void			Client::SetResponse(const Response &response) { _response = response; }
 void			Client::SetProcessed(bool processed) { _in_proccessed = processed; }
 void			Client::SetStage(int stage) { _stage = stage; }
 
-Request&		Client::GetRequest() { return (_request); }
-Response&		Client::GetResponse() { return (_response); }
+const Request&		Client::GetRequest() const { return (_request); }
+const Response&		Client::GetResponse() const { return (_response); }
 
 int				Client::GetStage() const { return (_stage); }
 int				Client::GetSocket() const { return (_socket); }
@@ -52,3 +52,11 @@ const std::string& Client::GetIp() const { return (_ip);
 }
 
 const std::string& Client::GetPort() const { return _port; }
+
+void Client::GenerateResponse() {
+	_response.GenerateResponse();
+}
+
+void Client::SendResponse() {
+	_response.SendResponse(_socket);
+}

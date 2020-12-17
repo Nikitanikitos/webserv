@@ -32,8 +32,8 @@ public:
 	explicit Response(const std::string& status_code, const std::string& message_phrase);
 	virtual ~Response();
 
-	const std::string&		GetHeader(const std::string& key);
-	const std::string&		GetBuffer();
+	const std::string&		GetHeader(const std::string& key) const;
+	const std::string&		GetBuffer() const;
 
 	const std::string& GetStatusCode() const;
 
