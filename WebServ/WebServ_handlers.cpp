@@ -69,8 +69,8 @@ bool	WebServ::_CheckError(Response& response, Client *client, const VirtualServe
 std::string WebServ::_GenerateErrorPage(const std::string& code) const {
 	return ("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" "
 		 	"content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" "
-			"content=\"ie=edge\"><title>Error Page</title><style>h1 {text-align: center;}</style></head><body>"
-			"<h1>" + code + "</h1><p>" + Response::_message_phrases.at(code) +"</p></body></html>");
+			"content=\"ie=edge\"><title>"+ code + " " + Response::_message_phrases.at(code) +"</title><style>h1, p {text-align: center;}</style></head><body>"
+			"<h1>" + code + " " + Response::_message_phrases.at(code) + "</h1><hr><p>WebServ/0.1</p></body></html>");
 }
 
 void WebServ::_SetErrorPage(Response& response, const Location& location, const VirtualServer& virtual_server,
