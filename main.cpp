@@ -13,9 +13,16 @@
 #include <WebServ.hpp>
 #include <ParseConfigFile.hpp>
 
-int main(int ac, char **av, char **env) {
+char*	getFilenameOfConfig(char *arg) {
+	if (arg != nullptr)
+		return arg;
+	else
+		return "/Users/imicah/CLionProjects/webserv/default.conf";
+}
+
+int		main(int ac, char **av, char **env) {
 	std::string					number_of_workers;
-	ParseConfigFile				parse("/Users/imicah/CLionProjects/webserv/default.conf");
+	ParseConfigFile				parse(getFilenameOfConfig(av[1]));
 	std::vector<VirtualServer>	list_virtual_server = parse.ParseFile(number_of_workers);
 	WebServ						server(std::stoi(number_of_workers));
 
