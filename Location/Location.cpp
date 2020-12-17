@@ -16,7 +16,7 @@ Location::Location() : _autoindex(non_accepted), _location_type(default_location
 	_allow_methods.assign(5, non_accepted);
 }
 
-void Location::AddAllowMethod(bool method) { _allow_methods[method] = accepted; }
+void	Location::AddAllowMethod(bool method) { _allow_methods[method] = accepted; }
 void	Location::SetRoot(const std::string& root) { _root = root; }
 void	Location::SetAutoindex(bool autoindex) { _autoindex = autoindex; }
 void	Location::SetCgiPath(const std::string& cgi_path) { _cgi_pass = cgi_path; }

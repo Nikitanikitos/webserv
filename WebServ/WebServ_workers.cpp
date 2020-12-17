@@ -35,9 +35,6 @@ void*	worker(void* arg) {
 				case send_response_:
 					web_serv.SendResponse(client);
 					break;
-				case close_connection_:
-					web_serv.CloseConnection(client);
-					break;
 			}
 			if (client->GetStage() != read_request_ && client->GetStage() != close_connection_)
 				thread_pool.PushTask(client);

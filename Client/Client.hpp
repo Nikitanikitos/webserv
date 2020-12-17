@@ -21,25 +21,23 @@ enum stage {
 	parsing_request_,
 	generate_response_,
 	send_response_,
-	completed_,
 	close_connection_,
 };
 
 class Client {
 private:
-	int 			_socket;
-	std::string		_ip;
-	std::string		_port;
-	std::string		_buffer;
-	int 			_stage;
-	Request			_request;
-	Response		_response;
-	bool 			_in_proccessed;
-
+	int 					_socket;
+	int 					_stage;
+	bool 					_in_proccessed;
+	std::string				_ip;
+	std::string				_port;
+	std::string				_buffer;
+	Request					_request;
+	Response				_response;
 	pthread_mutex_t*		_proccess_mutex;
 
 public:
-	Client(int socket, int stage, const std::string& ip, const std::string& port);
+	Client(int socket, const std::string& ip, const std::string& port);
 	virtual ~Client();
 
 	const std::string&			GetBuffer() const;

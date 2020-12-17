@@ -10,9 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <errno.h>
 #include <iostream>
-#include <ResponseException.hpp>
 #include "VirtualServer.hpp"
 
 VirtualServer::VirtualServer() : _limit_client_body_size(0) { }
@@ -50,20 +48,6 @@ const std::string&					VirtualServer::GetIp() const { return (_ip); }
 const std::string&					VirtualServer::GetPort() const { return (_port); }
 const std::vector<std::string>&		VirtualServer::GetServerNames() const { return (_server_names); }
 
-int 		priority_compare(const std::string &string1, const std::string& string2) {
-	int 	result;
-
-	result = 0;
-	if (string1.length() > string2.length())
-		return (result);
-	for (size_t	i = 0; i < string1.length() && i < string2.length(); ++i) {
-		if (string1[i] != string2[i])
-			return (0);
-		result++;
-	}
-	return (result);
-}
-
 Location				VirtualServer::GetLocation(const Request& request) const {
 	for (int i = 0; i < _list_locations.size(); ++i) {
 		if (request.GetTarget().find(_list_locations[i].GetPath()) == 0)
@@ -76,7 +60,7 @@ void					VirtualServer::AddErrorPage(const std::string& key, const std::string& 
 	{ _error_pages.insert(std::make_pair(key, value)); }
 
 const std::string&		VirtualServer::GetErrorPage(const std::string& status_code) const
-{ return _error_pages.at(status_code); }
+	{ return _error_pages.at(status_code); }
 
 void					VirtualServer::SetSocket(int socket) { _socket = socket; }
 

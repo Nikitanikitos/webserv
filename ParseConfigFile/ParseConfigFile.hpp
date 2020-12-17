@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 19:50:51 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/25 04:21:46 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 13:18:16 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ enum {
 
 class	ParseConfigFile {
 private:
-	std::string		_lineSurplus;
+	std::string		_line_surplus;
 	char*           _filename;
 	int 			_fd;
 
@@ -59,7 +59,7 @@ private:
 	bool 						_CheckPort(int port) const;
 
 public:
-	explicit ParseConfigFile(char *filename);
+	explicit ParseConfigFile(char *filename)  : _filename(filename) { }
 	~ParseConfigFile() { }
 
 	std::vector<VirtualServer> ParseFile(std::string &numberOfWorkers);
@@ -71,9 +71,9 @@ public:
 	private:
 		std::string 			_message;
 	public:
-		ParseConfigFileException(std::string const &message);
+		ParseConfigFileException(std::string const &message) : _message("Config File: " + message) { }
 
-		virtual const char*		what() const throw();
+		virtual const char*		what() const throw() { return (_message.c_str()); }
 	};
 };
 

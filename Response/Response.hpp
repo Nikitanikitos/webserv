@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:14:03 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/16 18:56:00 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 13:43:24 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,11 @@ protected:
 	std::string								_message_phrase;
 
 public:
+	static const std::map<std::string, std::string>	_message_phrases;
+
 	Response();
 	explicit Response(const std::string& status_code, const std::string& message_phrase);
-	virtual ~Response();
+	~Response() { }
 
 	const std::string&		GetHeader(const std::string& key) const;
 	const std::string&		GetBuffer() const;

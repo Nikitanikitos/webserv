@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/16 20:40:25 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 14:10:31 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,6 @@ private:
 								 			struct stat& buff, std::string& path_to_target, const Location& location);
 	void						_CgiHandler(const Request&, const VirtualServer&, const Location&, int);
 
-	static void					_GetHeadMethodsHandler(Client *client, struct stat* buff, const Location& location);
-
-	static Response				_StaticFileHandler(const Request& request, const std::string& path_to_file);
-	static Response				_AutoindexHandler(const Request& request, const std::string& path_to_target);
 	static std::string			_AutoindexGenerate(const Request& request, const std::string& path_to_target);
 
 	void						_CreateWorkers();
@@ -52,7 +48,6 @@ private:
 	void						ParsingRequest(Client* client);
 	void						GenerateResponse(Client* client);
 	void						SendResponse(Client* client);
-	void						CloseConnection(Client* client);
 
 	static std::string			_GetPathToTarget(const Request& request, const Location& location);
 	std::vector<std::string>	_GetArgs(const std::string& line, char separate) const;

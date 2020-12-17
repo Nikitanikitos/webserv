@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 14:17:15 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/16 17:59:47 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 15:00:56 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,6 @@ std::string ParseConfigFile::location_current_fields[7] = {
 		"proxy_pass"
 };
 
-ParseConfigFile::ParseConfigFile(char *filename) : _filename(filename), _lineSurplus(std::string()) { }
-
-ParseConfigFile::ParseConfigFileException::ParseConfigFileException(const std::string &message) : _message("Config File: " + message) {}
-
-const char*					ParseConfigFile::ParseConfigFileException::what() const throw() {
-	return _message.c_str();
-}
-
 std::vector<std::string>	ParseConfigFile::_GetArgsFromLine(std::string &input) const {
 	std::vector<std::string>	result;
 	size_t						posFind;
@@ -61,37 +53,35 @@ int 			ParseConfigFile::_GetIndexOfArg(std::string const &arg, std::string *arr,
 	for (int index = 0; index < size; ++index)
 		if (arr[index] == arg)
 			return index;
-	return -1;
+	return (-1);
 }
 
 bool			ParseConfigFile::_CheckTabulation(const std::string &line, int expectedTabCount) const {
 	for (int i = 0; i < expectedTabCount; ++i) {
 		if (line.compare(TAB_SIZE * i, TAB_SIZE, TAB))
-			return false;
+			return (false);
 	}
 	return line[expectedTabCount * TAB_SIZE] != ' ';
 }
 
-bool			ParseConfigFile::_CheckPort(int port) const {
-	return (port <= 262143 && port >= 1024);
-}
+bool			ParseConfigFile::_CheckPort(int port) const { return (port <= 262143 && port >= 1024); }
 
 VirtualServer	ParseConfigFile::_ParseVsDirective() {
 	VirtualServer	virtualServer;
 	std::string		line;
 
-	while (!_lineSurplus.empty() || ft_getline(_fd, line)) {
-		if (!_lineSurplus.empty()) {
-			line = _lineSurplus;
-			_lineSurplus.clear();
+	while (!_line_surplus.empty() || ft_getline(_fd, line)) {
+		if (!_line_surplus.empty()) {
+			line = _line_surplus;
+			_line_surplus.clear();
 		}
 		if (line.empty() || line[0] == '#')
 			continue;
 		else if (!_CheckTabulation(line, 1)) {
-			_lineSurplus = line;
+			_line_surplus = line;
 			if (virtualServer.GetPort().empty() || virtualServer.GetIp().empty())
 				throw ParseConfigFileException("Port and Host can not be empty");
-			return virtualServer;
+			return (virtualServer);
 		}
 		std::vector<std::string> trimmedStr = _GetArgsFromLine(line);
 
@@ -136,7 +126,7 @@ VirtualServer	ParseConfigFile::_ParseVsDirective() {
 	}
 	if (virtualServer.GetPort().empty() || virtualServer.GetIp().empty())
 		throw ParseConfigFileException("Port and Host can not be empty");
-	return virtualServer;
+	return (virtualServer);
 }
 
 void				ParseConfigFile::_AddAllowMethodsToLocation(Location &location, const std::vector<std::string> &trimmedStr) {
@@ -175,7 +165,7 @@ void				ParseConfigFile::_SetAutoindexInLocation(Location &location, const std::
 std::string&		ParseConfigFile::_CheckLocationPath(std::string &path) const {
 	if (path[0] != '/')
 		path.insert(path.begin(), '/');
-	return path;
+	return (path);
 }
 
 Location			ParseConfigFile::_ParseLocationDirective(std::string &locationAttribute) {
@@ -187,8 +177,8 @@ Location			ParseConfigFile::_ParseLocationDirective(std::string &locationAttribu
 		if (line.empty() || line[0] == '#')
 			continue;
 		else if (!_CheckTabulation(line, 2)) {
-			_lineSurplus = line;
-			return location;
+			_line_surplus = line;
+			return (location);
 		}
 		std::vector<std::string> trimmedStr = _GetArgsFromLine(line);
 
@@ -232,10 +222,10 @@ std::vector<VirtualServer>		ParseConfigFile::ParseFile(std::string& numberOfWork
 		throw ParseConfigFileException("Config file can not be opened");
 	std::string line;
 	std::vector<VirtualServer> virtualServers;
-	while (!_lineSurplus.empty() || ft_getline(_fd, line)) {
-		if (!_lineSurplus.empty()) {
-			line = _lineSurplus;
-			_lineSurplus.clear();
+	while (!_line_surplus.empty() || ft_getline(_fd, line)) {
+		if (!_line_surplus.empty()) {
+			line = _line_surplus;
+			_line_surplus.clear();
 		}
 		if (line[0] == '#')
 			continue;
@@ -246,5 +236,6 @@ std::vector<VirtualServer>		ParseConfigFile::ParseFile(std::string& numberOfWork
 		else if (line.length() > 0)
 			throw ParseConfigFileException("Unknown parameter " + line);
 	}
+	close(_fd);
 	return (virtualServers);
 }

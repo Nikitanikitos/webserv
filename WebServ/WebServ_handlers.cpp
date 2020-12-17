@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/17 13:07:11 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 15:37:16 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,17 +15,19 @@
 
 void	WebServ::ReadRequest(Client *client) {
 	char	buff[512];
-	int 	bytes;
-	static int	w;
 
 	ft_memset(buff, 0, 512);
-	bytes = recv(client->GetSocket(), buff, 512, MSG_TRUNC);
-	client->AddToBuffer(buff);
-	if (client->GetBuffer().rfind("\r\n\r\n") != std::string::npos)
-		client->NextStage();
+	recv(client->GetSocket(), buff, 512, MSG_TRUNC);
+	if (*((int*)buff) == -33557249)
+		client->SetStage(close_connection_);
+	else {
+		client->AddToBuffer(buff);
+		if (client->GetBuffer().rfind("\r\n\r\n") != std::string::npos)
+			client->NextStage();
+	}
 }
 
-bool WebServ::_CheckError(Response& response, Client *client, const VirtualServer& virtual_server, struct stat& buff,
+bool	WebServ::_CheckError(Response& response, Client *client, const VirtualServer& virtual_server, struct stat& buff,
 																					  std::string& path_to_target) {
 	const Location&			location = virtual_server.GetLocation(client->GetRequest());
 	const Request&			request = client->GetRequest();
@@ -68,7 +70,7 @@ std::string WebServ::_GenerateErrorPage(const std::string& code) const {
 	return ("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" "
 		 	"content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" "
 			"content=\"ie=edge\"><title>Error Page</title><style>h1 {text-align: center;}</style></head><body>"
-   			"<h1>" + code + "</h1></body></html>");
+			"<h1>" + code + "</h1><p>" + Response::_message_phrases.at(code) +"</p></body></html>");
 }
 
 void WebServ::_SetErrorPage(Response& response, const Location& location, const VirtualServer& virtual_server,
@@ -101,7 +103,6 @@ void	WebServ::_DefaultHandler(Response& response, Client *client, const VirtualS
 		body = _AutoindexGenerate(request, path_to_target);
 
 	response.SetStatusCode("200");
-	response.AddHeader("Content-Length", std::to_string(body.length()));
 	if (request.GetMethod() == "GET")
 		response.SetBody(body);
 }
@@ -120,7 +121,7 @@ void	WebServ::GenerateResponse(Client *client) {
 		_DefaultHandler(response, client, virtual_server, buff, path_to_target, location);
 
 	try {
-		if (response.GetHeader("connection") == "close")
+		if (request.GetHeader("connection") == "close")
 			response.AddHeader("Connection", "Close");
 		else
 			throw std::out_of_range("");
@@ -153,8 +154,4 @@ void	WebServ::SendResponse(Client* client) {
 		client->ClearRequest();
 		client->ClearBuffer();
 	}
-}
-
-void	WebServ::CloseConnection(Client* client) {
-	close(client->GetSocket());
 }

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 18:03:37 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/17 10:54:55 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 13:18:16 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,10 @@ private:
 	_headers_t				_headers;
 
 public:
-	Request();
-	virtual ~Request();
+	Request() { }
+	virtual ~Request() { }
 
 	void							AddHeader(const std::string& key, const std::string& value);
-
 	void							SetPort(const std::string& port);
 	void						 	SetHost(const std::string& host);
 	void							SetTarget(const std::string& target);
