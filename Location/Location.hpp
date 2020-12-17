@@ -51,7 +51,7 @@ private:
 
 public:
 	Location();
-	~Location() = default;
+	~Location() { }
 
 	void						AddAllowMethod(bool method);
 	void 						EraseAcceptedMethods();

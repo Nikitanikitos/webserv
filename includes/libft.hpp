@@ -38,7 +38,7 @@ int						ft_atoi(const char* nptr);
 
 void					ft_localtime(tm&, time_t);
 
-std::string				ft_getdate();
+std::string				ft_getdate(struct timeval& tv);
 std::string				ft_getfile(const char *path);
 
 void*					worker(void* arg);

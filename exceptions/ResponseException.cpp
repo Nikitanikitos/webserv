@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/26 16:20:35 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/16 15:21:36 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 13:13:22 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,13 @@ ResponseException::ResponseException(const std::string& status_code, const std::
 void ResponseException::GenerateResponse() {
 	std::string			body_response = ft_getfile(_error_page.c_str());
 	std::string			response;
+	struct timeval		tv;
 
+	gettimeofday(&tv, 0);
 	_buffer.append(
 			HTTP_VERSION + SP + _status_code + SP + _message_phrase + CRLF
 			"Server:" + SP + SERVER_VERSION + CRLF
-		  	"Date:" + SP + ft_getdate() + CRLF
+		  	"Date:" + SP + ft_getdate(tv) + CRLF
 		  	"Content-type: text/html" + CRLF
 		  	"Content-length:" + SP + std::to_string(body_response.length()) + CRLF
 		  	"Connection:" + SP + "close" + CRLF CRLF +

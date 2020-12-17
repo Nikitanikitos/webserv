@@ -6,13 +6,13 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/16 22:55:14 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 13:13:22 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Response.hpp"
 
-Response::Response() : _body() { }
+Response::Response() { }
 Response::Response(const std::string& status_code, const std::string& message_phrase) :
 														_status_code(status_code), _message_phrase(message_phrase) { }
 
@@ -29,13 +29,14 @@ void				Response::AddHeader(const std::string& key, const std::string& value) {
 const std::string&	Response::GetHeader(const std::string& key) const { return (_headers.at(key)); }
 
 void				Response::GenerateResponse() {
-	_buffer.append(
-		HTTP_VERSION + SP + _status_code + SP + _message_phrase + CRLF
-		"Server:" + SP + SERVER_VERSION + CRLF
-		"Date:" + SP + ft_getdate() + CRLF);
+	struct timeval	tv;
+	gettimeofday(&tv, nullptr);
 
-	_buffer.append("Content-length: " + std::to_string(_body.size()));
-	_buffer.append(CRLF);
+	_buffer.append(
+			HTTP_VERSION + SP + _status_code + SP + _message_phrase + CRLF
+		"Server:" + SP + SERVER_VERSION + CRLF
+		"Date:" + SP + ft_getdate(tv) + CRLF);
+
 	for (const auto& header : _headers)
 		_buffer.append(header.first + ":" + SP + header.second + CRLF);
 	_buffer.append(CRLF);

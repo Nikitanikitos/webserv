@@ -34,9 +34,8 @@ private:
 	int 									_number_workers;
 	ThreadPool								_thread_pool;
 
-	static void
-	_DefaultHandler(Response& response, Client *client, const VirtualServer& virtual_server, struct stat& buff,
-					std::string& path_to_target, const Location& location);
+	static void					_DefaultHandler(Response& response, Client *client, const VirtualServer& virtual_server,
+								 			struct stat& buff, std::string& path_to_target, const Location& location);
 	void						_CgiHandler(const Request&, const VirtualServer&, const Location&, int);
 
 	static void					_GetHeadMethodsHandler(Client *client, struct stat* buff, const Location& location);
@@ -68,10 +67,10 @@ private:
 	void						_InitSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
 	std::vector<std::string>	_GetKeyValue(const std::string &line) const;
 
-	bool						_CheckError(Response& response, Client *client, const VirtualServer& virtual_server, struct stat& buff,
-					 																	std::string& path_to_target);
-	void						_SetErrorPage(Response& response, const Location& location, const VirtualServer& virtual_server,
-					   const Request& request);
+	bool						_CheckError(Response& response, Client *client, const VirtualServer& virtual_server,
+					   													struct stat& buff, std::string& path_to_target);
+	void						_SetErrorPage(Response& response, const Location& location,
+						 								const VirtualServer& virtual_server, const Request& request);
 	std::string 				_GenerateErrorPage(const std::string& code) const;
 
 public:

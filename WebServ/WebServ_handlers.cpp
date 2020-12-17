@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/17 11:04:10 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 13:07:11 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,9 +89,14 @@ void	WebServ::_DefaultHandler(Response& response, Client *client, const VirtualS
 							  				struct stat& buff, std::string& path_to_target, const Location& location) {
 	const Request&		request = client->GetRequest();
 	std::string			body;
+	struct timeval		tv;
 
-	if (S_ISREG(buff.st_mode) || S_ISLNK(buff.st_mode))
+	if (S_ISREG(buff.st_mode) || S_ISLNK(buff.st_mode)) {
 		body = ft_getfile(path_to_target.c_str());
+		tv.tv_sec = buff.st_mtimespec.tv_sec;
+		tv.tv_usec = buff.st_mtimespec.tv_nsec;
+		response.AddHeader("Last-modified", ft_getdate(tv));
+	}
 	else if (S_ISDIR(buff.st_mode) && location.GetAutoindex())
 		body = _AutoindexGenerate(request, path_to_target);
 

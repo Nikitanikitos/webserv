@@ -60,7 +60,7 @@ private:
 
 public:
 	explicit ParseConfigFile(char *filename);
-	~ParseConfigFile() = default;
+	~ParseConfigFile() { }
 
 	std::vector<VirtualServer> ParseFile(std::string &numberOfWorkers);
 

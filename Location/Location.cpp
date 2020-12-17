@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Location.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 20:30:05 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/09 00:10:01 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/17 11:12:16 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Location.hpp"
 
-Location::Location() : _autoindex(non_accepted), _index("index.html"), _location_type(default_location) {
+Location::Location() : _autoindex(non_accepted), _location_type(default_location) {
 	_allow_methods.assign(5, non_accepted);
 }
 
@@ -38,7 +38,7 @@ const std::string&			Location::GetIndex() const { return (_index); }
 bool						Location::GetLocationType() const { return (_location_type); }
 bool						Location::GetAutoindex() const { return (_autoindex); }
 
-bool Location::IsAllowMethod(const std::string& method) const {
+bool						Location::IsAllowMethod(const std::string& method) const {
 	static std::string	methods[NUMBER_METHODS] = {"GET", "HEAD", "POST", "PUT", "DELETE", "OPTIONS"};
 
 	for (int i = 0; i < NUMBER_METHODS; ++i) {
