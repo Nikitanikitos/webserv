@@ -1,8 +1,8 @@
 /* Muller Medium */
 @font-face {
 	font-family: 'Muller Medium';
-	src: url('../lagoona/srcs/src/fonts/MullerMedium.woff2') format('woff2'),
-	url('../lagoona/srcs/src/fonts/MullerMedium.woff') format('woff');
+	src: url('../src/fonts/MullerMedium.woff2') format('woff2'),
+	url('../src/fonts/MullerMedium.woff') format('woff');
 	font-display: swap;
 	font-weight: 500;
 	font-style: normal;
@@ -11,8 +11,8 @@
 /* Muller Regular */
 @font-face {
 	font-family: 'Muller Regular';
-	src: url('../lagoona/srcs/src/fonts/MullerRegular.woff2') format('woff2'),
-		url('../lagoona/srcs/src/fonts/MullerRegular.woff') format('woff');
+	src: url('../src/fonts/MullerRegular.woff2') format('woff2'),
+		url('../src/fonts/MullerRegular.woff') format('woff');
 	font-display: swap;
 	font-weight: normal;
 	font-style: normal;
@@ -21,8 +21,8 @@
 /* Muller Bold */
 @font-face {
 	font-family: 'Muller Bold';
-	src: url('../lagoona/srcs/src/fonts/MullerBold.woff2') format('woff2'),
-		url('../lagoona/srcs/src/fonts/MullerBold.woff') format('woff');
+	src: url('../src/fonts/MullerBold.woff2') format('woff2'),
+		url('../src/fonts/MullerBold.woff') format('woff');
 	font-display: swap;
 	font-weight: 800;
 	font-style: normal;
@@ -31,8 +31,8 @@
 /* Muller Light */
 @font-face {
 	font-family: 'Muller';
-	src: url('../lagoona/srcs/src/fonts/MullerLight.woff2') format('woff2'),
-		url('../lagoona/srcs/src/fonts/MullerLight.woff') format('woff');
+	src: url('../src/fonts/MullerLight.woff2') format('woff2'),
+		url('../src/fonts/MullerLight.woff') format('woff');
 	font-display: swap;
 	font-weight: 500;
 	font-style: normal;
@@ -203,7 +203,7 @@ body {
 	position: absolute;
 	width: 22px;
 	height: 22px;
-	background-image: url(../lagoona/srcs/src/img/search.png);
+	background-image: url(../src/img/search.png);
 	background-repeat: no-repeat;
 	background-color: transparent;
 	border: none;
@@ -244,7 +244,7 @@ body {
 }
 
 .special-offer-poster {
-  background-image: url(../lagoona/srcs/src/img/offer_poster.jpg);
+  background-image: url(../src/img/offer_poster.jpg);
   background-repeat: no-repeat;
   background-size: cover;
   padding: 265px 223px 35px 40px;
@@ -270,7 +270,7 @@ body {
 }
 
 .offer-more-details {
-	background-image: url(../lagoona/srcs/src/img/arrow.svg);
+	background-image: url(../src/img/arrow.svg);
 	background-repeat: no-repeat;
 	background-position: right;
 	display: inline-block;
@@ -328,7 +328,7 @@ body {
 }
 
 .services-item-link {
-	background-image: url(../lagoona/srcs/src/img/arrow.svg);
+	background-image: url(../src/img/arrow.svg);
 	background-repeat: no-repeat;
 	background-position: right;
 	font-size: 22px;
@@ -376,35 +376,35 @@ body {
 }
 
 .advantages-item-1 {
-	background-image: url(../lagoona/srcs/src/img/bathtub.png);
+	background-image: url(../src/img/bathtub.png);
 }
 
 .advantages-item-2 {
-	background-image: url(../lagoona/srcs/src/img/hanger.png);
+	background-image: url(../src/img/hanger.png);
 }
 
 .advantages-item-3 {
-	background-image: url(../lagoona/srcs/src/img/heating.png);
+	background-image: url(../src/img/heating.png);
 }
 
 .advantages-item-4 {
-	background-image: url(../lagoona/srcs/src/img/hotel-key.png);
+	background-image: url(../src/img/hotel-key.png);
 }
 
 .advantages-item-5 {
-	background-image: url(../lagoona/srcs/src/img/parking.png);
+	background-image: url(../src/img/parking.png);
 }
 
 .advantages-item-6 {
-	background-image: url(../lagoona/srcs/src/img/reception.png);
+	background-image: url(../src/img/reception.png);
 }
 
 .advantages-item-7 {
-	background-image: url(../lagoona/srcs/src/img/security-box.png);
+	background-image: url(../src/img/security-box.png);
 }
 
 .advantages-item-8 {
-	background-image: url(../lagoona/srcs/src/img/swimming-pool.png);
+	background-image: url(../src/img/swimming-pool.png);
 }
 
 .advantages-item-description {
@@ -485,7 +485,7 @@ body {
 }
 
 .placement-other {
-	background-image: url(../lagoona/srcs/src/img/placement_other.jpg);
+	background-image: url(../src/img/placement_other.jpg);
 	background-repeat: no-repeat;
 	background-size: cover;
 	position: relative;
@@ -496,7 +496,7 @@ body {
 }
 
 .placement-other-text {
-	background-image: url(../lagoona/srcs/src/img/arrow_white.svg);
+	background-image: url(../src/img/arrow_white.svg);
 	background-repeat: no-repeat;
 	background-position: right;
 	display: inline-block;
@@ -595,7 +595,7 @@ body {
 
 .footer {
 	background-color: #333;
-	background-image: url(../lagoona/srcs/src/img/footer-logo.png);
+	background-image: url(../src/img/footer-logo.png);
 	background-position: 725px 138px ;
 	background-repeat: no-repeat;
 	width: 1168px;
@@ -659,21 +659,21 @@ body {
 }
 
 .link-tripadvisor {
-	background-image: url(../lagoona/srcs/src/img/tripadvisor.png);
+	background-image: url(../src/img/tripadvisor.png);
 }
 
 .link-twitter {
-	background-image: url(../lagoona/srcs/src/img/twitter.png);
+	background-image: url(../src/img/twitter.png);
 }
 
 .link-facebook {
-	background-image: url(../lagoona/srcs/src/img/facebook.png);
+	background-image: url(../src/img/facebook.png);
 }
 
 .link-vk {
-	background-image: url(../lagoona/srcs/src/img/social.png);
+	background-image: url(../src/img/social.png);
 }
 
 .link-google {
-	background-image: url(../lagoona/srcs/src/img/google-plus.png);
+	background-image: url(../src/img/google-plus.png);
 }

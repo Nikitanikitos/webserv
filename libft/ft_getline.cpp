@@ -12,7 +12,7 @@
 
 # include "libft.hpp"
 
-//static void		read_all_file(int fd, std::string& static_buff) {
+//srcs void		read_all_file(int fd, std::string& static_buff) {
 //	char	buffer[512];
 //
 //	while (read(fd, buffer, 512) > 0) {
@@ -23,7 +23,7 @@
 //}
 //
 //bool			ft_getline(int fd, std::string &line) {
-//	static std::string		static_buff;
+//	srcs std::string		static_buff;
 //	size_t					pos;
 //
 //	if (static_buff.empty())

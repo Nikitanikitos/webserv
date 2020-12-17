@@ -50,7 +50,9 @@ private:
 
 public:
 	Request() { }
-	virtual ~Request() { }
+	virtual ~Request() {
+		_headers.clear();
+	}
 
 	void							AddHeader(const std::string& key, const std::string& value);
 	void							SetPort(const std::string& port);

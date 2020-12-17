@@ -14,8 +14,8 @@
 
 Client::Client(int socket, const std::string& ip, const std::string& port)
 								: _socket(socket), _stage(read_request_), _in_proccessed(false), _ip(ip), _port(port) {
-	if ((_proccess_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == nullptr)
-		throw std::exception();
+	if ((_proccess_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == 0)
+		throw std::out_of_range("Pthread");
 	pthread_mutex_init(_proccess_mutex, 0);
 }
 

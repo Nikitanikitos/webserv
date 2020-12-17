@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/17 14:14:23 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 23:12:17 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int					Response::SendResponse(int client_socket) {
 	return (bytes);
 }
 
-const std::string& Response::GetBuffer() const { return (_buffer); }
+const std::string&		Response::GetBuffer() const { return (_buffer); }
 
 void	Response::Clear() {
 	_status_code.clear();
