@@ -40,13 +40,13 @@ enum {
 
 class	ParseConfigFile {
 private:
-	std::string		_line_surplus;
+	std::string		_lineSurplus;
 	char*           _filename;
 	int 			_fd;
 
 	VirtualServer				_ParseVsDirective();
 
-	Location					_ParseLocationDirective(std::string const & locationAttribute);
+	Location					_ParseLocationDirective(std::string &locationAttribute);
 
 	std::vector<std::string>	_GetArgsFromLine(std::string &input) const;
 
@@ -55,12 +55,14 @@ private:
 	bool 						_CheckTabulation(std::string const &line, int expectedTabCount) const;
 	void 						_AddAllowMethodsToLocation(Location &location, std::vector<std::string> const& trimmedStr);
 	void 						_SetAutoindexInLocation(Location &location, std::vector<std::string> const& trimmedStr);
+	std::string&				_CheckLocationPath(std::string &path) const;
+	bool 						_CheckPort(int port) const;
 
 public:
 	explicit ParseConfigFile(char *filename);
 	~ParseConfigFile() = default;
 
-	std::vector<VirtualServer> ParseFile(std::string &number_of_workers);
+	std::vector<VirtualServer> ParseFile(std::string &numberOfWorkers);
 
 	static std::string		server_current_fields[6];
 	static std::string		location_current_fields[7];
