@@ -27,8 +27,8 @@ public:
 	ResponseException(const std::string& status_code, const std::string& message_phrase, const std::string &error_page);
 	virtual ~ResponseException() = default;
 
-	virtual void	GenerateResponse();
-	virtual void	Clear();
+//	virtual void	GenerateResponse();
+//	virtual void	Clear();
 };
 
 #endif //WEBSERV_RESPONSEEXCEPTION_HPP

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/18 01:21:28 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 01:22:02 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void				WebServ::_AddClientInTaskQueue(fd_set &readfd_set) {
 		else if (!(*it)->InTaskQueue() && FD_ISSET((*it)->GetSocket(), &readfd_set))
 			_thread_pool.PushTask((*it));
 		if (_clients.empty())
-			return ;
+			break ;
 	}
 }
 
@@ -67,12 +67,11 @@ void				WebServ::_AddNewClient(fd_set& readfd_set) {
 }
 
 void				WebServ::RunServer() {
-	_CreateWorkers();
-
 	fd_set		writefd_set;
 	fd_set		readfd_set;
 	int 		max_fd;
 
+	_CreateWorkers();
 	while (true) {
 		_InitSets(writefd_set, readfd_set, max_fd);
 		_AddClientSocketInSet(readfd_set, max_fd);

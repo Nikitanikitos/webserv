@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/17 21:27:27 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 02:48:55 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	VirtualServer::AddLocation(const Location& location) { _list_locations.push
 
 void	VirtualServer::InitSocket() {
 	struct sockaddr_in	sock_addr;
-	int 				opt;
+	int 				opt = 1;
 
 	ft_memset(&sock_addr, 0, sizeof(sock_addr));
 	sock_addr.sin_family = PF_INET;
