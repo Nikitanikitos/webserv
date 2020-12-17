@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="{% static 'css/normalize.css'%}">
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <title>Lagoona</title>
+</head>
+<body>
+  <header class="header">
+    <div class="container upper-header-container">
+      <img src="{% static 'src/img/Logo.png' %}" alt="Lagoona" class="upper-header-logo">
+      <a href="tel:+7495322544834" class="link upper-header-number">
+        +7 495 322 54 48
+      </a>
+      <a href="" class="upper-header-authorization link">
+        Личный кабинет
+      </a>
+    </div>
+    <div class="container header-container">
+      <nav class="header-nav">
+        <ul class="list header-menu">
+          {% for item in list_menu %}
+            <li class="menu-item">
+              <a href="{{ item.link_to }}" class="link menu-item-link">{{ item.item_menu }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+      <form action="https://jsonplaceholder.typicode.com/gets"
+            method="GET" class="header-search">
+        <input name="search" type="search"
+                class="header-search-input" placeholder="Поиск">
+        <button type="submit" class="search-input-btn">
+        </button>
+      </form>
+    </div>
+  </header>
+  <main>
+    <section class="first-section">
+      <div class="container first-section-container">
+        <div class="booking">
+          <h2 class="title booking-title">
+            Быстрая бронь
+          </h2>
+          <form action="/"
+                method="POST" class="booking-form">
+            {% csrf_token %}
+            {{ booking_form.as_table }}
+            <button type="submit" class="btn btn-color booking-btn">
+              Найти номер
+            </button>
+            <span class="booking-available">
+              <span class="booking-available-count">
+                9 756
+              </span>
+              предложений доступно
+            </span>
+          </form>
+        </div>
+
+        <div class="special-offer">
+          <h2 class="title special-offer-title">
+            Спецпредложение
+          </h2>
+          <div class="special-offer-poster">
+            <p class="offer-description">
+              Номера категории люкс
+            </p>
+            <span class="offer-price">
+              от 5 000 р
+            </span>
+            <a href="#" class="link offer-more-details">
+              Подробнее
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="about">
+      <div class="container about-container">
+        <h2 class="title about-title" id="about-id">
+          О нас
+        </h2>
+        <p class="about-dscription">
+          Идейные соображения высшего порядка, а также сложившаяся структура
+          организации влечет за собой процесс внедрения и модернизации системы
+          обучения кадров, соответствует насущным потребностям. Идейные
+          соображения высшего порядка, а также дальнейшее развитие различных форм
+          деятельности представляет собой интересный эксперимент проверки системы
+          обучения кадров, соответствует насущным потребностям. Равным образом
+          сложившаяся структура организации требуют определения и уточнения
+          существенных финансовых и административных условий.
+        </p>
+      </div>
+    </section>
+
+    <section class="services">
+      <div class="container services-container">
+        <h2 class="title services-title" id="services-id">
+          Услуги
+        </h2>
+        <ul class="list services-list">
+          <li class="services-item">
+            <img src="../static/src/img/service_1.jpg" alt="Эксклюзивное обслуживание"
+                 class="services-item-img">
+            <a href="#" class="link services-item-link">
+              Эксклюзивное обслуживание
+            </a>
+            <p class="services-item-description">
+              Равным образом постоянный количественный рост
+              и сфера нашей активности
+            </p>
+          </li>
+
+          <li class="services-item">
+            <img src="../static/src/img/service_2.jpg" alt="Аренда банкетных залов"
+                 class="services-item-img">
+            <a href="#" class="link services-item-link">
+              Аренда банкетных залов
+            </a>
+            <p class="services-item-description">
+              Значимость этих проблем настолько очевидна,
+              что дальнейшее развитие различных форм.
+            </p>
+          </li>
+
+          <li class="services-item">
+            <img src="../static/src/img/service_3.jpg" alt="Сауны, бассейны, бани"
+                 class="services-item-img">
+            <a href="#" class="link services-item-link">
+              Сауны, бассейны, бани, фитнес-залы
+            </a>
+            <p class="services-item-description">
+              Не следует, однако забывать, что начало повседневной
+              работы по формированию позиции
+            </p>
+          </li>
+
+          <li class="services-item">
+            <img src="../static/src/img/service_4.jpg" alt="Охраняемые автомобильные стоянки"
+                 class="services-item-img">
+            <a href="#" class="link services-item-link">
+              Охраняемые автомобильные стоянки
+            </a>
+            <p class="services-item-description">
+              Не следует, однако забывать, что начало повседневной
+              работы по формированию позиции
+            </p>
+          </li>
+        </ul>
+      </div>
+
+    </section>
+
+    <section class="advantages">
+      <div class="container advantages-container">
+        <h2 class="advantages-title title" id="advantages-id">
+          Преимущества
+        </h2>
+        <ul class="list advantages-list">
+          <li class="advantages-item advantages-item-1">
+            <p class="advantages-item-description">
+              Идейные соображения высшего порядка, а также постоянный
+              количественный рост
+            </p>
+          </li>
+
+          <li class="advantages-item advantages-item-2">
+            <p class="advantages-item-description">
+              Идейные соображения высшего порядка, а также постоянный
+              количественный рост
+            </p>
+          </li>
+
+          <li class="advantages-item advantages-item-3">
+            <p class="advantages-item-description">
+              Идейные соображения высшего порядка, а также постоянный
+              количественный рост
+            </p>
+          </li>
+
+          <li class="advantages-item advantages-item-4">
+            <p class="advantages-item-description">
+              Идейные соображения высшего порядка, а также постоянный
+              количественный рост
+            </p>
+          </li>
+
+          <li class="advantages-item advantages-item-5">
+            <p class="advantages-item-description">
+              Идейные соображения высшего порядка, а также постоянный
+              количественный рост
+            </p>
+          </li>
+
+          <li class="advantages-item advantages-item-6">
+            <p class="advantages-item-description">
+              Идейные соображения высшего порядка, а также постоянный
+              количественный рост
+            </p>
+          </li>
+
+          <li class="advantages-item advantages-item-7">
+            <p class="advantages-item-description">
+              Идейные соображения высшего порядка, а также постоянный
+              количественный рост
+            </p>
+          </li>
+
+          <li class="advantages-item advantages-item-8">
+            <p class="advantages-item-description">
+              Идейные соображения высшего порядка, а также постоянный
+              количественный рост
+            </p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="placement">
+      <div class="container placement-container">
+        <h2 class="title placement-title" id="placement-id">
+          Размещение
+        </h2>
+        <ul class="list placement-list">
+          {% for hotel in hotel_list %}
+            <li class="placement-item">
+              <img src="{% static hotel.image_url %}" alt="" class="placement-item-img">
+              <div class="placement-item-info">
+                <div class="placement-item-price">
+                  <span class="placement-price-from">от</span>
+                  <span class="placement-price-price">{{ hotel.room_price}}р /</span>
+                  ночь
+                </div>
+                <div class="placement-item-rating">
+                  <img src=" {% static 'src/img/star.png' %}" alt="" class="placement-rating-img">
+                  <img src=" {% static 'src/img/star.png' %}" alt="" class="placement-rating-img">
+                  <img src=" {% static 'src/img/star.png' %}" alt="" class="placement-rating-img">
+                  <img src=" {% static 'src/img/star.png' %}" alt="" class="placement-rating-img">
+                  <img src=" {% static 'src/img/star.png' %}" alt="" class="placement-rating-img">
+                </div>
+                <p class="placement-item-name">
+                  {{ hotel.hotel_name}}
+                </p>
+                <p class="placement-item-location">
+                  {{ hotel.hotel_location }}
+                </p>
+                <button class="btn-clear btn placement-item-btn">
+                  Номера
+                </button>
+              </div>
+            </li>
+          {% endfor %}
+
+          <li class="placement-item placement-other">
+            <a href="#" class="placement-other-text">Посмотреть все варианты</a>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="contacts">
+      <div class="container contacts-container">
+        <h2 class="title contacts-title" id="contacts-id">
+          Контакты
+        </h2>
+        <div class="contacts-block">
+          <ul class="list contacts-list">
+            <li class="contacts-item">
+              <h3 class="contacts-item-title">
+                Адрес
+              </h3>
+              <div class="contacts-item-info">
+                <address class="contacts-adress">
+                  Москва, улица Юности, дом 5 строение 4, офис 2
+                </address>
+              </div>
+            </li>
+            <li class="contacts-item">
+              <h3 class="contacts-item-title">
+                Телефоны
+              </h3>
+              <div class="contacts-item-info">
+                <a href="tel:+74995356434" class="link contacts-link">
+                  +7 (499) 535-64-34
+                </a>
+                <a href="tel:+74950050544" class="link contacts-link">
+                  +7 (495) 005-05-44
+                </a>
+              </div>
+            </li>
+            <li class="contacts-item">
+              <h3 class="contacts-item-title">
+                E-mail
+              </h3>
+              <div class="contacts-item-info">
+                <a href="mailto:lg.oona@mail.ru" class="link">
+                  lg.oona@mail.ru
+                </a>
+                <span class="contacts-item-mail">
+                  по вопросам бронирования
+                </span>
+                <a href="mailto:hotels.ln@mail.ru" class="link">
+                  hotels.ln@mail.ru
+                </a>
+                <span class="contacts-item-mail">
+                  по вопросам сотрундичества
+                </span>
+              </div>
+            </li>
+            <li class="contacts-item">
+              <h3 class="contacts-item-title">
+                График
+              </h3>
+              <div class="contacts-item-info">
+                <p class="contacts-item-schedule">
+                  Понедельник - пятница,
+                  с 10:0 до 19:00
+                </p>
+              </div>
+            </li>
+          </ul>
+          <button class="btn btn-clear contacts-btn">
+            Построить маршрут
+          </button>
+        </div>
+        <div class="write-to-us">
+          <h2 class="title write-to-us-title">
+            Напишите нам
+          </h2>
+          <form action="/"
+                class="write-to-us-form" method="post">
+            {% csrf_token %}
+            {{ write_us_form.as_p }}
+            <button type="submit" class="btn btn-color write-to-us-btn">
+              Отправить
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-info">
+        <p class="footer-info-info">
+          © 2012-2020 Управляющая компания Объединенной сети «Лагуна Хотелс»
+        </p>
+        <p class="footer-info-info">
+          Представленная на сайте информация
+          носит справочный характер
+          и не является публичной офертой
+        </p>
+        <a href="#" class="link footer-info-link">
+          Политика конфиденциальности
+        </a>
+      </div>
+      <div class="footer-contacts">
+        <address class="footer-adress">
+          11710, улица Юности, дом 5 строение 4, офис 2
+        </address>
+        <div class="footer-contacts-numbers">
+          <a href="tel:+74995356434" class="link contacts-link">
+            +7 (499) 535-64-34
+          </a>
+          <a href="tel:+74950050544" class="link contacts-link">
+            +7 (495) 005-05-44
+          </a>
+        </div>
+        <div class="footer-contacts-mails">
+          <a href="mailto:lg.oona@mail.ru" class="link contacts-link">
+            lg.oona@mail.ru
+          </a>
+          <a href="mailto:hotels.ln@mail.ru" class="link contacts-link">
+            hotels.ln@mail.ru
+          </a>
+        </div>
+      </div>
+        <ul class="footer-icons list">
+          <li class="footer-icons-item">
+            <a href="#" class="footer-social-link link-tripadvisor">
+            </a>
+          </li>
+          <li class="footer-icons-item">
+            <a href="#" class="footer-social-link link-twitter">
+            </a>
+          </li>
+          <li class="footer-icons-item">
+            <a href="#" class="footer-social-link link-facebook">
+            </a>
+          </li>
+          <li class="footer-icons-item">
+            <a href="#" class="footer-social-link link-vk">
+            </a>
+          </li>
+          <li class="footer-icons-item">
+            <a href="#" class="footer-social-link link-google">
+            </a>
+          </li>
+        </ul>
+    </div>
+  </footer>
+</body>
+</html>

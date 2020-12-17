@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 14:17:15 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/17 21:24:09 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 21:25:13 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -218,10 +218,12 @@ Location			ParseConfigFile::_ParseLocationDirective(std::string &locationAttribu
 }
 
 std::vector<VirtualServer>		ParseConfigFile::ParseFile(std::string& numberOfWorkers) {
+	std::string					line;
+	std::vector<VirtualServer>	virtualServers;
+
 	if ((_fd = open(_filename, O_RDONLY)) < 0)
 		throw ParseConfigFileException("Config file can not be opened");
-	std::string line;
-	std::vector<VirtualServer> virtualServers;
+	virtualServers.reserve(8);
 	while (!_line_surplus.empty() || ft_getline(_fd, line)) {
 		if (!_line_surplus.empty()) {
 			line = _line_surplus;
@@ -231,14 +233,8 @@ std::vector<VirtualServer>		ParseConfigFile::ParseFile(std::string& numberOfWork
 			continue;
 		else if (!line.compare(0, 7, "worker "))
 			numberOfWorkers.append(&line[7]);
-		else if (line == "server") {
-			VirtualServer	virtual_server = _ParseVsDirective();
-			virtual_server.SortServerNames();
-			if (_CheckCorrectVS(virtual_server, virtualServers))
-				virtualServers.push_back(virtual_server);
-			else
-				throw ParseConfigFileException("Server already exists " + line);
-		}
+		else if (line == "server")
+			AddVirtualServer(line, virtualServers);
 		else if (line.length() > 0)
 			throw ParseConfigFileException("Unknown parameter " + line);
 	}
@@ -246,7 +242,18 @@ std::vector<VirtualServer>		ParseConfigFile::ParseFile(std::string& numberOfWork
 	return (virtualServers);
 }
 
-bool	ParseConfigFile::_CheckCorrectVS(const VirtualServer& virtual_server, const std::vector<VirtualServer> list_virtual_server) {
+void ParseConfigFile::AddVirtualServer(const std::string& line, std::vector<VirtualServer>& virtualServers) {
+	VirtualServer	virtual_server = _ParseVsDirective();
+
+	virtual_server.SortServerNames();
+	if (_CheckCorrectVS(virtual_server, virtualServers))
+		virtualServers.push_back(virtual_server);
+	else
+		throw ParseConfigFileException("Server already exists " + line);
+}
+
+bool	ParseConfigFile::_CheckCorrectVS(const VirtualServer& virtual_server,
+									  							const std::vector<VirtualServer> list_virtual_server) {
 	for (int i = 0; i < list_virtual_server.size(); ++i)
 		if (virtual_server == list_virtual_server[i])
 			return (false);

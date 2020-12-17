@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 19:50:51 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/17 13:18:16 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 21:09:47 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ public:
 
 		virtual const char*		what() const throw() { return (_message.c_str()); }
 	};
+
+	void AddVirtualServer(const std::string& line, std::vector<VirtualServer>& virtualServers);
 };
 
 #endif //WEBSERV_PARSECONFIGFILE_HPP
