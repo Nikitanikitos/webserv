@@ -6,10 +6,11 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/17 23:12:17 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 01:56:35 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
 #include "Response.hpp"
 
 const std::map<std::string, std::string>	Response::_message_phrases = {
@@ -29,10 +30,8 @@ Response::Response(const std::string& status_code, const std::string& message_ph
 void				Response::SetStatusCode(const std::string& status_code) { _status_code.append(status_code); }
 void				Response::SetBody(const std::string& body) { _body.append(body); }
 
-void				Response::AddHeader(const std::string& key, const std::string& value) {
-	_headers.insert(std::make_pair(key, value));
-	_headers[key] = value; // TODO каково хера...
-}
+void				Response::AddHeader(const std::string& key, const std::string& value)
+	{ _headers.insert(std::make_pair(key, value)); }
 
 const std::string&	Response::GetHeader(const std::string& key) const { return (_headers.at(key)); }
 
@@ -73,7 +72,7 @@ const std::string&		Response::GetBuffer() const { return (_buffer); }
 void	Response::Clear() {
 	_status_code.clear();
 	_buffer.clear();
-	_headers.clear();
+//	_headers.clear();
 	_body.clear();
 	_message_phrase.clear();
 }

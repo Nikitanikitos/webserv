@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/17 21:27:27 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 21:27:50 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ public:
 
 	int									GetSocket() const;
 	const std::string&					GetErrorPage(const std::string& status_code) const;
-	Location							GetLocation(const Request& request) const;
+	Location							GetLocation(Request *request) const;
 	const std::vector<std::string>&		GetServerNames() const;
 	const std::string&					GetPort() const;
 	const std::string&					GetIp() const;

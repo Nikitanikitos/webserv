@@ -12,7 +12,7 @@
 
 #include "WebServ.hpp"
 
-std::string	WebServ::_AutoindexGenerate(const Request& request, const std::string& path_to_target) {
+std::string	WebServ::_AutoindexGenerate(Request *request, const std::string& path_to_target) {
 	std::string 		body_response;
 	DIR*				directory;
 	dirent*				current_file;
@@ -20,8 +20,8 @@ std::string	WebServ::_AutoindexGenerate(const Request& request, const std::strin
 	directory = opendir(path_to_target.c_str());
 	current_file = readdir(directory);
 	current_file = readdir(directory);
-	body_response.append("<html><head><title>Index of " + request.GetTarget() + "</title></head><body>"
-								 "<h1>Index of " + request.GetTarget() + "</h1><hr><pre><a href=\"../\">../</a><br>");
+	body_response.append("<html><head><title>Index of " + request->GetTarget() + "</title></head><body>"
+								 "<h1>Index of " + request->GetTarget() + "</h1><hr><pre><a href=\"../\">../</a><br>");
 	while ((current_file = readdir(directory)) != nullptr) {
 		std::string		file(current_file->d_name);
 		if (current_file->d_type == 4)

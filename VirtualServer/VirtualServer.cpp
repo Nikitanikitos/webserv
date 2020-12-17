@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/17 21:26:41 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/17 21:27:27 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,9 +45,9 @@ const std::string&					VirtualServer::GetIp() const { return (_ip); }
 const std::string&					VirtualServer::GetPort() const { return (_port); }
 const std::vector<std::string>&		VirtualServer::GetServerNames() const { return (_server_names); }
 
-Location				VirtualServer::GetLocation(const Request& request) const {
+Location				VirtualServer::GetLocation(Request *request) const {
 	for (int i = 0; i < _list_locations.size(); ++i) {
-		if (request.GetTarget().find(_list_locations[i].GetPath()) == 0)
+		if (request->GetTarget().find(_list_locations[i].GetPath()) == 0)
 			return (_list_locations[i]);
 	}
 	throw std::exception();

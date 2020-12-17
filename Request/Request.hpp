@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 18:03:37 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/17 13:18:16 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 01:51:07 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,33 +40,28 @@ class	Request {
 private:
 	typedef		std::map<std::string, std::string>		_headers_t;
 
+	std::string				_buffer;
 	std::string				_method;
 	std::string				_target;
-	std::string				_arguments;
-	std::string				_host;
-	std::string				_port;
 	std::string				_body;
 	_headers_t				_headers;
+public:
+	const std::string& GetBuffer() const;
 
 public:
 	Request() { }
-	virtual ~Request() {
-		_headers.clear();
-	}
+	virtual ~Request() { }
 
-	void							AddHeader(const std::string& key, const std::string& value);
-	void							SetPort(const std::string& port);
-	void						 	SetHost(const std::string& host);
+	void							AddHeader(const std::string key, const std::string value);
 	void							SetTarget(const std::string& target);
 	void							SetMethod(const std::string& method);
 
-	const std::string&				GetHost() const;
 	const std::string&				GetMethod() const;
 	const std::string&				GetTarget() const;
-	const std::string&				GetPort() const;
 	const std::string&				GetBody() const;
 	const std::string&				GetHeader(const std::string& header) const;
 
+	void							AddToBuffer(char* data);
 	void							Clear();
 };
 

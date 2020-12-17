@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/15 20:06:14 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/16 11:56:33 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 01:24:39 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,23 +92,22 @@ void 	WebServ::_StrToLower(std::string& str) const {
 }
 
 void	WebServ::ParsingRequest(Client *client) {
-
 	try {
-		Request						request;
+		Request*					request = client->GetRequest();
 		bool						take_host;
 		std::vector<std::string>	line;
 		std::vector<std::string>	args;
 
 		take_host = false;
-		args = _TrimRequest(client->GetBuffer());
+		args = _TrimRequest(request->GetBuffer());
 		if (!_CheckCountSpace(args[0], 2))
 			throw ResponseException("400", "Bad Request", "400.html");
 		else {
 			line = _GetArgs(args[0], ' ');
 			if (line.size() != 3 || _CheckMethod(args[0], 6) || line[2] != HTTP_VERSION)
 				throw ResponseException("400", "Bad Request", "400.html");
-			request.SetMethod(line[0]);
-			request.SetTarget(line[1]);
+			request->SetMethod(line[0]);
+			request->SetTarget(line[1]);
 			for (size_t i = 1; i < args.size(); ++i) {
 				line = _GetKeyValue(args[i]);
 				_StrToLower(line[0]);
@@ -117,17 +116,13 @@ void	WebServ::ParsingRequest(Client *client) {
 				std::string key = line[0].substr(0, line[0].size());
 				if (key == "host")
 					take_host = true;
-				request.AddHeader(key, line[1]);
+				request->AddHeader(key, line[1]);
 			}
 			if (!take_host)
 				throw ResponseException("400", "Bad Request", "400.html");
 		}
-		client->SetRequest(request);
 		client->NextStage();
 	}
 	catch (ResponseException& response) {
-		response.GenerateResponse();
-		client->SetResponse(response);
-		client->SetStage(send_response_);
 	}
 }

@@ -31,35 +31,29 @@ private:
 	bool 					_in_proccessed;
 	std::string				_ip;
 	std::string				_port;
-	std::string				_buffer;
-	Request					_request;
-	Response				_response;
-	pthread_mutex_t*		_proccess_mutex;
+	Request*				_request;
+	Response*				_response;
 
 public:
 	Client(int socket, const std::string& ip, const std::string& port);
 	virtual ~Client();
 
-	const std::string&			GetBuffer() const;
 	const std::string&			GetPort() const;
 	const std::string&			GetIp() const;
-	const Request&				GetRequest() const;
-	const Response&				GetResponse() const;
 	int							GetStage() const;
 	int							GetSocket() const;
+	Request						*GetRequest() const;
+	Response					*GetResponse() const;
 
 	void						SetProcessed(bool processed);
-	void						SetRequest(const Request &request);
-	void						SetResponse(const Response &response);
+
 	void						SetStage(int stage);
 
-	void						AddToBuffer(char *data);
 
 	void						NextStage();
 
 	bool						InTaskQueue();
 
-	void						ClearBuffer();
 	void						ClearResponse();
 	void						ClearRequest();
 

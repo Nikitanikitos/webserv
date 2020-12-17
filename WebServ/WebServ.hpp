@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/17 19:43:22 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 01:10:37 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,12 @@ private:
 	int 							_number_workers;
 	ThreadPool						_thread_pool;
 
-	static void					_DefaultHandler(Response& response, Client *client, const VirtualServer& virtual_server,
-								 			struct stat& buff, std::string& path_to_target, const Location& location);
+	static void
+	_DefaultHandler(Client *client, const VirtualServer& virtual_server, struct stat& buff, std::string& path_to_target,
+					const Location& location);
 	void						_CgiHandler(const Request&, const VirtualServer&, const Location&, int);
 
-	static std::string			_AutoindexGenerate(const Request& request, const std::string& path_to_target);
+	static std::string			_AutoindexGenerate(Request *request, const std::string& path_to_target);
 
 	void						_CreateWorkers();
 
@@ -49,7 +50,7 @@ private:
 	void						GenerateResponse(Client* client);
 	void						SendResponse(Client* client);
 
-	static std::string			_GetPathToTarget(const Request& request, const Location& location);
+	static std::string			_GetPathToTarget(Request *request, const Location& location);
 	std::vector<std::string>	_GetArgs(const std::string& line, char separate) const;
 	std::vector<std::string>	_TrimRequest(const std::string& buff) const;
 	bool						_CheckCountSpace(const std::string& line, int numSpaces) const;
@@ -62,10 +63,10 @@ private:
 	void						_InitSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
 	std::vector<std::string>	_GetKeyValue(const std::string &line) const;
 
-	bool						_CheckError(Response& response, Client *client, const VirtualServer& virtual_server,
-					   													struct stat& buff, std::string& path_to_target);
-	void						_SetErrorPage(Response& response, const Location& location,
-						 								const VirtualServer& virtual_server, const Request& request);
+	bool _CheckError(Client *client, const VirtualServer& virtual_server, struct stat& buff,
+					 std::string& path_to_target);
+	void
+	_SetErrorPage(Client *client, const Location& location, const VirtualServer& virtual_server);
 	std::string 				_GenerateErrorPage(const std::string& code) const;
 
 

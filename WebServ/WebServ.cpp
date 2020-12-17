@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/17 23:50:21 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 01:21:28 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,8 @@ void				WebServ::RunServer() {
 }
 
 const VirtualServer&	WebServ::_GetVirtualServer(Client *client) const {
-	const VirtualServer		*default_vs = NULL;
-	const Request&			request = client->GetRequest();
+	const VirtualServer		*default_vs = 0;
+	Request*				request = client->GetRequest();
 
 	for (int i = 0; i < _virtual_servers.size(); ++i) {
 		const VirtualServer&	virtual_server = _virtual_servers[i];
@@ -94,15 +94,15 @@ const VirtualServer&	WebServ::_GetVirtualServer(Client *client) const {
 			if (!default_vs)
 				default_vs = &virtual_server;
 			for (int j = 0; j < virtual_server.GetServerNames().size(); ++j)
-				if (request.GetHeader("host") == virtual_server.GetServerNames()[j])
+				if (request->GetHeader("host") == virtual_server.GetServerNames()[j])
 					return (virtual_server);
 		}
 	}
 	return (*default_vs);
 }
 
-std::string		WebServ::_GetPathToTarget(const Request& request, const Location& location) {
-	std::string 	result = request.GetTarget();
+std::string		WebServ::_GetPathToTarget(Request *request, const Location& location) {
+	std::string 	result = request->GetTarget();
 
 	result.erase(0, location.GetPath().size());
 	return (location.GetRoot() + "/" + result);
