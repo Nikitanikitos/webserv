@@ -12,6 +12,7 @@ add_executable(webserv
 		libft/ft_localtime.cpp
 		libft/ft_getdate.cpp
 		libft/ft_getline.cpp
+		libft/ft_getfile.cpp
 
 		WebServ/WebServ.cpp
 		WebServ/WebServ_workers.cpp
@@ -22,13 +23,14 @@ add_executable(webserv
 		Location/Location.cpp
 		ParseConfigFile/ParseConfigFile.cpp
 		Request/Request.cpp
-        Response/Response.cpp
+		Response/Response.cpp
 
 		Client/Client.cpp
 		ThreadPool/ThreadPool.cpp
 
         exceptions/ResponseException.cpp
-		libft/ft_getfile.cpp WebServ/WebServ_parsing_request.cpp)
+		WebServ/WebServ_parsing_request.cpp
+		)
 
 include_directories(
 		includes
