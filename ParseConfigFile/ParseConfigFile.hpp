@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 19:50:51 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/17 21:09:47 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 16:28:36 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,26 +44,26 @@ private:
 	char*           _filename;
 	int 			_fd;
 
-	VirtualServer				_ParseVsDirective();
+	VirtualServer * _ParseVsDirective();
 
-	Location					_ParseLocationDirective(std::string &locationAttribute);
+	Location * _ParseLocationDirective(std::string &locationAttribute);
 
 	std::vector<std::string>	_GetArgsFromLine(std::string &input) const;
 
 	int 						_GetIndexOfArg(std::string const &arg, std::string *arr, int size) const;
 
 	bool 						_CheckTabulation(std::string const &line, int expectedTabCount) const;
-	void 						_AddAllowMethodsToLocation(Location &location, std::vector<std::string> const& trimmedStr);
-	void 						_SetAutoindexInLocation(Location &location, std::vector<std::string> const& trimmedStr);
+	void 						_AddAllowMethodsToLocation(Location *location, const std::vector<std::string>& trimmedStr);
+	void 						_SetAutoindexInLocation(Location *location, const std::vector<std::string>& trimmedStr);
 	std::string&				_CheckLocationPath(std::string &path) const;
 	bool 						_CheckPort(int port) const;
 
-	bool						_CheckCorrectVS(const VirtualServer& virtual_server, const std::vector<VirtualServer> list_virtual_server);
+	bool						_CheckCorrectVS(const VirtualServer *virtual_server, const std::vector<VirtualServer*>& list_virtual_server);
 public:
 	explicit ParseConfigFile(char *filename)  : _filename(filename) { }
 	~ParseConfigFile() { }
 
-	std::vector<VirtualServer> ParseFile(std::string &numberOfWorkers);
+	std::vector<VirtualServer*> ParseFile(std::string &numberOfWorkers);
 
 	static std::string		server_current_fields[6];
 	static std::string		location_current_fields[7];
@@ -77,7 +77,7 @@ public:
 		virtual const char*		what() const throw() { return (_message.c_str()); }
 	};
 
-	void AddVirtualServer(const std::string& line, std::vector<VirtualServer>& virtualServers);
+	void AddVirtualServer(const std::string& line, std::vector<VirtualServer*>& virtualServers);
 };
 
 #endif //WEBSERV_PARSECONFIGFILE_HPP
