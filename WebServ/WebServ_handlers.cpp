@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 18:22:19 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 19:01:17 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ bool	WebServ::_CheckError(Client* client, VirtualServer* virtual_server, Locatio
 	Request*				request = client->GetRequest();
 	int 					fd;
 
-	if (stat(path_to_target.c_str(), &buff) == -1) {
+	if (stat(path_to_target.c_str(), &buff) == -1 || !location) {
 		response->SetStatusCode("404");
 		return (true);
 	}
@@ -77,9 +77,8 @@ void	WebServ::_SetErrorPage(Client* client, Location* location, VirtualServer* v
 		response->AddHeader("Location", "http://" + virtual_server->GetIp() + ":" + virtual_server->GetPort() + path_to_target);
 		response->SetStatusCode("302");
 	}
-	catch (std::exception&) {
-		response->SetBody(_GenerateErrorPage(response->GetStatusCode()));
-	}
+	catch (std::exception&)
+		{ response->SetBody(_GenerateErrorPage(response->GetStatusCode())); }
 }
 
 void	WebServ::_DefaultHandler(Client* client, Location* location, struct stat& buff, std::string& path_to_target) {
@@ -106,7 +105,7 @@ void	WebServ::GenerateResponse(Client *client) {
 	VirtualServer*			virtual_server = _GetVirtualServer(client);
 	Location*				location = virtual_server->GetLocation(client->GetRequest());
 	Request*				request = client->GetRequest();
-	std::string				path_to_target = _GetPathToTarget(request, location);
+	std::string				path_to_target = (location) ? _GetPathToTarget(request, location) : "";
 	Response*				response = client->GetResponse();
 	struct stat				buff;
 

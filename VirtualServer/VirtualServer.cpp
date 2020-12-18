@@ -49,7 +49,7 @@ Location*							VirtualServer::GetLocation(Request* request) const {
 		if (request->GetTarget().find(_list_locations[i]->GetPath()) == 0)
 			return (_list_locations[i]);
 	}
-	throw std::exception();
+	return (0);
 }
 
 void					VirtualServer::AddErrorPage(const std::string& key, const std::string& value)
