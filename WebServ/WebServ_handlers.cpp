@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 03:48:31 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 04:25:33 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,18 +144,18 @@ void	WebServ::SendResponse(Client* client) {
 
 	client->SendResponse();
 	if (response->GetBuffer().empty()) {
-//		try {
-//			if (request.GetHeader("connection") == "close")
-//				client->SetStage(close_connection_);
-//			else
-//				throw std::out_of_range("");
-//		}
-//		catch (std::out_of_range&) {
-//			client->SetStage(read_request_);
-//		}
+		try {
+			if (request->GetHeader("connection") == "close")
+				client->SetStage(close_connection_);
+			else
+				throw std::out_of_range("");
+		}
+		catch (std::out_of_range&) {
+			client->SetStage(read_request_);
+		}
 
 		client->SetStage(close_connection_);
-//		client->ClearResponse();
-//		client->ClearRequest();
+		client->ClearResponse();
+		client->ClearRequest();
 	}
 }

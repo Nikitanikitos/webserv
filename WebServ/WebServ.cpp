@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/18 04:22:19 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 04:23:30 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,8 @@ void				WebServ::RunServer() {
 		_AddClientSocketInSet(readfd_set, writefd_set, max_fd);
 
 		select(max_fd + 1, &readfd_set, &writefd_set, 0, 0);
+
+		std::cout << _clients.size() << std::endl;
 
 		_AddNewClient(readfd_set);
 		_AddClientInTaskQueue(readfd_set, writefd_set);
