@@ -22,7 +22,7 @@ std::string WebServ::methods[6] = {
 		"OPTIONS"
 };
 
-std::vector<std::string> WebServ::_GetArgs(const std::string &line, char separate) const {
+std::vector<std::string>	WebServ::_GetArgs(const std::string &line, char separate) const {
 	std::vector<std::string>	result;
 	std::string					input(line);
 	size_t						pos_find;
@@ -54,7 +54,7 @@ std::vector<std::string>	WebServ::_GetKeyValue(const std::string &line) const {
 	return (result);
 }
 
-std::vector<std::string> WebServ::_TrimRequest(std::string const& buff) const {
+std::vector<std::string>	WebServ::_TrimRequest(std::string const& buff) const {
 	std::vector<std::string>	result;
 	std::string::size_type		start;
 	std::string::size_type 		pos;
