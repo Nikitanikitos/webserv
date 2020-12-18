@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 18:03:37 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 03:40:37 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 17:08:19 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ private:
 	std::string				_target;
 	std::string				_body;
 	_headers_t				_headers;
+
 public:
 	const std::string& GetBuffer() const;
 
@@ -53,7 +54,7 @@ public:
 	Request() { }
 	virtual ~Request() { }
 
-	void							AddHeader(const std::string key, const std::string value);
+	void							AddHeader(const std::string& key, const std::string& value);
 	void							SetTarget(const std::string& target);
 	void							SetMethod(const std::string& method);
 
