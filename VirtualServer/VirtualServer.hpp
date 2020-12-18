@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/17 21:27:50 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 16:31:17 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,26 +31,30 @@ private:
 	int										_limit_client_body_size;
 	std::vector<std::string>				_server_names;
 	error_pages_t							_error_pages;
-	std::vector<Location>					_list_locations;
+	std::vector<Location*>					_list_locations;
 
 public:
 	VirtualServer();
 
-	virtual ~VirtualServer()  { close(_socket); }
+	virtual ~VirtualServer()  {
+		close(_socket);
+		for (int i = 0; i < _list_locations.size(); ++i)
+			delete _list_locations[i];
+	}
 
 	void								InitSocket();
 	void								SortServerNames();
 
 	int									GetSocket() const;
 	const std::string&					GetErrorPage(const std::string& status_code) const;
-	Location							GetLocation(Request *request) const;
+	Location * GetLocation(Request *request) const;
 	const std::vector<std::string>&		GetServerNames() const;
 	const std::string&					GetPort() const;
 	const std::string&					GetIp() const;
 
 	void								AddServerName(const std::string& server_name);
 	void								AddErrorPage(const std::string& key, const std::string& value);
-	void								AddLocation(const Location& location);
+	void								AddLocation(Location *location);
 	void								SetPort(const std::string &port);
 	void								SetLimitClientBodySize(int limit_client_body_size);
 	void								SetIp(const std::string& ip);

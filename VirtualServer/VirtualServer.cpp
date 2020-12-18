@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 02:48:55 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 16:39:48 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,9 @@ VirtualServer::VirtualServer() : _limit_client_body_size(0) { }
 void	VirtualServer::SetIp(const std::string& ip) { _ip = ip; }
 void	VirtualServer::SetPort(const std::string& port) { _port = port; }
 void	VirtualServer::AddServerName(const std::string& server_name) { _server_names.push_back(server_name); }
-void	VirtualServer::AddLocation(const Location& location) { _list_locations.push_back(location); }
+void	VirtualServer::AddLocation(Location *location) { _list_locations.push_back(location); }
+void	VirtualServer::SetLimitClientBodySize(int limit_client_body_size)
+	{ _limit_client_body_size = limit_client_body_size; }
 
 void	VirtualServer::InitSocket() {
 	struct sockaddr_in	sock_addr;
@@ -38,16 +40,13 @@ void	VirtualServer::InitSocket() {
 	listen(_socket, 10);
 }
 
-void	VirtualServer::SetLimitClientBodySize(int limit_client_body_size)
-	{ _limit_client_body_size = limit_client_body_size; }
-
 const std::string&					VirtualServer::GetIp() const { return (_ip); }
 const std::string&					VirtualServer::GetPort() const { return (_port); }
 const std::vector<std::string>&		VirtualServer::GetServerNames() const { return (_server_names); }
 
-Location				VirtualServer::GetLocation(Request *request) const {
+Location*							VirtualServer::GetLocation(Request* request) const {
 	for (int i = 0; i < _list_locations.size(); ++i) {
-		if (request->GetTarget().find(_list_locations[i].GetPath()) == 0)
+		if (request->GetTarget().find(_list_locations[i]->GetPath()) == 0)
 			return (_list_locations[i]);
 	}
 	throw std::exception();
@@ -60,11 +59,8 @@ const std::string&		VirtualServer::GetErrorPage(const std::string& status_code) 
 	{ return _error_pages.at(status_code); }
 
 void					VirtualServer::SetSocket(int socket) { _socket = socket; }
-
 int						VirtualServer::GetSocket() const { return (_socket); }
-
 void					VirtualServer::SortServerNames() { std::sort(_server_names.begin(), _server_names.end()); }
-
 
 bool					operator==(const VirtualServer& virtual_server_l, const VirtualServer& virtual_server_r) {
 	return (virtual_server_l.GetPort() == virtual_server_r.GetPort() && virtual_server_l.GetIp() == virtual_server_r.GetIp() &&
