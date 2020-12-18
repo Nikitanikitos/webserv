@@ -24,9 +24,7 @@ enum Stage {
 	close_connection_,
 };
 
-enum TimeOut {
-	TimeOut = 3,
-};
+enum TimeOut { TimeOut = 10, };
 
 class Client {
 private:
