@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 03:45:42 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 15:37:08 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ const std::string&		Response::GetBuffer() const { return (_buffer); }
 void	Response::Clear() {
 	_status_code.clear();
 	_buffer.clear();
-//	_headers.clear();
+	_headers.clear();
 	_body.clear();
 	_message_phrase.clear();
 }
