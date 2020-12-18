@@ -6,19 +6,11 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 17:29:42 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 18:22:19 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
-
-std::string WebServ::_GenerateErrorPage(const std::string& code) const {
-	return ("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" "
-			"content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" "
-			"content=\"ie=edge\"><title>"+ code + " " + Response::_message_phrases.at(code) + "</title>"
-			"<style>h1, p {text-align: center;}</style></head><body><h1>" + code + " " +
-			Response::_message_phrases.at(code) + "</h1><hr><p>WebServ/0.1</p></body></html>");
-}
 
 void	WebServ::ReadRequest(Client *client) {
 	Request*	request = client->GetRequest();
@@ -37,7 +29,7 @@ void	WebServ::ReadRequest(Client *client) {
 		client->SetStage(close_connection_);
 }
 
-bool WebServ::_CheckError(Client* client, VirtualServer* virtual_server, Location* location, struct stat& buff,
+bool	WebServ::_CheckError(Client* client, VirtualServer* virtual_server, Location* location, struct stat& buff,
 																						std::string& path_to_target) {
 	Response*				response = client->GetResponse();
 	Request*				request = client->GetRequest();
@@ -76,7 +68,7 @@ bool WebServ::_CheckError(Client* client, VirtualServer* virtual_server, Locatio
 	return (false);
 }
 
-void WebServ::_SetErrorPage(Client* client, Location* location, VirtualServer* virtual_server) {
+void	WebServ::_SetErrorPage(Client* client, Location* location, VirtualServer* virtual_server) {
 	Response*		response = client->GetResponse();
 	std::string		path_to_target;
 
@@ -90,7 +82,7 @@ void WebServ::_SetErrorPage(Client* client, Location* location, VirtualServer* v
 	}
 }
 
-void WebServ::_DefaultHandler(Client* client, Location* location, struct stat& buff, std::string& path_to_target) {
+void	WebServ::_DefaultHandler(Client* client, Location* location, struct stat& buff, std::string& path_to_target) {
 	Request*			request = client->GetRequest();
 	Response*			response = client->GetResponse();
 	std::string			body;
@@ -122,7 +114,6 @@ void	WebServ::GenerateResponse(Client *client) {
 		_SetErrorPage(client, location, virtual_server);
 	else
 		_DefaultHandler(client, location, buff, path_to_target);
-
 	try {
 		if (request->GetHeader("connection") == "close")
 			response->AddHeader("Connection", "Close");

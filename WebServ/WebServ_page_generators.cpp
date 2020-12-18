@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   WebServ_default_handler.cpp                        :+:      :+:    :+:   */
+/*   WebServ_page_generators.cpp                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/12/03 23:04:25 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/17 11:15:27 by imicah           ###   ########.fr       */
+/*   Created: 2020/12/18 18:17:41 by imicah            #+#    #+#             */
+/*   Updated: 2020/12/18 18:17:41 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ std::string	WebServ::_AutoindexGenerate(Request *request, const std::string& pat
 	current_file = readdir(directory);
 	current_file = readdir(directory);
 	body_response.append("<html><head><title>Index of " + request->GetTarget() + "</title></head><body>"
-								 "<h1>Index of " + request->GetTarget() + "</h1><hr><pre><a href=\"../\">../</a><br>");
+						 "<h1>Index of " + request->GetTarget() + "</h1><hr><pre><a href=\"../\">../</a><br>");
 	while ((current_file = readdir(directory)) != nullptr) {
 		std::string		file(current_file->d_name);
 		if (current_file->d_type == 4)
@@ -30,4 +30,12 @@ std::string	WebServ::_AutoindexGenerate(Request *request, const std::string& pat
 	}
 	body_response.append("</pre><hr></body></html>");
 	return (body_response);
+}
+
+std::string WebServ::_GenerateErrorPage(const std::string& code) const {
+	return ("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" "
+			"content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" "
+			"content=\"ie=edge\"><title>"+ code + " " + Response::_message_phrases.at(code) + "</title>"
+			"<style>h1, p {text-align: center;}</style></head><body><h1>" + code + " " +
+			Response::_message_phrases.at(code) + "</h1><hr><p>WebServ/0.1</p></body></html>");
 }
