@@ -16,12 +16,16 @@
 # include "Request.hpp"
 # include "Response.hpp"
 
-enum stage {
+enum Stage {
 	read_request_,
 	parsing_request_,
 	generate_response_,
 	send_response_,
 	close_connection_,
+};
+
+enum TimeOut {
+	TimeOut = 20,
 };
 
 class Client {
@@ -33,6 +37,7 @@ private:
 	std::string				_port;
 	Request*				_request;
 	Response*				_response;
+	long					_connection_time;
 
 public:
 	Client(int socket, const std::string& ip, const std::string& port);
@@ -45,14 +50,15 @@ public:
 	Request						*GetRequest() const;
 	Response					*GetResponse() const;
 
+	void SetNewConnectionTime();
+
 	void						SetProcessed(bool processed);
 
 	void						SetStage(int stage);
-
-
 	void						NextStage();
 
 	bool						InTaskQueue();
+	bool						ConnectionTimedOut();
 
 	void						ClearResponse();
 	void						ClearRequest();

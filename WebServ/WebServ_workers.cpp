@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/02 14:46:29 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/12 08:13:37 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 04:03:52 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void*	worker(void* arg) {
 					web_serv.SendResponse(client);
 					break;
 			}
-			if (client->GetStage() != read_request_ && client->GetStage() != close_connection_)
+			if (client->GetStage() != read_request_ && client->GetStage() != close_connection_ && client->GetStage() != read_request_)
 				thread_pool.PushTask(client);
 			else
 				client->SetProcessed(false);

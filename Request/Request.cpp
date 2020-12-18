@@ -6,14 +6,14 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:25:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 01:53:40 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 03:45:42 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "Request.hpp"
 
-void	Request::SetMethod(const std::string& method) { _method = method; }
-void	Request::SetTarget(const std::string& target) { _target = target; }
+void					Request::SetMethod(const std::string& method) { _method = method; }
+void					Request::SetTarget(const std::string& target) { _target = target; }
 
 void					Request::AddToBuffer(char *data) { _buffer.append(data); }
 void					Request::AddHeader(const std::string key, const std::string value)

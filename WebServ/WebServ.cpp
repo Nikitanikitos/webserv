@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/18 01:22:02 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 04:22:19 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,33 +25,34 @@ void				WebServ::_InitSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd)
 	FD_ZERO(&readfd_set);
 	FD_ZERO(&writefd_set);
 
-	for (int i = 0; i < _virtual_servers.size(); ++i) {
+	for (int i = 0; i < _virtual_servers.size(); ++i)
 		FD_SET(_virtual_servers[i].GetSocket(), &readfd_set);
-		max_fd = (_virtual_servers[i].GetSocket() > max_fd) ? _virtual_servers[i].GetSocket() : max_fd;
-	}
 }
 
-void				WebServ::_AddClientInTaskQueue(fd_set &readfd_set) {
-	for (std::vector<Client*>::iterator it = _clients.begin(); it != _clients.end(); ++it) {
-		if ((*it)->GetStage() == close_connection_) {
+void				WebServ::_AddClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set) {
+	std::vector<Client*>::iterator it;
+
+	for (it = _clients.begin(); it != _clients.end(); ++it) {
+		if ((*it)->GetStage() == close_connection_ || (*it)->ConnectionTimedOut()) {
 			delete *it;
 			_clients.erase(it);
 			it = _clients.begin();
 		}
-		else if (!(*it)->InTaskQueue() && FD_ISSET((*it)->GetSocket(), &readfd_set))
+		else if (!(*it)->InTaskQueue() && (FD_ISSET((*it)->GetSocket(), &readfd_set) || FD_ISSET((*it)->GetSocket(), &writefd_set)))
 			_thread_pool.PushTask((*it));
 		if (_clients.empty())
 			break ;
 	}
 }
 
-void				WebServ::_AddClientSocketInSet(fd_set &readfd_set, int &max_fd) {
+void				WebServ::_AddClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, int& max_fd) {
 	for (int i = 0; i < _clients.size(); ++i) {
 		const int		client_socket = _clients[i]->GetSocket();
 		if (_clients[i]->GetStage() == read_request_)
 			FD_SET(client_socket, &readfd_set);
-		if (client_socket > max_fd)
-			max_fd = client_socket;
+		else
+			FD_SET(client_socket, &writefd_set);
+		max_fd = (client_socket > max_fd) ? client_socket : max_fd;
 	}
 }
 
@@ -74,12 +75,12 @@ void				WebServ::RunServer() {
 	_CreateWorkers();
 	while (true) {
 		_InitSets(writefd_set, readfd_set, max_fd);
-		_AddClientSocketInSet(readfd_set, max_fd);
+		_AddClientSocketInSet(readfd_set, writefd_set, max_fd);
 
 		select(max_fd + 1, &readfd_set, &writefd_set, 0, 0);
 
 		_AddNewClient(readfd_set);
-		_AddClientInTaskQueue(readfd_set);
+		_AddClientInTaskQueue(readfd_set, writefd_set);
 	}
 }
 

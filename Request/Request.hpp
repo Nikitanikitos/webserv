@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 18:03:37 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 01:51:07 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 03:40:37 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@
 
 # include <string>
 # include <map>
+#include <iostream>
 
 class	Request {
 private:

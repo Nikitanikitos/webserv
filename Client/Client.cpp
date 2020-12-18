@@ -14,6 +14,11 @@
 
 Client::Client(int socket, const std::string& ip, const std::string& port)
 								: _socket(socket), _stage(read_request_), _in_proccessed(false), _ip(ip), _port(port) {
+	struct timeval	tv;
+
+	gettimeofday(&tv, 0);
+	_connection_time = tv.tv_sec;
+
 	_request = new Request();
 	_response = new Response();
 }
@@ -44,4 +49,17 @@ void				Client::ClearRequest() { _request->Clear(); }
 void				Client::GenerateResponse() { _response->GenerateResponse(); }
 void				Client::SendResponse() { _response->SendResponse(_socket); }
 
+bool Client::ConnectionTimedOut() {
+	struct timeval	tv;
+
+	gettimeofday(&tv, 0);
+	return ((tv.tv_sec - _connection_time) > TimeOut);
+}
+
+void Client::SetNewConnectionTime() {
+	struct timeval	tv;
+
+	gettimeofday(&tv, 0);
+	_connection_time = tv.tv_sec;
+}
 

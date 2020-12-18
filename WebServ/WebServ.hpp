@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/18 01:10:37 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 01:21:28 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ private:
 	void						_StrToLower(std::string& str) const;
 
 	void						_AddNewClient(fd_set& readfd_set);
-	void						_AddClientSocketInSet(fd_set &readfd_set, int &max_fd);
-	void						_AddClientInTaskQueue(fd_set &readfd_set);
+	void _AddClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, int& max_fd);
+	void _AddClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set);
 	void						_InitSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
 	std::vector<std::string>	_GetKeyValue(const std::string &line) const;
 

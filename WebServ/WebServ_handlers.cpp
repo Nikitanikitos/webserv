@@ -6,27 +6,27 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 01:53:57 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 03:48:31 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
-#include <iostream>
 
 std::string WebServ::_GenerateErrorPage(const std::string& code) const {
 	return ("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" "
 			"content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" "
 			"content=\"ie=edge\"><title>"+ code + " " + Response::_message_phrases.at(code) + "</title>"
-																							  "<style>h1, p {text-align: center;}</style></head><body><h1>" + code + " " +
+			"<style>h1, p {text-align: center;}</style></head><body><h1>" + code + " " +
 			Response::_message_phrases.at(code) + "</h1><hr><p>WebServ/0.1</p></body></html>");
 }
 
 void	WebServ::ReadRequest(Client *client) {
 	Request*	request = client->GetRequest();
-	char		buff[512];
+	char		buff[1025];
 
-	ft_memset(buff, 0, 512);
-	recv(client->GetSocket(), buff, 512, MSG_TRUNC);
+	recv(client->GetSocket(), buff, 1024, MSG_TRUNC);
+	buff[1024] = 0;
+	client->SetNewConnectionTime();
 	if (*((int*)buff) == -33557249)
 		client->SetStage(close_connection_);
 	else {
@@ -37,7 +37,6 @@ void	WebServ::ReadRequest(Client *client) {
 }
 
 bool WebServ::_CheckError(Client *client, const VirtualServer& virtual_server, struct stat& buff, std::string& path_to_target) {
-
 	const Location&			location = virtual_server.GetLocation(client->GetRequest());
 	Response*				response = client->GetResponse();
 	Request*				request = client->GetRequest();
@@ -156,7 +155,7 @@ void	WebServ::SendResponse(Client* client) {
 //		}
 
 		client->SetStage(close_connection_);
-		client->ClearResponse();
-		client->ClearRequest();
+//		client->ClearResponse();
+//		client->ClearRequest();
 	}
 }

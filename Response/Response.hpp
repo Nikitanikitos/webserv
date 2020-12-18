@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:14:03 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/17 13:43:24 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 03:40:58 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include <ctime>
 # include "libft.hpp"
 # include <fcntl.h>
+# include <iostream>
 
 class Response {
 protected:
