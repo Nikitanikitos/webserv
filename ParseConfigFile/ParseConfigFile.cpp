@@ -79,9 +79,7 @@ VirtualServer*	ParseConfigFile::_ParseVsDirective() {
 			continue;
 		else if (!_CheckTabulation(line, 1)) {
 			_line_surplus = line;
-			if (virtualServer->GetPort().empty() || virtualServer->GetIp().empty())
-				throw ParseConfigFileException("Port and Host can not be empty");
-			return (virtualServer);
+			break ;
 		}
 		std::vector<std::string> trimmedStr = _GetArgsFromLine(line);
 
@@ -124,7 +122,7 @@ VirtualServer*	ParseConfigFile::_ParseVsDirective() {
 				throw ParseConfigFileException("Unknown parameter");
 		}
 	}
-	if (virtualServer->GetPort().empty() || virtualServer->GetIp().empty()) // TODO зачем одинаковые проверки две?
+	if (virtualServer->GetPort().empty() || virtualServer->GetIp().empty())
 		throw ParseConfigFileException("Port and Host can not be empty");
 	return (virtualServer);
 }
