@@ -25,7 +25,7 @@ enum Stage {
 };
 
 enum TimeOut {
-	TimeOut = 20,
+	TimeOut = 3,
 };
 
 class Client {

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 04:25:33 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 14:49:18 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,13 +23,14 @@ std::string WebServ::_GenerateErrorPage(const std::string& code) const {
 void	WebServ::ReadRequest(Client *client) {
 	Request*	request = client->GetRequest();
 	char		buff[1025];
+	int 		bytes;
 
-	recv(client->GetSocket(), buff, 1024, MSG_TRUNC);
+	bytes = recv(client->GetSocket(), buff, 1024, MSG_TRUNC);
 	buff[1024] = 0;
-	client->SetNewConnectionTime();
 	if (*((int*)buff) == -33557249)
 		client->SetStage(close_connection_);
-	else {
+	else if (bytes) {
+		client->SetNewConnectionTime();
 		request->AddToBuffer(buff);
 		if (request->GetBuffer().rfind("\r\n\r\n") != std::string::npos)
 			client->NextStage();
@@ -154,7 +155,7 @@ void	WebServ::SendResponse(Client* client) {
 			client->SetStage(read_request_);
 		}
 
-		client->SetStage(close_connection_);
+//		client->SetStage(close_connection_);
 		client->ClearResponse();
 		client->ClearRequest();
 	}
