@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ_handlers.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 19:01:17 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/18 20:00:58 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,8 +89,13 @@ void	WebServ::_DefaultHandler(Client* client, Location* location, struct stat& b
 
 	if (S_ISREG(buff.st_mode) || S_ISLNK(buff.st_mode)) {
 		body = ft_getfile(path_to_target.c_str());
-		tv.tv_sec = buff.st_mtimespec.tv_sec;
+#ifdef __linux__
+		tv.tv_sec = buff.st_mtim.tv_sec;
+		tv.tv_sec = buff.st_mtim.tv_nsec;
+#else
 		tv.tv_usec = buff.st_mtimespec.tv_nsec;
+		tv.tv_sec = buff.st_mtimespec.tv_sec;
+#endif
 		response->AddHeader("Last-modified", ft_getdate(tv));
 	}
 	else if (S_ISDIR(buff.st_mode) && location->GetAutoindex())
