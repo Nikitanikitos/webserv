@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/19 11:41:09 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 15:25:02 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 15:37:46 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ const bytes&	bytes::append(const std::string& string) {
 const char*		bytes::c_str() const { return (_buffer); }
 
 const bytes&	bytes::append(const char* string, int i) {
-	if (*_buffer == 0) {
+	if (!_buffer) {
 		free(_buffer);
 		_buffer = _bytedup(string, i);
 		_size = i;
@@ -53,11 +53,8 @@ void	bytes::clear() {
 }
 
 const bytes&	bytes::erase(size_t pos, size_t n) {
-	if (n >= _size) {
-		free(_buffer);
-		_buffer = 0;
-		_size = 0;
-	}
+	if (n >= _size)
+		clear();
 	return (*this);
 }
 
@@ -68,14 +65,12 @@ bytes&		bytes::operator=(const bytes& string) {
 	return (*this);
 }
 
-char* bytes::_bytedup(const char* src, int size) {
+char*		bytes::_bytedup(const char* src, int size) {
 	char	*result;
-	size_t	i;
 
-	i = 0;
 	if (!(result = (char*)malloc(sizeof(char) * size)))
 		return (0);
-	for (; i < size; ++i)
+	for (int i = 0; i < size; ++i)
 		result[i] = src[i];
 	return (result);
 }

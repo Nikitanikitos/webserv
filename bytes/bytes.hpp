@@ -19,7 +19,7 @@ private:
 public:
 	bytes() : _size(0), _buffer() { }
 	~bytes() { free(_buffer); }
-	bytes(const bytes& string) : _size(string._size) { _buffer = _bytedup(string._buffer, 0); }
+	bytes(const bytes& string) : _size(string._size) { _buffer = _bytedup(string._buffer, _size); }
 	bytes(const std::string& string) : _size(string.size())
 		{ _buffer = _bytedup(string.c_str(), string.size()); }
 
