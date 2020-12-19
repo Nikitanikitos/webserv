@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 09:54:12 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 14:29:40 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,27 @@ void	WebServ::ReadRequest(Client *client) {
 	}
 	else
 		client->SetStage(close_connection_);
+}
+
+void	WebServ::SendResponse(Client* client) {
+	Response*		response = client->GetResponse();
+	Request*		request = client->GetRequest();
+
+	client->SendResponse();
+	if (!response->GetBuffer().size()) {
+		try {
+			if (request->GetHeader("connection") == "close")
+				client->SetStage(close_connection_);
+			else
+				throw std::out_of_range("");
+		}
+		catch (std::out_of_range&) {
+			client->SetStage(read_request_);
+		}
+
+		client->ClearResponse();
+		client->ClearRequest();
+	}
 }
 
 bool	WebServ::_CheckError(Client* client, VirtualServer* virtual_server, Location* location, struct stat& buff,
@@ -84,17 +105,17 @@ void	WebServ::_SetErrorPage(Client* client, Location* location, VirtualServer* v
 void	WebServ::_DefaultHandler(Client* client, Location* location, struct stat& buff, std::string& path_to_target) {
 	Request*			request = client->GetRequest();
 	Response*			response = client->GetResponse();
-	std::string			body;
+	ft::string			body;
 	struct timeval		tv;
 
 	if (S_ISREG(buff.st_mode) || S_ISLNK(buff.st_mode)) {
 		body = ft_getfile(path_to_target.c_str());
 #ifdef __linux__
 		tv.tv_sec = buff.st_mtim.tv_sec;
-		tv.tv_sec = buff.st_mtim.tv_nsec;
+		tv.tv_usec = buff.st_mtim.tv_nsec;
 #else
-		tv.tv_usec = buff.st_mtimespec.tv_nsec;
 		tv.tv_sec = buff.st_mtimespec.tv_sec;
+		tv.tv_usec = buff.st_mtimespec.tv_nsec;
 #endif
 		response->AddHeader("Last-modified", ft_getdate(tv));
 	}
@@ -107,12 +128,12 @@ void	WebServ::_DefaultHandler(Client* client, Location* location, struct stat& b
 }
 
 void	WebServ::GenerateResponse(Client *client) {
-	VirtualServer*			virtual_server = _GetVirtualServer(client);
-	Location*				location = virtual_server->GetLocation(client->GetRequest());
-	Request*				request = client->GetRequest();
-	std::string				path_to_target = (location) ? _GetPathToTarget(request, location) : "";
-	Response*				response = client->GetResponse();
-	struct stat				buff;
+	VirtualServer*		virtual_server = _GetVirtualServer(client);
+	Location*			location = virtual_server->GetLocation(client->GetRequest());
+	Request*			request = client->GetRequest();
+	std::string			path_to_target = (location) ? _GetPathToTarget(request, location) : "";
+	Response*			response = client->GetResponse();
+	struct stat			buff;
 
 	if (_CheckError(client, virtual_server, location, buff, path_to_target))
 		_SetErrorPage(client, location, virtual_server);
@@ -129,25 +150,4 @@ void	WebServ::GenerateResponse(Client *client) {
 	}
 	client->GenerateResponse();
 	client->NextStage();
-}
-
-void	WebServ::SendResponse(Client* client) {
-	Response*		response = client->GetResponse();
-	Request*		request = client->GetRequest();
-
-	client->SendResponse();
-	if (response->GetBuffer().empty()) {
-		try {
-			if (request->GetHeader("connection") == "close")
-				client->SetStage(close_connection_);
-			else
-				throw std::out_of_range("");
-		}
-		catch (std::out_of_range&) {
-			client->SetStage(read_request_);
-		}
-
-		client->ClearResponse();
-		client->ClearRequest();
-	}
 }

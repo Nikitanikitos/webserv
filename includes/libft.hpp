@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 12:50:34 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 12:15:23 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 13:16:49 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,19 +38,22 @@ namespace ft {
 		char*			_buffer;
 
 	public:
-		string() : _size(0), _buffer() { }
-		string(const ft::string& string) : _size(string._size), _buffer(string._buffer) { }
+		string() : _size(0), _buffer(ft_strdup("")) { }
+		~string() { free(_buffer); }
+		string(const ft::string& string) : _size(string._size) { _buffer = ft_strdup(string._buffer); }
 		string(const std::string& string) : _size(string.size())
 			{ _buffer = ft_strdup(string.c_str()); }
 
-		string		append(const std::string& string);
-		ft::string	append(const char* string, int i);
-		string		append(string string);
-//		string		erase(size_t pos = 0, size_t n = -1);
+		string&		operator=(const string& string);
 
-		size_t			size();
+		const string& append(const std::string& string);
+		const string& append(const char* string, int i);
+		string& append(const string& string);
+		const string& erase(size_t pos = 0, size_t n = -1);
+
+		size_t			size() const;
 		void			clear();
-		const char*		c_str();
+		const char* c_str() const;
 	};
 }
 
@@ -64,7 +67,7 @@ int						ft_atoi(const char* nptr);
 void					ft_localtime(tm&, time_t);
 
 std::string				ft_getdate(struct timeval& tv);
-std::string				ft_getfile(const char *path);
+ft::string ft_getfile(const char *path);
 
 void*					worker(void* arg);
 void*					ft_memcpy(void *dest, const void *src, size_t byte_sizes);

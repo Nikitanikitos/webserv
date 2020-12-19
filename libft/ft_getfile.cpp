@@ -6,15 +6,15 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/06 02:11:18 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 11:11:37 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 12:54:07 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "libft.hpp"
 
-std::string		ft_getfile(const char *path) {
+ft::string	ft_getfile(const char *path) {
 	const int 			fd = open(path, O_RDONLY);
-	std::string			result;
+	ft::string			result;
 	int					bytes;
 	char				buff[2049];
 
