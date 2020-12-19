@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 12:21:39 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 15:17:51 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ private:
 	static void					_DefaultHandler(Client *client, Location *location, struct stat& buff, std::string& path_to_target);
 	void						_CgiHandler(const Request&, const VirtualServer&, const Location&, int);
 
-	static ft::string			_AutoindexGenerate(Request *request, const std::string& path_to_target);
+	static bytes _AutoindexGenerate(Request *request, const std::string& path_to_target);
 
 	void						_CreateWorkers();
 
@@ -64,7 +64,7 @@ private:
 	bool						_CheckError(Client* client, VirtualServer* virtual_server, Location* location,
 																		struct stat& buff, std::string& path_to_target);
 	void						_SetErrorPage(Client *client, Location *location, VirtualServer *virtual_server);
-	ft::string					_GenerateErrorPage(const std::string& code) const;
+	bytes _GenerateErrorPage(const std::string& code) const;
 
 public:
 	explicit WebServ(int number_of_workers);

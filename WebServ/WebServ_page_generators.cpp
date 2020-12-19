@@ -6,16 +6,16 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/18 18:17:41 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 12:21:39 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 15:18:09 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 
-ft::string		WebServ::_AutoindexGenerate(Request *request, const std::string& path_to_target) {
-	ft::string			body_response;
-	DIR*				directory;
-	dirent*				current_file;
+bytes WebServ::_AutoindexGenerate(Request *request, const std::string& path_to_target) {
+	bytes			body_response;
+	DIR*			directory;
+	dirent*			current_file;
 
 	directory = opendir(path_to_target.c_str());
 	current_file = readdir(directory);
@@ -32,7 +32,7 @@ ft::string		WebServ::_AutoindexGenerate(Request *request, const std::string& pat
 	return (body_response);
 }
 
-ft::string		WebServ::_GenerateErrorPage(const std::string& code) const {
+bytes	WebServ::_GenerateErrorPage(const std::string& code) const {
 	return ("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" "
 			"content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" "
 			"content=\"ie=edge\"><title>"+ code + " " + Response::_message_phrases.at(code) + "</title>"

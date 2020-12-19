@@ -29,7 +29,7 @@ add_executable(webserv
 
         exceptions/ResponseException.cpp
 		WebServ/WebServ_parsing_request.cpp
-        WebServ/WebServ_page_generators.cpp libft/ft_realloc.cpp libft/ft_strlen.cpp libft/ft_memcpy.cpp libft/ft_strjoin.cpp libft/ft_strdup.cpp libft/ft_string.cpp)
+        WebServ/WebServ_page_generators.cpp libft/ft_strdup.cpp bytes/bytes.cpp bytes/bytes.hpp)
 
 include_directories(
 		includes
@@ -42,6 +42,7 @@ include_directories(
 		Response
 		Client
 		ThreadPool
+		bytes
 		)
 
 target_link_libraries(webserv pthread)

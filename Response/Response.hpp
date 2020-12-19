@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:14:03 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 12:21:11 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 15:16:18 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ class Response {
 protected:
 	std::string								_status_code;
 	std::map<std::string, std::string>		_headers;
-	ft::string 								_body;
-	ft::string 								_buffer;
+	bytes 									_body;
+	bytes	 								_buffer;
 	std::string								_message_phrase;
 
 public:
@@ -36,12 +36,12 @@ public:
 	~Response() { }
 
 	const std::string&		GetHeader(const std::string& key) const;
-	const ft::string&		GetBuffer() const;
+	const bytes&			GetBuffer() const;
 	const std::string&		GetStatusCode() const;
 
 	void					AddHeader(const std::string& key, const std::string& value);
 	void					SetStatusCode(const std::string& status_code);
-	void					SetBody(const ft::string& body);
+	void					SetBody(const bytes& body);
 
 	void					GenerateResponse();
 	int						SendResponse(int client_socket);

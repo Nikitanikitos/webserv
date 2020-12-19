@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 14:29:40 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 14:46:10 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ void	WebServ::_SetErrorPage(Client* client, Location* location, VirtualServer* v
 void	WebServ::_DefaultHandler(Client* client, Location* location, struct stat& buff, std::string& path_to_target) {
 	Request*			request = client->GetRequest();
 	Response*			response = client->GetResponse();
-	ft::string			body;
+	bytes				body;
 	struct timeval		tv;
 
 	if (S_ISREG(buff.st_mode) || S_ISLNK(buff.st_mode)) {

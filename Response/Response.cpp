@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 14:00:48 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 15:16:18 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ Response::Response(const std::string& status_code, const std::string& message_ph
 														_status_code(status_code), _message_phrase(message_phrase) { }
 
 void				Response::SetStatusCode(const std::string& status_code) { _status_code.append(status_code); }
-void				Response::SetBody(const ft::string& body) { _body.append(body); }
+void				Response::SetBody(const bytes& body) { _body.append(body); }
 
 void				Response::AddHeader(const std::string& key, const std::string& value)
 	{ _headers.insert(std::make_pair(key, value)); }
@@ -67,7 +67,7 @@ int					Response::SendResponse(int client_socket) {
 	return (bytes);
 }
 
-const ft::string& Response::GetBuffer() const { return (_buffer); }
+const bytes& Response::GetBuffer() const { return (_buffer); }
 
 void	Response::Clear() {
 	_status_code.clear();
