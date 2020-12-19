@@ -6,60 +6,49 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/19 11:41:09 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 15:37:46 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 15:48:33 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "bytes.hpp"
 
-const bytes&	bytes::append(const std::string& string) {
-	append(string.c_str(), string.size());
-	return (*this);
-}
+void			bytes::add(const std::string& string) { add(string.c_str(), string.size()); }
+void			bytes::add(const bytes& string) { add(string.c_str(), string.size()); }
 
 const char*		bytes::c_str() const { return (_buffer); }
+size_t			bytes::size() const { return (_size); }
 
-const bytes&	bytes::append(const char* string, int i) {
+void bytes::add(const char* string, int i) {
+	char*	temp_buff;
+
 	if (!_buffer) {
-		free(_buffer);
+		delete (_buffer);
 		_buffer = _bytedup(string, i);
 		_size = i;
 	}
 	else {
-		char*	temp_buff;
-
 		temp_buff = _buffer;
-		_buffer = (char*)malloc(_size + i);
+		_buffer = new char[_size + i];
 		for (int j = 0; j < _size ; ++j)
 			_buffer[j] = temp_buff[j];
 		for (int k = 0; k < i; ++k)
 			_buffer[_size++] = string[k];
-		free(temp_buff);
+		delete []temp_buff;
 	}
-	return (*this);
 }
 
-const bytes&	bytes::append(const bytes& string) {
-	append(string.c_str(), string.size());
-	return (*this);
-}
 
-size_t			bytes::size() const { return (_size); }
-
-void	bytes::clear() {
-	free(_buffer);
+void			bytes::clear() {
+	delete []_buffer;
 	_size = 0;
 	_buffer = 0;
 }
 
-const bytes&	bytes::erase(size_t pos, size_t n) {
-	if (n >= _size)
-		clear();
-	return (*this);
-}
+void bytes::erase(size_t pos, size_t n)
+	{ if (n >= _size) clear(); }
 
 bytes&		bytes::operator=(const bytes& string) {
-	free(_buffer);
+	delete []_buffer;
 	_buffer = _bytedup(string._buffer, string._size);
 	_size = string._size;
 	return (*this);
@@ -68,8 +57,7 @@ bytes&		bytes::operator=(const bytes& string) {
 char*		bytes::_bytedup(const char* src, int size) {
 	char	*result;
 
-	if (!(result = (char*)malloc(sizeof(char) * size)))
-		return (0);
+	result = new char[size];
 	for (int i = 0; i < size; ++i)
 		result[i] = src[i];
 	return (result);

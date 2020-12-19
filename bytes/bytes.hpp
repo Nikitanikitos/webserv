@@ -18,22 +18,20 @@ private:
 
 public:
 	bytes() : _size(0), _buffer() { }
-	~bytes() { free(_buffer); }
+	~bytes() { delete []_buffer; }
 	bytes(const bytes& string) : _size(string._size) { _buffer = _bytedup(string._buffer, _size); }
-	bytes(const std::string& string) : _size(string.size())
-		{ _buffer = _bytedup(string.c_str(), string.size()); }
+	bytes(const std::string& string) : _size(string.size()) { _buffer = _bytedup(string.c_str(), string.size()); }
 
-	bytes&		operator=(const bytes& string);
+	bytes&			operator=(const bytes& string);
 
-	const bytes&	append(const std::string& string);
-	const bytes&	append(const char* string, int i);
-	const bytes&	append(const bytes& string);
-	const bytes&	erase(size_t pos = 0, size_t n = -1);
+	void			add(const std::string& string);
+	void			add(const char* string, int i);
+	void			add(const bytes& string);
+	void			erase(size_t pos = 0, size_t n = -1);
 
 	size_t			size() const;
 	void			clear();
 	const char*		c_str() const;
 };
-
 
 #endif //WEBSERV_BYTES_HPP

@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/18 18:17:41 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 15:18:09 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 15:18:18 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,15 +20,16 @@ bytes WebServ::_AutoindexGenerate(Request *request, const std::string& path_to_t
 	directory = opendir(path_to_target.c_str());
 	current_file = readdir(directory);
 	current_file = readdir(directory);
-	body_response.append("<html><head><title>Index of " + request->GetTarget() + "</title></head><body>"
-						 "<h1>Index of " + request->GetTarget() + "</h1><hr><pre><a href=\"../\">../</a><br>");
+	body_response.add("<html><head><title>Index of " + request->GetTarget() + "</title></head><body>"
+																			  "<h1>Index of " + request->GetTarget() +
+					  "</h1><hr><pre><a href=\"../\">../</a><br>");
 	while ((current_file = readdir(directory)) != nullptr) {
 		std::string		file(current_file->d_name);
 		if (current_file->d_type == 4)
 			file.append("/");
-		body_response.append("<a href=\"" + file + "\">" + file + "</a><br>");
+		body_response.add("<a href=\"" + file + "\">" + file + "</a><br>");
 	}
-	body_response.append("</pre><hr></body></html>");
+	body_response.add("</pre><hr></body></html>");
 	return (body_response);
 }
 

@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 15:16:18 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 15:47:10 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ Response::Response(const std::string& status_code, const std::string& message_ph
 														_status_code(status_code), _message_phrase(message_phrase) { }
 
 void				Response::SetStatusCode(const std::string& status_code) { _status_code.append(status_code); }
-void				Response::SetBody(const bytes& body) { _body.append(body); }
+void				Response::SetBody(const bytes& body) { _body.add(body); }
 
 void				Response::AddHeader(const std::string& key, const std::string& value)
 	{ _headers.insert(std::make_pair(key, value)); }
@@ -40,22 +40,23 @@ void				Response::GenerateResponse() {
 
 	gettimeofday(&tv, 0);
 
-	_buffer.append(
-		HTTP_VERSION + SP + _status_code + SP + _message_phrases.at(_status_code) + CRLF
-		"Server: " + SERVER_VERSION + CRLF
-		"Date: " + ft_getdate(tv) + CRLF);
+	_buffer.add(
+			HTTP_VERSION + SP + _status_code + SP + _message_phrases.at(_status_code) + CRLF
+																						"Server: " + SERVER_VERSION +
+			CRLF
+			"Date: " + ft_getdate(tv) + CRLF);
 
 	if (_body.size())
-		_buffer.append("Content-length: " + std::to_string(_body.size()) + CRLF);
+		_buffer.add("Content-length: " + std::to_string(_body.size()) + CRLF);
 
 	for (const auto& header : _headers)
-		_buffer.append(header.first + ": " + header.second + CRLF);
-	_buffer.append(CRLF);
+		_buffer.add(header.first + ": " + header.second + CRLF);
+	_buffer.add(CRLF);
 
 	if (_body.size()) {
-		_buffer.append(_body);
-		_buffer.append(CRLF);
-		_buffer.append(CRLF);
+		_buffer.add(_body);
+		_buffer.add(CRLF);
+		_buffer.add(CRLF);
 	}
 }
 
