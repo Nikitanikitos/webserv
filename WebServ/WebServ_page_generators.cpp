@@ -33,7 +33,7 @@ bytes WebServ::_AutoindexGenerate(Request *request, const std::string& path_to_t
 	return (body_response);
 }
 
-bytes	WebServ::_GenerateErrorPage(const std::string& code) const {
+bytes	WebServ::_GenerateErrorPage(const std::string& code) {
 	return ("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" "
 			"content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" "
 			"content=\"ie=edge\"><title>"+ code + " " + Response::_message_phrases.at(code) + "</title>"

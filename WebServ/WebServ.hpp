@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 19:21:01 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 22:12:13 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,10 @@ private:
 	int 							_number_workers;
 	ThreadPool						_thread_pool;
 
-	static void					_GetHeadMethodHandler(Client *client, Location *location, struct stat& buff, std::string& path_to_target);
+	static void
+	_GetHeadMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, struct stat& buff,
+			std::string& path_to_target);
+	static void					_PutMethodHandler(Client *client, Location *location, struct stat& buff, std::string& path_to_target);
 	void						_CgiHandler(const Request&, const VirtualServer&, const Location&, int);
 
 	static bytes				_AutoindexGenerate(Request *request, const std::string& path_to_target);
@@ -63,8 +66,8 @@ private:
 
 	bool						_CheckError(Client* client, VirtualServer* virtual_server, Location* location,
 																		struct stat& buff, std::string& path_to_target);
-	void						_SetErrorPage(Client *client, Location *location, VirtualServer *virtual_server);
-	bytes						_GenerateErrorPage(const std::string& code) const;
+	static void					_SetErrorPage(Client *client, Location *location, VirtualServer *virtual_server);
+	static bytes				_GenerateErrorPage(const std::string& code) ;
 
 public:
 	explicit WebServ(int number_of_workers);

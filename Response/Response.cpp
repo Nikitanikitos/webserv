@@ -27,7 +27,7 @@ Response::Response() { }
 Response::Response(const std::string& status_code, const std::string& message_phrase) :
 														_status_code(status_code), _message_phrase(message_phrase) { }
 
-void				Response::SetStatusCode(const std::string& status_code) { _status_code.append(status_code); }
+void				Response::SetStatusCode(const std::string& status_code) { _status_code = status_code; }
 void				Response::SetBody(const bytes& body) { _body.add(body); }
 
 void				Response::AddHeader(const std::string& key, const std::string& value)
