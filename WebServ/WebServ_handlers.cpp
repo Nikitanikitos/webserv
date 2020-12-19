@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 14:46:10 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 21:27:37 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,12 @@ void	WebServ::ReadRequest(Client *client) {
 
 	bytes = recv(client->GetSocket(), buff, 1024, 0);
 	buff[bytes] = 0;
-	if (bytes > 0) {
-		client->SetNewConnectionTime();
-		request->AddToBuffer(buff);
-		if (request->GetBuffer().rfind("\r\n\r\n") != std::string::npos)
-			client->NextStage();
-	}
-	else
+	if (bytes == 0)
 		client->SetStage(close_connection_);
+	else {
+		request->AddToBuffer(buff);
+		if (bytes < 1024) client->NextStage();
+	}
 }
 
 void	WebServ::SendResponse(Client* client) {
@@ -102,7 +100,7 @@ void	WebServ::_SetErrorPage(Client* client, Location* location, VirtualServer* v
 		{ response->SetBody(_GenerateErrorPage(response->GetStatusCode())); }
 }
 
-void	WebServ::_DefaultHandler(Client* client, Location* location, struct stat& buff, std::string& path_to_target) {
+void	WebServ::_GetHeadMethodHandler(Client* client, Location* location, struct stat& buff, std::string& path_to_target) {
 	Request*			request = client->GetRequest();
 	Response*			response = client->GetResponse();
 	bytes				body;
@@ -137,8 +135,11 @@ void	WebServ::GenerateResponse(Client *client) {
 
 	if (_CheckError(client, virtual_server, location, buff, path_to_target))
 		_SetErrorPage(client, location, virtual_server);
-	else
-		_DefaultHandler(client, location, buff, path_to_target);
+	else if (request->GetMethod() == "GET" || request->GetMethod() == "HEAD")
+		_GetHeadMethodHandler(client, location, buff, path_to_target);
+//	else if (request->GetMethod() == "PUT")
+//		_PutMethodHanler(client, location, buff, path_to_target);
+
 	try {
 		if (request->GetHeader("connection") == "close")
 			response->AddHeader("Connection", "Close");

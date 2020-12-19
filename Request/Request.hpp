@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 18:03:37 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 17:08:19 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/19 20:21:08 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,20 +35,18 @@
 
 # include <string>
 # include <map>
-#include <iostream>
+# include <iostream>
+# include "bytes.hpp"
 
 class	Request {
 private:
 	typedef		std::map<std::string, std::string>		_headers_t;
 
-	std::string				_buffer;
+	bytes					_buffer;
 	std::string				_method;
 	std::string				_target;
-	std::string				_body;
+	bytes					_body;
 	_headers_t				_headers;
-
-public:
-	const std::string& GetBuffer() const;
 
 public:
 	Request() { }
@@ -60,7 +58,8 @@ public:
 
 	const std::string&				GetMethod() const;
 	const std::string&				GetTarget() const;
-	const std::string&				GetBody() const;
+	const bytes&					GetBody() const;
+	const bytes&					GetBuffer() const;
 	const std::string&				GetHeader(const std::string& header) const;
 
 	void							AddToBuffer(char* data);

@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/15 20:06:14 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 16:19:27 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 19:34:07 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,7 @@ void	WebServ::ParsingRequest(Client *client) {
 	std::vector<std::string>	args;
 
 	take_host = false;
-	args = _TrimRequest(request->GetBuffer());
+	args = _TrimRequest(request->GetBuffer().c_str());
 	if (!_CheckCountSpace(args[0], 2)) {
 		_SetBadRequestResponse(client);
 		return;

@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/19 11:41:09 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 15:48:33 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 20:34:30 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,10 @@ void			bytes::add(const bytes& string) { add(string.c_str(), string.size()); }
 const char*		bytes::c_str() const { return (_buffer); }
 size_t			bytes::size() const { return (_size); }
 
-void bytes::add(const char* string, int i) {
+void			bytes::add(const char* string, int i) {
 	char*	temp_buff;
 
 	if (!_buffer) {
-		delete (_buffer);
 		_buffer = _bytedup(string, i);
 		_size = i;
 	}
@@ -37,14 +36,13 @@ void bytes::add(const char* string, int i) {
 	}
 }
 
-
 void			bytes::clear() {
 	delete []_buffer;
 	_size = 0;
 	_buffer = 0;
 }
 
-void bytes::erase(size_t pos, size_t n)
+void			bytes::erase(size_t pos, size_t n)
 	{ if (n >= _size) clear(); }
 
 bytes&		bytes::operator=(const bytes& string) {

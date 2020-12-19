@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 16:17:55 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 19:21:01 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,10 @@ private:
 	int 							_number_workers;
 	ThreadPool						_thread_pool;
 
-	static void					_DefaultHandler(Client *client, Location *location, struct stat& buff, std::string& path_to_target);
+	static void					_GetHeadMethodHandler(Client *client, Location *location, struct stat& buff, std::string& path_to_target);
 	void						_CgiHandler(const Request&, const VirtualServer&, const Location&, int);
 
-	static bytes _AutoindexGenerate(Request *request, const std::string& path_to_target);
+	static bytes				_AutoindexGenerate(Request *request, const std::string& path_to_target);
 
 	void						_CreateWorkers();
 
