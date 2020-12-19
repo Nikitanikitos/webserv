@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 15:17:51 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 16:17:55 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # include <queue>
 # include "VirtualServer.hpp"
 # include "Client.hpp"
-# include "ResponseException.hpp"
 # include "libft.hpp"
 # include "ThreadPool.hpp"
 
@@ -54,6 +53,7 @@ private:
 	bool						_CheckCountSpace(const std::string& line, int numSpaces) const;
 	bool						_CheckMethod(std::string method, int size) const;
 	void						_StrToLower(std::string& str) const;
+	void						_SetBadRequestResponse(Client* client);
 
 	void						_AddNewClient(fd_set& readfd_set);
 	void						_AddClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, int& max_fd);
@@ -64,7 +64,7 @@ private:
 	bool						_CheckError(Client* client, VirtualServer* virtual_server, Location* location,
 																		struct stat& buff, std::string& path_to_target);
 	void						_SetErrorPage(Client *client, Location *location, VirtualServer *virtual_server);
-	bytes _GenerateErrorPage(const std::string& code) const;
+	bytes						_GenerateErrorPage(const std::string& code) const;
 
 public:
 	explicit WebServ(int number_of_workers);

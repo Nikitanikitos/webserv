@@ -17,6 +17,8 @@ add_executable(webserv
 		WebServ/WebServ.cpp
 		WebServ/WebServ_workers.cpp
 		WebServ/WebServ_handlers.cpp
+		WebServ/WebServ_parsing_request.cpp
+		WebServ/WebServ_page_generators.cpp
 
 		VirtualServer/VirtualServer.cpp
 		Location/Location.cpp
@@ -27,13 +29,12 @@ add_executable(webserv
 		Client/Client.cpp
 		ThreadPool/ThreadPool.cpp
 
-        exceptions/ResponseException.cpp
-		WebServ/WebServ_parsing_request.cpp
-        WebServ/WebServ_page_generators.cpp libft/ft_strdup.cpp bytes/bytes.cpp bytes/bytes.hpp)
+		bytes/bytes.cpp
+		bytes/bytes.hpp
+		)
 
 include_directories(
 		includes
-		exceptions
         Location
 		VirtualServer
 		WebServ
