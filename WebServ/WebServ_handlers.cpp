@@ -73,7 +73,7 @@ void	WebServ::_GetHeadMethodHandler(Client* client, Location* location, VirtualS
 	}
 	else if (S_ISDIR(buff.st_mode) && !location->GetAutoindex())
 		response->SetStatusCode("403");
-	if (S_ISREG(buff.st_mode) || S_ISLNK(buff.st_mode)) {
+	else if (S_ISREG(buff.st_mode) || S_ISLNK(buff.st_mode)) {
 		body = ft_getfile(path_to_target.c_str());
 #ifdef __linux__
 		tv.tv_sec = buff.st_mtim.tv_sec;
