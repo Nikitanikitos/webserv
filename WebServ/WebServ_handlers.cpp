@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 20:00:58 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 09:54:12 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	WebServ::ReadRequest(Client *client) {
 	char		buff[1025];
 	int 		bytes;
 
-	bytes = recv(client->GetSocket(), &buff, 1024, MSG_TRUNC);
+	bytes = recv(client->GetSocket(), buff, 1024, 0);
 	buff[bytes] = 0;
 	if (bytes > 0) {
 		client->SetNewConnectionTime();

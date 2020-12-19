@@ -12,9 +12,9 @@
 
 #include "ParseConfigFile.hpp"
 
-# define ONLY_DIGITS(s) (s.find_first_not_of("0123456789") == std::string::npos)
-# define TAB "    "
-# define TAB_SIZE 4
+# define ONLY_DIGITS(s)	(s.find_first_not_of("0123456789") == std::string::npos)
+# define TAB			"    "
+# define TAB_SIZE		4
 
 std::string ParseConfigFile::server_current_fields[6] = {
 		"server_names",
@@ -229,7 +229,7 @@ std::vector<VirtualServer*>		ParseConfigFile::ParseFile(std::string& numberOfWor
 		}
 		if (line[0] == '#')
 			continue;
-		else if (!line.compare(0, 7, "worker "))
+/Users/imicah/CLionProjects/webserv		else if (!line.compare(0, 7, "worker "))
 			numberOfWorkers.append(&line[7]);
 		else if (line == "server")
 			AddVirtualServer(line, virtualServers);

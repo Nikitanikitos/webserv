@@ -15,7 +15,7 @@
 
 int		main(int ac, char **av, char **env) {
 	std::string					number_of_workers;
-	ParseConfigFile				parse(((ac == 2) ? av[1] : (char*)"default.conf"));
+	ParseConfigFile				parse(((ac == 2) ? av[1] : (char*)"default_for_linux.conf"));
 	std::vector<VirtualServer*>	list_virtual_server = parse.ParseFile(number_of_workers);
 	WebServ						server(std::stoi(number_of_workers));
 
