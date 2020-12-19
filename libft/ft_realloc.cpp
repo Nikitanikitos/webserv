@@ -1,27 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_getfile.cpp                                     :+:      :+:    :+:   */
+/*   ft_realloc.cpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/12/06 02:11:18 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 11:11:37 by nikita           ###   ########.fr       */
+/*   Created: 2020/12/19 10:23:09 by nikita            #+#    #+#             */
+/*   Updated: 2020/12/19 10:32:49 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "libft.hpp"
 
-std::string		ft_getfile(const char *path) {
-	const int 			fd = open(path, O_RDONLY);
-	std::string			result;
-	int					bytes;
-	char				buff[2049];
+char*	ft_realloc(char* str, size_t n) {
+	char	*temp;
 
-	while ((bytes = read(fd, &buff, 2048)) > 0) {
-		buff[bytes] = 0;
-		result.append(buff);
+	temp = str;
+	if (str == 0)
+		str = (char*)malloc(sizeof(char) * n);
+	else {
+		int 	len = ft_strlen(str);
+		str = (char*)malloc(sizeof(char) * len * n);
+		ft_memcpy((void*)str, (void*)temp, len);
+		free(temp);
 	}
-	close(fd);
-	return (result);
+	return (str);
 }

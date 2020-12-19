@@ -74,7 +74,6 @@ public:
 
 	void	RunServer();
 	void	AddVirtualServer(VirtualServer *virtual_server);
-	void	ReserveSize(const int capacity);
 };
 
 #endif //WEBSERV_WEBSERV_HPP

@@ -229,7 +229,7 @@ std::vector<VirtualServer*>		ParseConfigFile::ParseFile(std::string& numberOfWor
 		}
 		if (line[0] == '#')
 			continue;
-/Users/imicah/CLionProjects/webserv		else if (!line.compare(0, 7, "worker "))
+		else if (!line.compare(0, 7, "worker "))
 			numberOfWorkers.append(&line[7]);
 		else if (line == "server")
 			AddVirtualServer(line, virtualServers);

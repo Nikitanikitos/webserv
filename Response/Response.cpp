@@ -38,7 +38,7 @@ const std::string&	Response::GetHeader(const std::string& key) const { return (_
 void				Response::GenerateResponse() {
 	struct timeval	tv;
 
-	gettimeofday(&tv, nullptr);
+	gettimeofday(&tv, 0);
 
 	_buffer.append(
 		HTTP_VERSION + SP + _status_code + SP + _message_phrases.at(_status_code) + CRLF
@@ -63,7 +63,7 @@ int					Response::SendResponse(int client_socket) {
 	int 	bytes;
 
 	bytes = send(client_socket, _buffer.c_str(), _buffer.size(), 0);
-	_buffer.erase(0, bytes);
+//	_buffer.erase(0, bytes);
 	return (bytes);
 }
 

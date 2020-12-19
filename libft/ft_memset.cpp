@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memset.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 12:47:51 by imicah            #+#    #+#             */
-/*   Updated: 2020/11/19 12:52:29 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/19 11:02:48 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <cstddef>
+#include <libft.hpp>
+
 
 void*	ft_memset(void* dest, int symb, size_t byte_sizes)
 {
