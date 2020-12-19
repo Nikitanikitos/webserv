@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 15:47:10 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 22:25:36 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 const std::map<std::string, std::string>	Response::_message_phrases = {
 		{"200", "OK"},
+		{"201", "Created"},
 		{"301", "Moved Permanently"},
 		{"302", "Found"},
 		{"400", "Bad Request"},

@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 22:23:15 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 23:18:38 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,31 +33,25 @@ void	WebServ::SendResponse(Client* client) {
 
 	client->SendResponse();
 	if (!response->GetBuffer().size()) {
-		try {
-			if (request->GetHeader("connection") == "close")
-				client->SetStage(close_connection_);
-			else
-				throw std::out_of_range("");
-		}
-		catch (std::out_of_range&) {
+		if (request->FindHeader("connection") && request->GetHeader("connection") == "close")
+			client->SetStage(close_connection_);
+		else
 			client->SetStage(read_request_);
-		}
-
-		client->ClearResponse();
-		client->ClearRequest();
 	}
+	client->ClearResponse();
+	client->ClearRequest();
 }
 
 void	WebServ::_SetErrorPage(Client* client, Location* location, VirtualServer* virtual_server) {
 	Response*		response = client->GetResponse();
 	std::string		path_to_target;
 
-	try {
+	if (virtual_server->FindErrorPage(response->GetStatusCode())) {
 		path_to_target.append(location->GetPath() + virtual_server->GetErrorPage(response->GetStatusCode()));
 		response->AddHeader("Location", "http://" + virtual_server->GetIp() + ":" + virtual_server->GetPort() + path_to_target);
 		response->SetStatusCode("302");
 	}
-	catch (std::exception&)
+	else
 		{ response->SetBody(_GenerateErrorPage(response->GetStatusCode())); }
 }
 
@@ -70,19 +64,15 @@ void	WebServ::_GetHeadMethodHandler(Client* client, Location* location, VirtualS
 	int 				fd;
 
 	response->SetStatusCode("200");
-	if (!buff.st_dev) {
+	if (!buff.st_dev)
 		response->SetStatusCode("404");
-		_SetErrorPage(client, location, virtual_server);
-	}
 	else if (S_ISDIR(buff.st_mode) && (fd = open((path_to_target + location->GetIndex()).c_str(), O_RDONLY)) != -1) {
 		path_to_target.append(location->GetIndex());
 		stat(path_to_target.c_str(), &buff);
 		close(fd);
 	}
-	else if (S_ISDIR(buff.st_mode) && !location->GetAutoindex()) {
+	else if (S_ISDIR(buff.st_mode) && !location->GetAutoindex())
 		response->SetStatusCode("403");
-		_SetErrorPage(client, location, virtual_server);
-	}
 	if (S_ISREG(buff.st_mode) || S_ISLNK(buff.st_mode)) {
 		body = ft_getfile(path_to_target.c_str());
 #ifdef __linux__
@@ -101,6 +91,29 @@ void	WebServ::_GetHeadMethodHandler(Client* client, Location* location, VirtualS
 		response->SetBody(body);
 }
 
+void WebServ::_PutMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, struct stat& buff,
+		std::string& path_to_target) {
+	int 		fd;
+	Request*	request = client->GetRequest();
+	Response*	response = client->GetResponse();
+
+	fd = 0;
+	if (S_ISDIR(buff.st_mode))
+		response->SetStatusCode("404");
+	else if (!buff.st_dev) {
+		if ((fd = open(path_to_target.c_str(), O_WRONLY | O_CREAT)) > 0)
+			response->SetStatusCode("201");
+		else
+			response->SetStatusCode("404");
+	}
+	else {
+		fd = open(path_to_target.c_str(), O_WRONLY | O_EXCL);
+		response->SetStatusCode("200");
+	}
+	if (fd > 0)
+		write(fd, request->GetBody().c_str(), request->GetBody().size());
+}
+
 void	WebServ::GenerateResponse(Client *client) {
 	VirtualServer*		virtual_server = _GetVirtualServer(client);
 	Location*			location = virtual_server->GetLocation(client->GetRequest());
@@ -112,32 +125,30 @@ void	WebServ::GenerateResponse(Client *client) {
 	stat(path_to_target.c_str(), &buff);
 	if (!location)
 		response->SetStatusCode("404");
-	else if (!location->IsAllowMethod(request->GetMethod())) {
+	else if (!location->IsAllowMethod(request->GetMethod()))
 		response->SetStatusCode("405");
-		_SetErrorPage(client, location, virtual_server);
-	}
 	else if (S_ISDIR(buff.st_mode) && request->GetTarget().back() != '/') {
 		response->SetStatusCode("301");
 		response->AddHeader("Location", "http://" + virtual_server->GetIp() + ":" + virtual_server->GetPort() + request->GetTarget() + "/");
 	}
 	else if (request->GetMethod() == "GET" || request->GetMethod() == "HEAD")
 		_GetHeadMethodHandler(client, location, virtual_server, buff, path_to_target);
+	else if (request->GetMethod() == "PUT")
+		_PutMethodHandler(client, location, virtual_server, buff, path_to_target);
 
-
-
-
-//	else if (request->GetMethod() == "PUT")
-//		_PutMethodHandler(client, location, buff, path_to_target);
-//
-//	try {
-//		if (request->GetHeader("connection") == "close")
-//			response->AddHeader("Connection", "Close");
-//		else
-//			throw std::out_of_range("");
-//	}
-//	catch (std::out_of_range&) {
-//		response->AddHeader("Connection", "Keep-alive");
-//	}
+	if (request->FindHeader("connection") && request->GetHeader("connection") == "close")
+		response->AddHeader("Connection", "Close");
+	if (_IsErrorStatus(response->GetStatusCode()))
+		_SetErrorPage(client, location, virtual_server);
 	client->GenerateResponse();
 	client->NextStage();
+}
+
+bool	WebServ::_IsErrorStatus(const std::string& status) {
+	const std::string	status_code[4] = {"400", "403", "404", "405"};
+
+	for (int i = 0; i < 4; ++i)
+		if (status == status_code[i])
+			return (true);
+	return (false);
 }

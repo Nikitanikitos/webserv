@@ -60,6 +60,7 @@ public:
 	const std::string&				GetTarget() const;
 	const bytes&					GetBody() const;
 	const bytes&					GetBuffer() const;
+	bool							FindHeader(const std::string& header) const;
 	const std::string&				GetHeader(const std::string& header) const;
 
 	void							AddToBuffer(char* data);

@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/15 20:06:14 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 19:34:19 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/19 22:51:04 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,8 +131,5 @@ void	WebServ::ParsingRequest(Client *client) {
 			take_host = true;
 		request->AddHeader(key, line[1]);
 	}
-	if (!take_host)
-		_SetBadRequestResponse(client);
-	else
-		client->NextStage();
+	(!take_host) ? _SetBadRequestResponse(client) : client->NextStage();
 }

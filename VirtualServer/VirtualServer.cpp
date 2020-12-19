@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualServer.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 16:39:48 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/19 23:18:39 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,15 +54,17 @@ Location*							VirtualServer::GetLocation(Request* request) const {
 
 void					VirtualServer::AddErrorPage(const std::string& key, const std::string& value)
 	{ _error_pages.insert(std::make_pair(key, value)); }
-
 const std::string&		VirtualServer::GetErrorPage(const std::string& status_code) const
 	{ return _error_pages.at(status_code); }
+bool					VirtualServer::FindErrorPage(const std::string& error_page) const
+	{ return (_error_pages.count(error_page)); }
 
 void					VirtualServer::SetSocket(int socket) { _socket = socket; }
 int						VirtualServer::GetSocket() const { return (_socket); }
 void					VirtualServer::SortServerNames() { std::sort(_server_names.begin(), _server_names.end()); }
 
 bool					operator==(const VirtualServer& virtual_server_l, const VirtualServer& virtual_server_r) {
-	return (virtual_server_l.GetPort() == virtual_server_r.GetPort() && virtual_server_l.GetIp() == virtual_server_r.GetIp() &&
+	return (virtual_server_l.GetPort() == virtual_server_r.GetPort() &&
+			virtual_server_l.GetIp() == virtual_server_r.GetIp() &&
 			virtual_server_l.GetServerNames() == virtual_server_r.GetServerNames());
 }

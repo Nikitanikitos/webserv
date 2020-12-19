@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualServer.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/18 16:31:17 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/19 23:17:14 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,9 @@ public:
 	void								SortServerNames();
 
 	int									GetSocket() const;
+	bool								FindErrorPage(const std::string& error_page) const;
 	const std::string&					GetErrorPage(const std::string& status_code) const;
-	Location * GetLocation(Request *request) const;
+	Location*							GetLocation(Request *request) const;
 	const std::vector<std::string>&		GetServerNames() const;
 	const std::string&					GetPort() const;
 	const std::string&					GetIp() const;
