@@ -31,8 +31,7 @@ protected:
 public:
 	static const std::map<std::string, std::string>	_message_phrases;
 
-	Response();
-	explicit Response(const std::string& status_code, const std::string& message_phrase);
+	Response() { }
 	~Response() { }
 
 	const std::string&		GetHeader(const std::string& key) const;

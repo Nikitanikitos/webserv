@@ -6,23 +6,22 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 23:18:39 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 11:43:13 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <iostream>
 #include "VirtualServer.hpp"
 
-VirtualServer::VirtualServer() : _limit_client_body_size(0) { }
-
-void	VirtualServer::SetIp(const std::string& ip) { _ip = ip; }
-void	VirtualServer::SetPort(const std::string& port) { _port = port; }
-void	VirtualServer::AddServerName(const std::string& server_name) { _server_names.push_back(server_name); }
-void	VirtualServer::AddLocation(Location *location) { _list_locations.push_back(location); }
-void	VirtualServer::SetLimitClientBodySize(int limit_client_body_size)
+void								VirtualServer::SetIp(const std::string& ip) { _ip = ip; }
+void								VirtualServer::SetPort(const std::string& port) { _port = port; }
+void								VirtualServer::SetSocket(int socket) { _socket = socket; }
+void								VirtualServer::AddServerName(const std::string& server_name) { _server_names.push_back(server_name); }
+void								VirtualServer::AddLocation(Location *location) { _list_locations.push_back(location); }
+void								VirtualServer::SetLimitClientBodySize(int limit_client_body_size)
 	{ _limit_client_body_size = limit_client_body_size; }
 
-void	VirtualServer::InitSocket() {
+void								VirtualServer::InitSocket() {
 	struct sockaddr_in	sock_addr;
 	int 				opt = 1;
 
@@ -43,6 +42,8 @@ void	VirtualServer::InitSocket() {
 const std::string&					VirtualServer::GetIp() const { return (_ip); }
 const std::string&					VirtualServer::GetPort() const { return (_port); }
 const std::vector<std::string>&		VirtualServer::GetServerNames() const { return (_server_names); }
+int									VirtualServer::GetSocket() const { return (_socket); }
+int									VirtualServer::GetLimitBodySize() const { return (_limit_client_body_size); }
 
 Location*							VirtualServer::GetLocation(Request* request) const {
 	for (int i = 0; i < _list_locations.size(); ++i) {
@@ -59,8 +60,6 @@ const std::string&		VirtualServer::GetErrorPage(const std::string& status_code) 
 bool					VirtualServer::FindErrorPage(const std::string& error_page) const
 	{ return (_error_pages.count(error_page)); }
 
-void					VirtualServer::SetSocket(int socket) { _socket = socket; }
-int						VirtualServer::GetSocket() const { return (_socket); }
 void					VirtualServer::SortServerNames() { std::sort(_server_names.begin(), _server_names.end()); }
 
 bool					operator==(const VirtualServer& virtual_server_l, const VirtualServer& virtual_server_r) {

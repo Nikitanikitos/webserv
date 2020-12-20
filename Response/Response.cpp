@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 22:25:36 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 11:46:30 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,12 @@ const std::map<std::string, std::string>	Response::_message_phrases = {
 		{"403", "Forbidden"},
 		{"404", "Not Found"},
 		{"405", "Method Not Allowed"},
+		{"411", "Length Required"},
+		{"413", "Payload Too Large"}
 };
 
-Response::Response() { }
-Response::Response(const std::string& status_code, const std::string& message_phrase) :
-														_status_code(status_code), _message_phrase(message_phrase) { }
-
 void				Response::SetStatusCode(const std::string& status_code) { _status_code = status_code; }
-void				Response::SetBody(const bytes& body) { _body.add(body); }
+void				Response::SetBody(const bytes& body) { _body = body; }
 
 void				Response::AddHeader(const std::string& key, const std::string& value)
 	{ _headers.insert(std::make_pair(key, value)); }
@@ -37,23 +35,20 @@ void				Response::AddHeader(const std::string& key, const std::string& value)
 const std::string&	Response::GetHeader(const std::string& key) const { return (_headers.at(key)); }
 
 void				Response::GenerateResponse() {
-	struct timeval	tv;
+	struct timeval											tv;
+	std::map<std::string, std::string>::const_iterator		it;
 
 	gettimeofday(&tv, 0);
-
 	_buffer.add(
 			HTTP_VERSION + SP + _status_code + SP + _message_phrases.at(_status_code) + CRLF
-																						"Server: " + SERVER_VERSION +
-			CRLF
+			"Server: " + SERVER_VERSION + CRLF
 			"Date: " + ft_getdate(tv) + CRLF);
 
 	if (_body.size())
 		_buffer.add("Content-length: " + std::to_string(_body.size()) + CRLF);
-
-	for (const auto& header : _headers)
-		_buffer.add(header.first + ": " + header.second + CRLF);
+	for (it = _headers.begin(); it != _headers.end(); ++it)
+		_buffer.add(it->first + ": " + it->second + CRLF);
 	_buffer.add(CRLF);
-
 	if (_body.size()) {
 		_buffer.add(_body);
 		_buffer.add(CRLF);

@@ -53,7 +53,7 @@ private:
 
 	static std::string			_GetPathToTarget(Request *request, Location* location);
 	std::vector<std::string>	_GetArgs(const std::string& line, char separate) const;
-	std::vector<std::string>	_TrimRequest(const std::string& buff) const;
+	std::vector<std::string> _TrimRequest(std::string const& buff, Request* request) const;
 	bool						_CheckCountSpace(const std::string& line, int numSpaces) const;
 	bool						_CheckMethod(std::string method, int size) const;
 	void						_StrToLower(std::string& str) const;

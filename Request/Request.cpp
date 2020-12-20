@@ -34,3 +34,5 @@ void					Request::Clear() {
 	_method.clear();
 	_target.clear();
 }
+
+void Request::SetBody(const std::string& body) { _body = body; }

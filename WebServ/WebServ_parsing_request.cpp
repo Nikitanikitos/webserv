@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/15 20:06:14 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 22:51:04 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 10:02:08 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ std::vector<std::string>	WebServ::_GetKeyValue(const std::string &line) const {
 	return (result);
 }
 
-std::vector<std::string>	WebServ::_TrimRequest(std::string const& buff) const {
+std::vector<std::string> WebServ::_TrimRequest(std::string const& buff, Request* request) const {
 	std::vector<std::string>	result;
 	std::string::size_type		start;
 	std::string::size_type 		pos;
@@ -67,6 +67,8 @@ std::vector<std::string>	WebServ::_TrimRequest(std::string const& buff) const {
 			break ;
 		start = pos + 2;
 	}
+	pos = buff.find("\r\n\r\n", start) + 4;
+	request->SetBody(buff.substr(pos));
 	return (result);
 }
 
@@ -107,7 +109,7 @@ void	WebServ::ParsingRequest(Client *client) {
 	std::vector<std::string>	args;
 
 	take_host = false;
-	args = _TrimRequest(request->GetBuffer().c_str());
+	args = _TrimRequest(request->GetBuffer().c_str(), request);
 	if (!_CheckCountSpace(args[0], 2)) {
 		_SetBadRequestResponse(client);
 		return;

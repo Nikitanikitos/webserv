@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 23:18:38 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 11:45:59 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,11 @@ void WebServ::_PutMethodHandler(Client* client, Location* location, VirtualServe
 	Response*	response = client->GetResponse();
 
 	fd = 0;
-	if (S_ISDIR(buff.st_mode))
+	if (!request->FindHeader("content-length"))
+		response->SetStatusCode("411");
+	else if (request->GetHeader("content-length").size() > virtual_server->GetLimitBodySize())
+		response->SetStatusCode("413");
+	else if (S_ISDIR(buff.st_mode))
 		response->SetStatusCode("404");
 	else if (!buff.st_dev) {
 		if ((fd = open(path_to_target.c_str(), O_WRONLY | O_CREAT)) > 0)

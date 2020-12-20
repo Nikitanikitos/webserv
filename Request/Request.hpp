@@ -55,6 +55,7 @@ public:
 	void							AddHeader(const std::string& key, const std::string& value);
 	void							SetTarget(const std::string& target);
 	void							SetMethod(const std::string& method);
+	void							SetBody(const std::string& body);
 
 	const std::string&				GetMethod() const;
 	const std::string&				GetTarget() const;

@@ -6,7 +6,7 @@
 /*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 23:17:14 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 11:43:13 by nikita           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ private:
 	std::vector<Location*>					_list_locations;
 
 public:
-	VirtualServer();
+	VirtualServer() : _limit_client_body_size(0) { }
 
 	virtual ~VirtualServer()  {
 		close(_socket);
@@ -52,6 +52,7 @@ public:
 	const std::vector<std::string>&		GetServerNames() const;
 	const std::string&					GetPort() const;
 	const std::string&					GetIp() const;
+	int									GetLimitBodySize() const;
 
 	void								AddServerName(const std::string& server_name);
 	void								AddErrorPage(const std::string& key, const std::string& value);
@@ -60,7 +61,6 @@ public:
 	void								SetLimitClientBodySize(int limit_client_body_size);
 	void								SetIp(const std::string& ip);
 	void								SetSocket(int socket);
-
 };
 
 bool					operator==(const VirtualServer& virtual_server_l, const VirtualServer& virtual_server_r); // TODO доделать сравнение
