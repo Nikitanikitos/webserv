@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Request.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:25:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 22:56:38 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 13:12:46 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void					Request::SetMethod(const std::string& method) { _method = method; }
 void					Request::SetTarget(const std::string& target) { _target = target; }
 
-void					Request::AddToBuffer(char* data) { _buffer.add(data); }
+void					Request::AddToBuffer(char* data, size_t n) { _buffer.add(data, n); }
 void					Request::AddHeader(const std::string& key, const std::string& value)
 	{ _headers.insert(std::make_pair(key, value)); }
 bool					Request::FindHeader(const std::string& header) const

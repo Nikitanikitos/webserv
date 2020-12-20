@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   bytes.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/19 11:41:09 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 20:34:30 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 13:06:14 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,12 @@ void			bytes::add(const char* string, int i) {
 	}
 	else {
 		temp_buff = _buffer;
-		_buffer = new char[_size + i];
+		_buffer = new char[_size + i + 1];
 		for (int j = 0; j < _size ; ++j)
 			_buffer[j] = temp_buff[j];
 		for (int k = 0; k < i; ++k)
 			_buffer[_size++] = string[k];
+		_buffer[_size] = 0;
 		delete []temp_buff;
 	}
 }
@@ -54,9 +55,11 @@ bytes&		bytes::operator=(const bytes& string) {
 
 char*		bytes::_bytedup(const char* src, int size) {
 	char	*result;
+	int 	i;
 
-	result = new char[size];
-	for (int i = 0; i < size; ++i)
+	result = new char[size + 1];
+	for (i = 0; i < size; ++i)
 		result[i] = src[i];
+	result[i] = 0;
 	return (result);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 22:37:46 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 14:07:48 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,10 @@ private:
 	ThreadPool						_thread_pool;
 
 	static void
-	_GetHeadMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, struct stat& buff,
-			std::string& path_to_target);
-	static void _PutMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, struct stat& buff,
-			std::string& path_to_target);
+	_GetHeadMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, struct stat* buff,
+						  std::string& path_to_target);
+	static void _PutMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, struct stat* buff,
+								  std::string& path_to_target);
 	void						_CgiHandler(const Request&, const VirtualServer&, const Location&, int);
 
 	static bytes				_AutoindexGenerate(Request *request, const std::string& path_to_target);
@@ -65,8 +65,6 @@ private:
 	void						_InitSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
 	std::vector<std::string>	_GetKeyValue(const std::string &line) const;
 
-	bool						_CheckError(Client* client, VirtualServer* virtual_server, Location* location,
-																		struct stat& buff, std::string& path_to_target);
 	static void					_SetErrorPage(Client *client, Location *location, VirtualServer *virtual_server);
 	static bytes				_GenerateErrorPage(const std::string& code);
 	static bool _IsErrorStatus(const std::string& status);

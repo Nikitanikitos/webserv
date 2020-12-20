@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualServer.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/20 11:43:13 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 14:00:43 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void								VirtualServer::InitSocket() {
 	if (bind(_socket, (struct sockaddr*) &sock_addr, sizeof(sock_addr)) < 0)
 		throw std::exception();
 	fcntl(_socket, F_SETFL, O_NONBLOCK);
-	listen(_socket, 10);
+	listen(_socket, 100);
 }
 
 const std::string&					VirtualServer::GetIp() const { return (_ip); }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ_handlers.cpp                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/20 11:45:59 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 14:52:57 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,10 @@ void	WebServ::ReadRequest(Client *client) {
 
 	bytes = recv(client->GetSocket(), buff, 1024, 0);
 	buff[bytes] = 0;
-	if (bytes == 0)
+	if (bytes <= 0)
 		client->SetStage(close_connection_);
 	else {
-		request->AddToBuffer(buff);
+		request->AddToBuffer(buff, bytes);
 		if (bytes < 1024) client->NextStage();
 	}
 }
@@ -56,7 +56,7 @@ void	WebServ::_SetErrorPage(Client* client, Location* location, VirtualServer* v
 }
 
 void	WebServ::_GetHeadMethodHandler(Client* client, Location* location, VirtualServer* virtual_server,
-																	struct stat& buff, std::string& path_to_target) {
+									struct stat* buff, std::string& path_to_target) {
 	Request*			request = client->GetRequest();
 	Response*			response = client->GetResponse();
 	bytes				body;
@@ -64,35 +64,35 @@ void	WebServ::_GetHeadMethodHandler(Client* client, Location* location, VirtualS
 	int 				fd;
 
 	response->SetStatusCode("200");
-	if (!buff.st_dev)
+	if (!buff->st_dev)
 		response->SetStatusCode("404");
-	else if (S_ISDIR(buff.st_mode) && (fd = open((path_to_target + location->GetIndex()).c_str(), O_RDONLY)) != -1) {
+	else if (S_ISDIR(buff->st_mode) && (fd = open((path_to_target + location->GetIndex()).c_str(), O_RDONLY)) != -1) {
 		path_to_target.append(location->GetIndex());
-		stat(path_to_target.c_str(), &buff);
+		stat(path_to_target.c_str(), buff);
 		close(fd);
 	}
-	else if (S_ISDIR(buff.st_mode) && !location->GetAutoindex())
+	else if (S_ISDIR(buff->st_mode) && !location->GetAutoindex())
 		response->SetStatusCode("403");
-	else if (S_ISREG(buff.st_mode) || S_ISLNK(buff.st_mode)) {
+	if (S_ISREG(buff->st_mode) || S_ISLNK(buff->st_mode)) {
 		body = ft_getfile(path_to_target.c_str());
 #ifdef __linux__
 		tv.tv_sec = buff.st_mtim.tv_sec;
 		tv.tv_usec = buff.st_mtim.tv_nsec;
 #else
-		tv.tv_sec = buff.st_mtimespec.tv_sec;
-		tv.tv_usec = buff.st_mtimespec.tv_nsec;
+		tv.tv_sec = buff->st_mtimespec.tv_sec;
+		tv.tv_usec = buff->st_mtimespec.tv_nsec;
 #endif
 		response->AddHeader("Last-modified", ft_getdate(tv));
 	}
-	else if (S_ISDIR(buff.st_mode) && location->GetAutoindex())
+	else if (S_ISDIR(buff->st_mode) && location->GetAutoindex())
 		body = _AutoindexGenerate(request, path_to_target);
 
 	if (request->GetMethod() == "GET" && response->GetStatusCode() == "200")
 		response->SetBody(body);
 }
 
-void WebServ::_PutMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, struct stat& buff,
-		std::string& path_to_target) {
+void WebServ::_PutMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, struct stat* buff,
+								std::string& path_to_target) {
 	int 		fd;
 	Request*	request = client->GetRequest();
 	Response*	response = client->GetResponse();
@@ -102,9 +102,9 @@ void WebServ::_PutMethodHandler(Client* client, Location* location, VirtualServe
 		response->SetStatusCode("411");
 	else if (request->GetHeader("content-length").size() > virtual_server->GetLimitBodySize())
 		response->SetStatusCode("413");
-	else if (S_ISDIR(buff.st_mode))
+	else if (S_ISDIR(buff->st_mode))
 		response->SetStatusCode("404");
-	else if (!buff.st_dev) {
+	else if (!buff->st_dev) {
 		if ((fd = open(path_to_target.c_str(), O_WRONLY | O_CREAT)) > 0)
 			response->SetStatusCode("201");
 		else
@@ -136,9 +136,9 @@ void	WebServ::GenerateResponse(Client *client) {
 		response->AddHeader("Location", "http://" + virtual_server->GetIp() + ":" + virtual_server->GetPort() + request->GetTarget() + "/");
 	}
 	else if (request->GetMethod() == "GET" || request->GetMethod() == "HEAD")
-		_GetHeadMethodHandler(client, location, virtual_server, buff, path_to_target);
+		_GetHeadMethodHandler(client, location, virtual_server, &buff, path_to_target);
 	else if (request->GetMethod() == "PUT")
-		_PutMethodHandler(client, location, virtual_server, buff, path_to_target);
+		_PutMethodHandler(client, location, virtual_server, &buff, path_to_target);
 
 	if (request->FindHeader("connection") && request->GetHeader("connection") == "close")
 		response->AddHeader("Connection", "Close");

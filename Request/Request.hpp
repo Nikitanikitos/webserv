@@ -64,7 +64,7 @@ public:
 	bool							FindHeader(const std::string& header) const;
 	const std::string&				GetHeader(const std::string& header) const;
 
-	void							AddToBuffer(char* data);
+	void AddToBuffer(char* data, size_t n);
 	void							Clear();
 };
 

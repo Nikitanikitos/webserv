@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/19 19:40:27 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 14:03:34 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void				WebServ::_AddClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, 
 		const int&		client_socket = _clients[i]->GetSocket();
 		if (_clients[i]->GetStage() == read_request_)
 			FD_SET(client_socket, &readfd_set);
-		else if (_clients[i]->GetStage() == send_response_) // TODO если что то зависнит, посмотрите сюда
+		else if (_clients[i]->GetStage() != read_request_ && _clients[i]->GetStage() != close_connection_) // TODO если что то зависнит, посмотрите сюда
 			FD_SET(client_socket, &writefd_set);
 		max_fd = (client_socket > max_fd) ? client_socket : max_fd;
 	}
@@ -61,7 +61,7 @@ void				WebServ::_AddNewClient(fd_set& readfd_set) {
 
 	for (int i = 0; i < _virtual_servers.size(); ++i) {
 		if (FD_ISSET(_virtual_servers[i]->GetSocket(), &readfd_set)) {
-			while ((client_socket = accept(_virtual_servers[i]->GetSocket(), 0, 0)) > 0)
+			if ((client_socket = accept(_virtual_servers[i]->GetSocket(), 0, 0)) > 0)
 				_clients.push_back(new Client(client_socket, _virtual_servers[i]->GetIp(), _virtual_servers[i]->GetPort()));
 		}
 	}
@@ -79,7 +79,7 @@ void				WebServ::RunServer() {
 
 		select(max_fd + 1, &readfd_set, &writefd_set, 0, 0);
 
-		std::cout << _clients.size() << std::endl;
+//		std::cout << _clients.size() << std::endl;
 
 		_AddNewClient(readfd_set);
 		_AddClientInTaskQueue(readfd_set, writefd_set);
