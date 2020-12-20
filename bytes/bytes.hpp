@@ -1,13 +1,19 @@
-//
-// Created by nikita on 19.12.2020.
-//
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   bytes.hpp                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2020/12/20 15:08:50 by imicah            #+#    #+#             */
+/*   Updated: 2020/12/20 15:08:50 by imicah           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef WEBSERV_BYTES_HPP
-#define WEBSERV_BYTES_HPP
+# define WEBSERV_BYTES_HPP
 
-#include <cstddef>
-#include <cstdlib>
-#include <string>
+# include <string>
 
 struct		bytes {
 private:

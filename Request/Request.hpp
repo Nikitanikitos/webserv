@@ -33,9 +33,7 @@
 # define USER_AGENT			"user-agent"
 # define WWW_AUTHENTICATE	"www-authenticate"
 
-# include <string>
 # include <map>
-# include <iostream>
 # include "bytes.hpp"
 
 class	Request {

@@ -3,23 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   VirtualServer.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/20 11:43:13 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 15:31:31 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WEBSERV_VIRTUALSERVER_HPP
 # define WEBSERV_VIRTUALSERVER_HPP
 
+# include "libft.hpp"
+
+# include <zconf.h>
 # include <netinet/in.h>
 # include <arpa/inet.h>
-# include <zconf.h>
 # include <fcntl.h>
-# include "Request.hpp"
+
+# include <map>
+# include <vector>
 # include "Location.hpp"
-# include "libft.hpp"
+# include "Request.hpp"
 
 class	VirtualServer {
 private:

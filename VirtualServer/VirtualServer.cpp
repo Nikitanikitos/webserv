@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
 #include "VirtualServer.hpp"
 
 void								VirtualServer::SetIp(const std::string& ip) { _ip = ip; }

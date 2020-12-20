@@ -17,7 +17,6 @@
 
 # include <vector>
 # include <string>
-# include <cstdint>
 
 enum {
 	accepted = true,

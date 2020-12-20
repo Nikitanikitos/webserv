@@ -13,12 +13,8 @@
 #ifndef WEBSERV_PARSECONFIGFILE_HPP
 # define WEBSERV_PARSECONFIGFILE_HPP
 
-# include <string>
-# include <iostream>
-# include <fcntl.h>
 # include "VirtualServer.hpp"
 # include "Location.hpp"
-# include "libft.hpp"
 
 enum {
     server_names_d,

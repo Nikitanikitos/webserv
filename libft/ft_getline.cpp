@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "libft.hpp"
+# include <zconf.h>
+# include <string>
 
 bool			ft_getline(int fd, std::string &line) {
 	static std::string	surplus = std::string();
@@ -23,7 +24,7 @@ bool			ft_getline(int fd, std::string &line) {
 			surplus.append(buffer);
 		}
 		if (!bytes && surplus.empty())
-			return false;
+			return (false);
 	}
 	std::string::size_type pos = surplus.find('\n');
 	if (pos == std::string::npos) {
@@ -33,5 +34,5 @@ bool			ft_getline(int fd, std::string &line) {
 		line = surplus.substr(0, pos);
 		surplus = surplus.substr(pos + 1);
 	}
-	return true;
+	return (true);
 }

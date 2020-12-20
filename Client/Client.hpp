@@ -15,6 +15,7 @@
 
 # include "Request.hpp"
 # include "Response.hpp"
+# include <zconf.h>
 
 enum Stage {
 	read_request_,
@@ -48,7 +49,7 @@ public:
 	Request						*GetRequest() const;
 	Response					*GetResponse() const;
 
-	void SetNewConnectionTime();
+	void						SetNewConnectionTime();
 
 	void						SetProcessed(bool processed);
 

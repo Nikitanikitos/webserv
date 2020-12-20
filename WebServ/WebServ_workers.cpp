@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/02 14:46:29 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/20 13:46:24 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/20 15:41:09 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void*	worker(void* arg) {
 	WebServ&		web_serv = *(WebServ*)arg;
 	ThreadPool&		thread_pool = web_serv._thread_pool;
 
-	while (true) {
+	while (WebServ::working) {
 		thread_pool.LockQueueMutex();
 		if (!thread_pool.QueueIsEmpty()) {
 			Client*		client = thread_pool.PopTask();
@@ -45,6 +45,7 @@ void*	worker(void* arg) {
 			thread_pool.UnlockQueueMutex();
 		usleep(500);
 	}
+	return (0);
 }
 
 void		WebServ::_CreateWorkers() {

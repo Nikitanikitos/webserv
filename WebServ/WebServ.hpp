@@ -6,19 +6,20 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/20 14:07:48 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/20 15:43:29 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WEBSERV_WEBSERV_HPP
 # define WEBSERV_WEBSERV_HPP
 
-# include <string>
-# include <map>
-# include <queue>
-# include "VirtualServer.hpp"
-# include "Client.hpp"
+# include <vector>
+# include <sys/stat.h>
+# include <dirent.h>
+
 # include "libft.hpp"
+# include "Client.hpp"
+# include "VirtualServer.hpp"
 # include "ThreadPool.hpp"
 
 class WebServ {
@@ -67,14 +68,16 @@ private:
 
 	static void					_SetErrorPage(Client *client, Location *location, VirtualServer *virtual_server);
 	static bytes				_GenerateErrorPage(const std::string& code);
-	static bool _IsErrorStatus(const std::string& status);
+	static bool					_IsErrorStatus(const std::string& status);
 
 public:
+	static int working;
+
 	explicit WebServ(int number_of_workers);
 	virtual ~WebServ();
 
-	void	RunServer();
-	void	AddVirtualServer(VirtualServer *virtual_server);
+	void						RunServer();
+	void						AddVirtualServer(VirtualServer *virtual_server);
 };
 
 #endif //WEBSERV_WEBSERV_HPP

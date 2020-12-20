@@ -12,9 +12,8 @@
 
 #include "Location.hpp"
 
-Location::Location() : _autoindex(non_accepted), _location_type(default_location) {
-	_allow_methods.assign(5, accepted);
-}
+Location::Location() : _autoindex(non_accepted), _location_type(default_location)
+	{ _allow_methods.assign(5, accepted); }
 
 void	Location::AddAllowMethod(bool method) { _allow_methods[method] = accepted; }
 void	Location::SetRoot(const std::string& root) { _root = root; }

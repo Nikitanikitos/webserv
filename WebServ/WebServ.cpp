@@ -6,12 +6,14 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/20 14:03:34 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/20 15:41:09 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
 #include <iostream>
+
+int		WebServ::working = 1;
 
 WebServ::WebServ(int number_of_workers) : _number_workers(number_of_workers) { }
 
@@ -73,7 +75,7 @@ void				WebServ::RunServer() {
 	int 		max_fd;
 
 	_CreateWorkers();
-	while (true) {
+	while (WebServ::working) {
 		_InitSets(writefd_set, readfd_set, max_fd);
 		_AddClientSocketInSet(readfd_set, writefd_set, max_fd);
 

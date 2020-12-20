@@ -15,7 +15,7 @@
 ThreadPool::ThreadPool() {
 	if ((_queue_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == nullptr)
 		throw std::exception();
-	pthread_mutex_init(_queue_mutex, NULL);
+	pthread_mutex_init(_queue_mutex, 0);
 }
 
 ThreadPool::~ThreadPool() {
@@ -39,10 +39,5 @@ void				ThreadPool::PushTask(Client* client) {
 
 bool				ThreadPool::QueueIsEmpty() const { return (_tasks_queue.empty()); }
 
-void ThreadPool::LockQueueMutex() {
-	pthread_mutex_lock(_queue_mutex);
-}
-
-void ThreadPool::UnlockQueueMutex() {
-	pthread_mutex_unlock(_queue_mutex);
-}
+void				ThreadPool::LockQueueMutex() { pthread_mutex_lock(_queue_mutex); }
+void				ThreadPool::UnlockQueueMutex() { pthread_mutex_unlock(_queue_mutex); }

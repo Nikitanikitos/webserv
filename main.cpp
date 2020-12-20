@@ -3,15 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 11:45:00 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 15:48:09 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <WebServ.hpp>
-#include <ParseConfigFile.hpp>
+#include "WebServ.hpp"
+#include "ParseConfigFile.hpp"
+
+int		exit() {
+	WebServ::working = 0;
+	return (0);
+}
 
 int		main(int ac, char **av, char **env) {
 	std::string					number_of_workers;
@@ -22,6 +27,7 @@ int		main(int ac, char **av, char **env) {
 	for (int i = 0; i < list_virtual_server.size(); ++i)
 		server.AddVirtualServer(list_virtual_server[i]);
 
+	signal(SIGINT, exit);
 	server.RunServer();
 	return (0);
 }

@@ -13,7 +13,7 @@
 #include <cstdint>
 
 static bool		ft_isspace(char c)
-{ return ((c == '\n' || c == '\t' || c == '\r' || c == '\v' || c == '\f' || c == ' ')); }
+	{ return ((c == '\n' || c == '\t' || c == '\r' || c == '\v' || c == '\f' || c == ' ')); }
 
 int				ft_atoi(const char* nptr) {
 	int		result;

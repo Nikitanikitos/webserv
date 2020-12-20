@@ -10,7 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "libft.hpp"
+# include <fcntl.h>
+# include <zconf.h>
+# include "bytes.hpp"
 
 bytes	ft_getfile(const char *path) {
 	const int 	fd = open(path, O_RDONLY);

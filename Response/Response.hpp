@@ -3,22 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   Response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:14:03 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/19 15:16:18 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/20 15:27:17 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WEBSERV_RESPONSE_HPP
 # define WEBSERV_RESPONSE_HPP
 
-# include <string>
 # include <map>
-# include <ctime>
+# include <sys/time.h>
+# include <sys/socket.h>
+
 # include "libft.hpp"
-# include <fcntl.h>
-# include <iostream>
+
+# define HTTP_VERSION	(std::string)"HTTP/1.1"
+# define SERVER_VERSION	"WebServ/0.1"
+# define CRLF			"\r\n"
+# define SP				" "
 
 class Response {
 protected:
