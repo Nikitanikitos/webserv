@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <csignal>
 #include "WebServ.hpp"
 #include "ParseConfigFile.hpp"
 

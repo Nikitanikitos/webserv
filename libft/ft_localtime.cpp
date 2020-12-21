@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <sys/time.h>
+#include <ctime>
 
 #define SEC_PER_DAY		86400
 int 	get_number_days(time_t &seconds) {

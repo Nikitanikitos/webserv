@@ -76,8 +76,8 @@ void	WebServ::_GetHeadMethodHandler(Client* client, Location* location, VirtualS
 	if (S_ISREG(buff->st_mode) || S_ISLNK(buff->st_mode)) {
 		body = ft_getfile(path_to_target.c_str());
 #ifdef __linux__
-		tv.tv_sec = buff.st_mtim.tv_sec;
-		tv.tv_usec = buff.st_mtim.tv_nsec;
+		tv.tv_sec = buff->st_mtim.tv_sec;
+		tv.tv_usec = buff->st_mtim.tv_nsec;
 #else
 		tv.tv_sec = buff->st_mtimespec.tv_sec;
 		tv.tv_usec = buff->st_mtimespec.tv_nsec;

@@ -25,7 +25,7 @@
 # define SP				" "
 
 class Response {
-protected:
+private:
 	std::string								_status_code;
 	std::map<std::string, std::string>		_headers;
 	bytes 									_body;
