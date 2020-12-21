@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 19:50:51 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/18 16:28:36 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:37:06 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,27 +36,27 @@ enum {
 
 class	ParseConfigFile {
 private:
-	std::string		_line_surplus;
-	char*           _filename;
-	int 			_fd;
+	std::string		line_surplus;
+	char*           filename;
+	int 			fd;
 
-	VirtualServer * _ParseVsDirective();
+	VirtualServer*				parseVsDirective();
 
-	Location * _ParseLocationDirective(std::string &locationAttribute);
+	Location*					parseLocationDirective(std::string &locationAttribute);
 
-	std::vector<std::string>	_GetArgsFromLine(std::string &input) const;
+	std::vector<std::string>	getArgsFromLine(std::string &input) const;
 
-	int 						_GetIndexOfArg(std::string const &arg, std::string *arr, int size) const;
+	int 						getIndexOfArg(std::string const &arg, std::string *arr, int size) const;
 
-	bool 						_CheckTabulation(std::string const &line, int expectedTabCount) const;
-	void 						_AddAllowMethodsToLocation(Location *location, const std::vector<std::string>& trimmedStr);
-	void 						_SetAutoindexInLocation(Location *location, const std::vector<std::string>& trimmedStr);
-	std::string&				_CheckLocationPath(std::string &path) const;
-	bool 						_CheckPort(int port) const;
+	bool 						checkTabulation(std::string const &line, int expectedTabCount) const;
+	void 						addAllowMethodsToLocation(Location *location, const std::vector<std::string>& trimmedStr);
+	void 						setAutoindexInLocation(Location *location, const std::vector<std::string>& trimmedStr);
+	std::string&				checkLocationPath(std::string &path) const;
+	bool 						checkPort(int port) const;
 
-	bool						_CheckCorrectVS(const VirtualServer *virtual_server, const std::vector<VirtualServer*>& list_virtual_server);
+	bool						checkCorrectVs(const VirtualServer *virtual_server, const std::vector<VirtualServer*>& list_virtual_server);
 public:
-	explicit ParseConfigFile(char *filename)  : _filename(filename) { }
+	explicit ParseConfigFile(char *filename)  : filename(filename) { }
 	~ParseConfigFile() { }
 
 	std::vector<VirtualServer*> ParseFile(std::string &numberOfWorkers);

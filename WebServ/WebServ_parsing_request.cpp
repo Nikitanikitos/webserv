@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   WebServ_parsing_request.cpp                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/15 20:06:14 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/20 10:02:08 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:30:08 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ std::string WebServ::methods[6] = {
 		"OPTIONS"
 };
 
-std::vector<std::string>	WebServ::_GetArgs(const std::string &line, char separate) const {
+std::vector<std::string>	WebServ::getArgs(const std::string &line, char separate) const {
 	std::vector<std::string>	result;
 	std::string					input(line);
 	size_t						pos_find;
@@ -37,7 +37,7 @@ std::vector<std::string>	WebServ::_GetArgs(const std::string &line, char separat
 	return (result);
 }
 
-std::vector<std::string>	WebServ::_GetKeyValue(const std::string &line) const {
+std::vector<std::string>	WebServ::getKeyValue(const std::string &line) const {
 	std::vector<std::string>	result;
 	std::string					clear_line;
 	size_t						pos_find;
@@ -54,7 +54,7 @@ std::vector<std::string>	WebServ::_GetKeyValue(const std::string &line) const {
 	return (result);
 }
 
-std::vector<std::string> WebServ::_TrimRequest(std::string const& buff, Request* request) const {
+std::vector<std::string> WebServ::trimRequest(std::string const& buff, HttpRequest* request) const {
 	std::vector<std::string>	result;
 	std::string::size_type		start;
 	std::string::size_type 		pos;
@@ -72,66 +72,66 @@ std::vector<std::string> WebServ::_TrimRequest(std::string const& buff, Request*
 	return (result);
 }
 
-bool	WebServ::_CheckCountSpace(std::string const& line, int num_spaces) const {
+bool	WebServ::checkCountSpace(std::string const& line, int numSpaces) const {
 	int count_space = 0;
 
 	for (int i = 0; i < line.size(); ++i)
 		if (line[i] == ' ')
 			++count_space;
-	return (count_space == num_spaces);
+	return (count_space == numSpaces);
 }
 
-bool	WebServ::_CheckMethod(std::string method, int size) const {
+bool	WebServ::checkMethod(std::string method, int size) const {
 	for (int i = 0; i < size; ++i)
 		if (WebServ::methods[i] == method)
 			return (true);
 	return (false);
 }
 
-void 	WebServ::_StrToLower(std::string& str) const {
+void 	WebServ::strToLower(std::string& str) const {
 	for (int i = 0; i < str.size(); ++i)
 		str[i] = std::tolower(str[i]);
 }
 
-void	WebServ::_SetBadRequestResponse(Client* client) {
-	Response*	response = client->GetResponse();
+void	WebServ::setBadRequestResponse(Client* client) {
+	HttpResponse*	response = client->getResponse();
 
-	response->SetStatusCode("400");
-	response->SetBody(_GenerateErrorPage(response->GetStatusCode()));
-	response->GenerateResponse();
-	client->SetStage(send_response_);
+	response->setStatusCode("400");
+	response->SetBody(generateErrorPage(response->getStatusCode()));
+	response->generateResponse();
+	client->setStage(send_response_);
 }
 
-void	WebServ::ParsingRequest(Client *client) {
-	Request*					request = client->GetRequest();
+void	WebServ::parsingRequest(Client *client) {
+	HttpRequest*					request = client->getRequest();
 	bool						take_host;
 	std::vector<std::string>	line;
 	std::vector<std::string>	args;
 
 	take_host = false;
-	args = _TrimRequest(request->GetBuffer().c_str(), request);
-	if (!_CheckCountSpace(args[0], 2)) {
-		_SetBadRequestResponse(client);
+	args = trimRequest(request->getBuffer().c_str(), request);
+	if (!checkCountSpace(args[0], 2)) {
+		setBadRequestResponse(client);
 		return;
 	}
-	line = _GetArgs(args[0], ' ');
-	if (line.size() != 3 || _CheckMethod(args[0], 6) || line[2] != HTTP_VERSION) {
-		_SetBadRequestResponse(client);
+	line = getArgs(args[0], ' ');
+	if (line.size() != 3 || checkMethod(args[0], 6) || line[2] != HTTP_VERSION) {
+		setBadRequestResponse(client);
 		return;
 	}
-	request->SetMethod(line[0]);
-	request->SetTarget(line[1]);
+	request->setMethod(line[0]);
+	request->setTarget(line[1]);
 	for (size_t i = 1; i < args.size(); ++i) {
-		line = _GetKeyValue(args[i]);
-		_StrToLower(line[0]);
+		line = getKeyValue(args[i]);
+		strToLower(line[0]);
 		if (line.empty() || line.size() == 1 || line.size() > 2) {
-			_SetBadRequestResponse(client);
+			setBadRequestResponse(client);
 			return;
 		}
 		std::string key = line[0].substr(0, line[0].size());
 		if (key == "host")
 			take_host = true;
-		request->AddHeader(key, line[1]);
+		request->addHeader(key, line[1]);
 	}
-	(!take_host) ? _SetBadRequestResponse(client) : client->NextStage();
+	(!take_host) ? setBadRequestResponse(client) : client->nextStage();
 }

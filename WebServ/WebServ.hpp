@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/20 15:43:29 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:42:53 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,47 +28,46 @@ private:
 
 	static std::string				methods[6];
 
-	std::vector<Client*>			_clients;
-	std::vector<VirtualServer*>		_virtual_servers;
+	std::vector<Client*>			clients;
+	std::vector<VirtualServer*>		virtual_servers;
 
-	int 							_number_workers;
-	ThreadPool						_thread_pool;
+	int 							number_workers;
+	ThreadPool						thread_pool;
 
-	static void
-	_GetHeadMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, struct stat* buff,
-						  std::string& path_to_target);
-	static void _PutMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, struct stat* buff,
-								  std::string& path_to_target);
-	void						_CgiHandler(const Request&, const VirtualServer&, const Location&, int);
+	static void					getHeadMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, struct stat* buff,
+														std::string& path_to_target);
+	static void					putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server,
+													struct stat* buff, std::string& path_to_target);
+	void						cgiHandler(const HttpRequest&, const VirtualServer&, const Location&, int);
 
-	static bytes				_AutoindexGenerate(Request *request, const std::string& path_to_target);
+	static bytes				autoindexGenerate(HttpRequest *request, const std::string& path_to_target);
 
-	void						_CreateWorkers();
+	void						createWorkers();
 
-	VirtualServer*				_GetVirtualServer(Client *client) const;
+	VirtualServer*				getVirtualServer(Client *client) const;
 
-	void						ReadRequest(Client* client);
-	void						ParsingRequest(Client* client);
-	void						GenerateResponse(Client* client);
-	void						SendResponse(Client* client);
+	void						readRequest(Client* client);
+	void						parsingRequest(Client* client);
+	void						generateResponse(Client* client);
+	void						sendResponse(Client* client);
 
-	static std::string			_GetPathToTarget(Request *request, Location* location);
-	std::vector<std::string>	_GetArgs(const std::string& line, char separate) const;
-	std::vector<std::string> _TrimRequest(std::string const& buff, Request* request) const;
-	bool						_CheckCountSpace(const std::string& line, int numSpaces) const;
-	bool						_CheckMethod(std::string method, int size) const;
-	void						_StrToLower(std::string& str) const;
-	void						_SetBadRequestResponse(Client* client);
+	static std::string			getPathToTarget(HttpRequest *request, Location* location);
+	std::vector<std::string>	getArgs(const std::string& line, char separate) const;
+	std::vector<std::string>	trimRequest(std::string const& buff, HttpRequest* request) const;
+	bool						checkCountSpace(const std::string& line, int numSpaces) const;
+	bool						checkMethod(std::string method, int size) const;
+	void						strToLower(std::string& str) const;
+	void						setBadRequestResponse(Client* client);
 
-	void						_AddNewClient(fd_set& readfd_set);
-	void						_AddClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, int& max_fd);
-	void						_AddClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set);
-	void						_InitSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
-	std::vector<std::string>	_GetKeyValue(const std::string &line) const;
+	void						addNewClient(fd_set& readfd_set);
+	void						addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, int& max_fd);
+	void						addClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set);
+	void						initSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
+	std::vector<std::string>	getKeyValue(const std::string &line) const;
 
-	static void					_SetErrorPage(Client *client, Location *location, VirtualServer *virtual_server);
-	static bytes				_GenerateErrorPage(const std::string& code);
-	static bool					_IsErrorStatus(const std::string& status);
+	static void					setErrorPage(Client *client, Location *location, VirtualServer *virtual_server);
+	static bytes				generateErrorPage(const std::string& code);
+	static bool					isErrorStatus(const std::string& status);
 
 public:
 	static int working;
@@ -76,8 +75,8 @@ public:
 	explicit WebServ(int number_of_workers);
 	virtual ~WebServ();
 
-	void						RunServer();
-	void						AddVirtualServer(VirtualServer *virtual_server);
+	void						runServer();
+	void						addVirtualServer(VirtualServer *virtual_server);
 };
 
 #endif //WEBSERV_WEBSERV_HPP

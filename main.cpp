@@ -26,9 +26,9 @@ int		main(int ac, char **av, char **env) {
 	WebServ						server(std::stoi(number_of_workers));
 
 	for (int i = 0; i < list_virtual_server.size(); ++i)
-		server.AddVirtualServer(list_virtual_server[i]);
+		server.addVirtualServer(list_virtual_server[i]);
 
 	signal(SIGINT, exit);
-	server.RunServer();
+	server.runServer();
 	return (0);
 }

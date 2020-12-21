@@ -13,8 +13,8 @@
 #ifndef WEBSERV_CLIENT_HPP
 #define WEBSERV_CLIENT_HPP
 
-# include "Request.hpp"
-# include "Response.hpp"
+# include "HttpRequest.hpp"
+# include "HttpResponse.hpp"
 # include <zconf.h>
 
 enum Stage {
@@ -29,41 +29,41 @@ enum TimeOut { TimeOut = 10, };
 
 class Client {
 private:
-	int 					_socket;
-	int 					_stage;
-	bool 					_in_proccessed;
-	std::string				_ip;
-	std::string				_port;
-	Request*				_request;
-	Response*				_response;
-	long					_connection_time;
+	int 					socket;
+	int 					stage;
+	bool 					in_proccessed;
+	std::string				host;
+	std::string				port;
+	HttpRequest*			request;
+	HttpResponse*			response;
+	long					connection_time;
 
 public:
 	Client(int socket, const std::string& ip, const std::string& port);
 	virtual ~Client();
 
-	const std::string&			GetPort() const;
-	const std::string&			GetIp() const;
-	int							GetStage() const;
-	int							GetSocket() const;
-	Request						*GetRequest() const;
-	Response					*GetResponse() const;
+	const std::string&			getPort() const;
+	const std::string&			getHost() const;
+	int							getStage() const;
+	int							getSocket() const;
+	HttpRequest*				getRequest() const;
+	HttpResponse*				getResponse() const;
 
-	void						SetNewConnectionTime();
+	void						setNewConnectionTime();
 
-	void						SetProcessed(bool processed);
+	void						setProcessed(bool processed);
 
-	void						SetStage(int stage);
-	void						NextStage();
+	void						setStage(int stage_);
+	void						nextStage();
 
-	bool						InTaskQueue();
-	bool						ConnectionTimedOut();
+	bool						inTaskQueue();
+	bool						connectionTimedOut();
 
-	void						ClearResponse();
-	void						ClearRequest();
+	void						clearResponse();
+	void						clearRequest();
 
-	void						SendResponse();
-	void 						GenerateResponse();
+	void						sendResponse();
+	void 						generateResponse();
 };
 
 #endif //WEBSERV_CLIENT_HPP

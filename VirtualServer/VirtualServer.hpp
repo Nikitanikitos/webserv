@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/20 15:31:31 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:42:53 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,48 +23,48 @@
 # include <map>
 # include <vector>
 # include "Location.hpp"
-# include "Request.hpp"
+# include "HttpRequest.hpp"
 
 class	VirtualServer {
 private:
 	typedef std::map<std::string, std::string>		error_pages_t;
 
-	int										_socket;
-	std::string								_ip;
-	std::string								_port;
-	int										_limit_client_body_size;
-	std::vector<std::string>				_server_names;
-	error_pages_t							_error_pages;
-	std::vector<Location*>					_list_locations;
+	int										server_socket;
+	std::string								host;
+	std::string								port;
+	int										limit_client_body_size;
+	std::vector<std::string>				server_names;
+	error_pages_t							error_pages;
+	std::vector<Location*>					list_locations;
 
 public:
-	VirtualServer() : _limit_client_body_size(0) { }
+	VirtualServer() : limit_client_body_size(0) { }
 
 	virtual ~VirtualServer()  {
-		close(_socket);
-		for (int i = 0; i < _list_locations.size(); ++i)
-			delete _list_locations[i];
+		close(server_socket);
+		for (int i = 0; i < list_locations.size(); ++i)
+			delete list_locations[i];
 	}
 
-	void								InitSocket();
-	void								SortServerNames();
+	void								initSocket();
+	void								sortServerNames();
 
-	int									GetSocket() const;
-	bool								FindErrorPage(const std::string& error_page) const;
-	const std::string&					GetErrorPage(const std::string& status_code) const;
-	Location*							GetLocation(Request *request) const;
-	const std::vector<std::string>&		GetServerNames() const;
-	const std::string&					GetPort() const;
-	const std::string&					GetIp() const;
-	int									GetLimitBodySize() const;
+	int									getSocket() const;
+	bool								findErrorPage(const std::string& error_page) const;
+	const std::string&					getErrorPage(const std::string& status_code) const;
+	Location*							getLocation(HttpRequest *request) const;
+	const std::vector<std::string>&		getServerNames() const;
+	const std::string&					getPort() const;
+	const std::string&					getHost() const;
+	int									getLimitBodySize() const;
 
-	void								AddServerName(const std::string& server_name);
-	void								AddErrorPage(const std::string& key, const std::string& value);
-	void								AddLocation(Location *location);
-	void								SetPort(const std::string &port);
-	void								SetLimitClientBodySize(int limit_client_body_size);
-	void								SetIp(const std::string& ip);
-	void								SetSocket(int socket);
+	void								addServerName(const std::string& server_name);
+	void								addErrorPage(const std::string& key, const std::string& value);
+	void								addLocation(Location *location);
+	void								setPort(const std::string &port_);
+	void								setLimitClientBodySize(int limit_client_body_size_);
+	void								setHost(const std::string& ip);
+	void								setSocket(int socket);
 };
 
 bool					operator==(const VirtualServer& virtual_server_l, const VirtualServer& virtual_server_r); // TODO доделать сравнение

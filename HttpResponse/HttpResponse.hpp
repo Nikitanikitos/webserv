@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Response.hpp                                       :+:      :+:    :+:   */
+/*   HttpResponse.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:14:03 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:03:59 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:29:51 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_RESPONSE_HPP
-# define WEBSERV_RESPONSE_HPP
+#ifndef WEBSERV_HTTPRESPONSE_HPP
+# define WEBSERV_HTTPRESPONSE_HPP
 
 # include <sys/time.h>
 # include <sys/socket.h>
@@ -24,7 +24,7 @@
 # define CRLF			"\r\n"
 # define SP				" "
 
-class Response : public HttpObject {
+class HttpResponse : public HttpObject {
 private:
 	std::string								status_code;
 	std::string								message_phrase;
@@ -32,17 +32,17 @@ private:
 public:
 	static const std::map<std::string, std::string>	message_phrases;
 
-	Response() { }
-	virtual ~Response() { }
+	HttpResponse() { }
+	virtual ~HttpResponse() { }
 
-	const std::string&		GetStatusCode() const;
+	const std::string&		getStatusCode() const;
 
-	void					SetStatusCode(const std::string& status_code);
+	void					setStatusCode(const std::string& status_code);
 
-	void					GenerateResponse();
-	int						SendResponse(int client_socket);
+	void					generateResponse();
+	int						sendResponse(int client_socket);
 
-	virtual void			Clear();
+	virtual void			clear();
 };
 
-#endif //WEBSERV_RESPONSE_HPP
+#endif //WEBSERV_HTTPRESPONSE_HPP

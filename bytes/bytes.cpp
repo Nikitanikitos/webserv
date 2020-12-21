@@ -13,43 +13,43 @@
 #include "bytes.hpp"
 
 void			bytes::add(const std::string& string) { add(string.c_str(), string.size()); }
-void			bytes::add(const bytes& string) { add(string.c_str(), string.size()); }
+void			bytes::add(const bytes& string) { add(string.c_str(), string.size_()); }
 
-const char*		bytes::c_str() const { return (_buffer); }
-size_t			bytes::size() const { return (_size); }
+const char*		bytes::c_str() const { return (buffer); }
+size_t			bytes::size() const { return (size_); }
 
 void			bytes::add(const char* string, int i) {
 	char*	temp_buff;
 
-	if (!_buffer) {
-		_buffer = _bytedup(string, i);
-		_size = i;
+	if (!buffer) {
+		buffer = _bytedup(string, i);
+		size_ = i;
 	}
 	else {
-		temp_buff = _buffer;
-		_buffer = new char[_size + i + 1];
-		for (int j = 0; j < _size ; ++j)
-			_buffer[j] = temp_buff[j];
+		temp_buff = buffer;
+		buffer = new char[size_ + i + 1];
+		for (int j = 0; j < size_ ; ++j)
+			buffer[j] = temp_buff[j];
 		for (int k = 0; k < i; ++k)
-			_buffer[_size++] = string[k];
-		_buffer[_size] = 0;
+			buffer[size_++] = string[k];
+		buffer[size_] = 0;
 		delete []temp_buff;
 	}
 }
 
 void			bytes::clear() {
-	delete []_buffer;
-	_size = 0;
-	_buffer = 0;
+	delete []buffer;
+	size_ = 0;
+	buffer = 0;
 }
 
 void			bytes::erase(size_t pos, size_t n)
-	{ if (n >= _size) clear(); }
+	{ if (n >= size_) clear(); }
 
 bytes&		bytes::operator=(const bytes& string) {
-	delete []_buffer;
-	_buffer = _bytedup(string._buffer, string._size);
-	_size = string._size;
+	delete []buffer;
+	buffer = _bytedup(string.buffer, string.size_);
+	size_ = string.size_;
 	return (*this);
 }
 

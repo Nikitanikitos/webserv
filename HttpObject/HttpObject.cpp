@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 11:43:02 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:06:59 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:12:24 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,16 @@
 
 void				HttpObject::SetBody(const bytes& body_) { body = body_; }
 
-void				HttpObject::AddToBuffer(char* data, size_t n) { buffer.add(data, n); }
-void				HttpObject::AddHeader(const std::string& key, const std::string& value)
+void				HttpObject::addToBuffer(char* data, size_t n) { buffer.add(data, n); }
+void				HttpObject::addHeader(const std::string& key, const std::string& value)
 	{ headers.insert(std::make_pair(key, value)); }
 
-bool				HttpObject::FindHeader(const std::string& header) const { return (headers.count(header)); }
-const bytes&		HttpObject::GetBody() const { return (body); }
-const bytes&		HttpObject::GetBuffer() const { return (buffer); }
-const std::string&	HttpObject::GetHeader(const std::string& header) const { return (headers.at(header)); }
+bool				HttpObject::findHeader(const std::string& header) const { return (headers.count(header)); }
+const bytes&		HttpObject::getBody() const { return (body); }
+const bytes&		HttpObject::getBuffer() const { return (buffer); }
+const std::string&	HttpObject::getHeader(const std::string& header) const { return (headers.at(header)); }
 
-void				HttpObject::Clear() {
+void				HttpObject::clear() {
 	body.clear();
 	buffer.clear();
 	headers.clear();

@@ -17,16 +17,17 @@
 
 struct		bytes {
 private:
-	size_t			_size;
-	char*			_buffer;
+	size_t			size_;
+	char*			buffer;
 
 	char*			_bytedup(const char* src, int size);
 
 public:
-	bytes() : _size(0), _buffer() { }
-	~bytes() { delete []_buffer; }
-	bytes(const bytes& string) : _size(string._size) { _buffer = _bytedup(string._buffer, _size); }
-	bytes(const std::string& string) : _size(string.size()) { _buffer = _bytedup(string.c_str(), string.size()); }
+	bytes() : size_(0), buffer() { }
+	~bytes() { delete []buffer; }
+
+	bytes(const bytes& string) : size_(string.size_) { buffer = _bytedup(string.buffer, size_); }
+	bytes(const std::string& string) : size_(string.size()) { buffer = _bytedup(string.c_str(), string.size()); }
 
 	bytes&			operator=(const bytes& string);
 

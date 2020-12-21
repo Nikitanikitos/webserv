@@ -23,8 +23,8 @@ add_executable(webserv
 		VirtualServer/VirtualServer.cpp
 		Location/Location.cpp
 		ParseConfigFile/ParseConfigFile.cpp
-		Request/Request.cpp
-		Response/Response.cpp
+		HttpRequest/HttpRequest.cpp
+		HttpResponse/HttpResponse.cpp
 
 		Client/Client.cpp
 		ThreadPool/ThreadPool.cpp
@@ -40,8 +40,8 @@ include_directories(
 		VirtualServer
 		WebServ
 		ParseConfigFile
-		Request
-		Response
+		HttpRequest
+		HttpResponse
 		Client
 		ThreadPool
 		bytes

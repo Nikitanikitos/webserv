@@ -13,53 +13,53 @@
 #include "Client.hpp"
 
 Client::Client(int socket, const std::string& ip, const std::string& port)
-								: _socket(socket), _stage(read_request_), _in_proccessed(false), _ip(ip), _port(port) {
+								: socket(socket), stage(read_request_), in_proccessed(false), host(ip), port(port) {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);
-	_connection_time = tv.tv_sec;
+	connection_time = tv.tv_sec;
 
-	_request = new Request();
-	_response = new Response();
+	request = new HttpRequest();
+	response = new HttpResponse();
 }
 
 Client::~Client() {
-	delete _response;
-	delete _request;
-	close(_socket);
+	delete response;
+	delete request;
+	close(socket);
 }
 
-void				Client::SetProcessed(bool processed) { _in_proccessed = processed; }
-void				Client::SetStage(int stage) { _stage = stage; }
+void					Client::setProcessed(bool processed) { in_proccessed = processed; }
+void					Client::setStage(int stage_) { stage = stage_; }
 
-Request*			Client::GetRequest() const { return (_request); }
-Response*			Client::GetResponse() const { return (_response); }
-const std::string&	Client::GetIp() const { return (_ip); }
-const std::string&	Client::GetPort() const { return _port; }
-int					Client::GetStage() const { return (_stage); }
-int					Client::GetSocket() const { return (_socket); }
+HttpRequest*			Client::getRequest() const { return (request); }
+HttpResponse*			Client::getResponse() const { return (response); }
+const std::string&		Client::getHost() const { return (host); }
+const std::string&		Client::getPort() const { return port; }
+int						Client::getStage() const { return (stage); }
+int						Client::getSocket() const { return (socket); }
 
-bool				Client::InTaskQueue() { return (_in_proccessed); }
+bool					Client::inTaskQueue() { return (in_proccessed); }
 
-void				Client::NextStage() { _stage++; }
+void					Client::nextStage() { stage++; }
 
-void				Client::ClearResponse() { _response->Clear(); }
-void				Client::ClearRequest() { _request->Clear(); }
+void					Client::clearResponse() { response->clear(); }
+void					Client::clearRequest() { request->clear(); }
 
-void				Client::GenerateResponse() { _response->GenerateResponse(); }
-void				Client::SendResponse() { _response->SendResponse(_socket); }
+void					Client::generateResponse() { response->generateResponse(); }
+void					Client::sendResponse() { response->sendResponse(socket); }
 
-bool Client::ConnectionTimedOut() {
+bool Client::connectionTimedOut() {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);
-	return ((tv.tv_sec - _connection_time) > TimeOut);
+	return ((tv.tv_sec - connection_time) > TimeOut);
 }
 
-void Client::SetNewConnectionTime() {
+void Client::setNewConnectionTime() {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);
-	_connection_time = tv.tv_sec;
+	connection_time = tv.tv_sec;
 }
 

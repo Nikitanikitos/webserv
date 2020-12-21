@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ThreadPool.hpp                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nikita <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/05 18:34:43 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/07 01:13:05 by nikita           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:40:42 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,19 +19,19 @@
 
 class ThreadPool {
 private:
-	std::queue<Client*>		_tasks_queue;
-	pthread_mutex_t*		_queue_mutex;
+	std::queue<Client*>		tasks_queue;
+	pthread_mutex_t*		queue_mutex;
 
 public:
 	ThreadPool();
 	~ThreadPool();
 
-	bool					QueueIsEmpty() const;
+	bool					queueIsEmpty() const;
 
-	void					LockQueueMutex();
-	void					UnlockQueueMutex();
-	void 					PushTask(Client* client);
-	Client*					PopTask();
+	void					lockQueueMutex();
+	void					unlockQueueMutex();
+	void 					pushTask(Client* client);
+	Client*					popTask();
 };
 
 #endif //WEBSERV_THREADPOOL_HPP

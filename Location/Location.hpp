@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 20:29:23 by nikita            #+#    #+#             */
-/*   Updated: 2020/11/26 12:39:53 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:37:06 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,38 +39,38 @@ enum {
 
 class	Location {
 private:
-	std::vector<bool>	_allow_methods;
-	std::string			_extension;
-	std::string			_path;
-	std::string			_root;
-	std::string			_cgi_pass;
-	std::string			_index;
-	bool				_autoindex;
-	bool 				_location_type;
+	std::vector<bool>	allow_methods;
+	std::string			extension;
+	std::string			path;
+	std::string			root;
+	std::string			cgi_pass;
+	std::string			index;
+	bool				autoindex;
+	bool 				location_type;
 
 public:
 	Location();
 	~Location() { }
 
-	void						AddAllowMethod(bool method);
-	void 						EraseAcceptedMethods();
-	bool						IsAllowMethod(const std::string& method) const;
+	void						addAllowMethod(bool method);
+	void 						eraseAcceptedMethods();
+	bool						isAllowMethod(const std::string& method) const;
 
-	void						SetLocationType(bool location_type);
-	void						SetRoot(const std::string& root);
-	void						SetIndex(const std::string& index);
-	void						SetCgiPath(const std::string& cgi_path);
-	void						SetAutoindex(bool autoindex);
-	void						SetPath(const std::string& path);
-	void 						SetExtension(const std::string &extension);
+	void						setLocationType(bool location_type_);
+	void						setRoot(const std::string& root_);
+	void						setIndex(const std::string& index_);
+	void						setCgiPath(const std::string& cgi_path);
+	void						setAutoindex(bool autoindex_);
+	void						setPath(const std::string& path_);
+	void 						setExtension(const std::string &extension_);
 
-	const std::string&			GetIndex() const;
-	const std::string&			GetPath() const;
-	const std::string&			GetExtension() const;
-	const std::string&			GetRoot() const;
-	const std::vector<bool>&	GetAllowMethods() const;
-	bool						GetLocationType() const;
-	bool						GetAutoindex() const;
+	const std::string&			getIndex() const;
+	const std::string&			getPath() const;
+	const std::string&			getExtension() const;
+	const std::string&			getRoot() const;
+	const std::vector<bool>&	getAllowMethods() const;
+	bool						getLocationType() const;
+	bool						getAutoindex() const;
 
 };
 
