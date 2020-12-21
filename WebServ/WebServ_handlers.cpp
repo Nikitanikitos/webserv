@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 22:34:13 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 22:55:45 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,8 +88,8 @@ void	WebServ::getHeadMethodHandler(Client* client, Location* location, VirtualSe
 	if (info->exists != -1 && (S_ISREG(info->info.st_mode) || S_ISLNK(info->info.st_mode))) {
 		body = ft_getfile(path_to_target.c_str());
 #ifdef __linux__
-		tv.tv_sec = buff->st_mtim.tv_sec;
-		tv.tv_usec = buff->st_mtim.tv_nsec;
+		tv.tv_sec = info->info.st_mtim.tv_sec;
+		tv.tv_usec = info->info->st_mtim.tv_nsec;
 #else
 		tv.tv_sec = info->info.st_mtimespec.tv_sec;
 		tv.tv_usec = info->info.st_mtimespec.tv_nsec;
