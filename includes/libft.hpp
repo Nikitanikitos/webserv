@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 12:50:34 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/20 15:36:42 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 14:47:35 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,13 @@
 # define WEBSERV_LIBFT_HPP
 
 # include <string>
+#include <sys/stat.h>
 # include "bytes.hpp"
 
+struct					t_stat {
+	struct stat			info;
+	int					exists;
+};
 
 uint16_t				ft_htons(uint16_t);
 uint32_t				ft_htonl(uint32_t);

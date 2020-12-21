@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/21 12:42:53 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 14:53:43 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include "VirtualServer.hpp"
 # include "ThreadPool.hpp"
 
-class WebServ {
+class	WebServ {
 private:
 	friend void*	worker(void*);
 
@@ -34,10 +34,10 @@ private:
 	int 							number_workers;
 	ThreadPool						thread_pool;
 
-	static void					getHeadMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, struct stat* buff,
-														std::string& path_to_target);
+	static void					getHeadMethodHandler(Client* client, Location* location, VirtualServer* virtual_server,
+																			t_stat* info, std::string& path_to_target);
 	static void					putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server,
-													struct stat* buff, std::string& path_to_target);
+																			t_stat* info, std::string& path_to_target);
 	void						cgiHandler(const HttpRequest&, const VirtualServer&, const Location&, int);
 
 	static bytes				autoindexGenerate(HttpRequest *request, const std::string& path_to_target);

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 11:37:57 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:49:53 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:59:06 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <string>
 # include "bytes.hpp"
 
-class HttpObject {
+class	HttpObject {
 protected:
 	typedef		std::map<std::string, std::string>		_headers_t;
 

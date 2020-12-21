@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/20 15:08:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/20 15:08:50 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:37:06 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,14 +20,14 @@ private:
 	size_t			size_;
 	char*			buffer;
 
-	char*			_bytedup(const char* src, int size);
+	char*			bytedup(const char* src, int size);
 
 public:
 	bytes() : size_(0), buffer() { }
 	~bytes() { delete []buffer; }
 
-	bytes(const bytes& string) : size_(string.size_) { buffer = _bytedup(string.buffer, size_); }
-	bytes(const std::string& string) : size_(string.size()) { buffer = _bytedup(string.c_str(), string.size()); }
+	bytes(const bytes& string) : size_(string.size_) { buffer = bytedup(string.buffer, size_); }
+	bytes(const std::string& string) : size_(string.size()) { buffer = bytedup(string.c_str(), string.size()); }
 
 	bytes&			operator=(const bytes& string);
 

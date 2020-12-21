@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/21 12:42:53 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 16:13:26 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void				WebServ::addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, i
 		const int&		client_socket = clients[i]->getSocket();
 		if (clients[i]->getStage() == read_request_)
 			FD_SET(client_socket, &readfd_set);
-		else if (clients[i]->getStage() != read_request_ && clients[i]->getStage() != close_connection_) // TODO если что то зависнит, посмотрите сюда
+		else if (clients[i]->getStage() != read_request_) // TODO если что то зависнит, посмотрите сюда
 			FD_SET(client_socket, &writefd_set);
 		max_fd = (client_socket > max_fd) ? client_socket : max_fd;
 	}
@@ -81,7 +81,7 @@ void				WebServ::runServer() {
 
 		select(max_fd + 1, &readfd_set, &writefd_set, 0, 0);
 
-//		std::cout << _clients.size() << std::endl;
+//		std::cout << clients.size() << std::endl;
 
 		addNewClient(readfd_set);
 		addClientInTaskQueue(readfd_set, writefd_set);

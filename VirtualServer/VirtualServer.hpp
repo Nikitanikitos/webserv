@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/21 12:42:53 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 16:12:29 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,13 @@ private:
 	int										server_socket;
 	std::string								host;
 	std::string								port;
-	int										limit_client_body_size;
+	size_t									limit_client_body_size;
 	std::vector<std::string>				server_names;
 	error_pages_t							error_pages;
 	std::vector<Location*>					list_locations;
 
 public:
-	VirtualServer() : limit_client_body_size(0) { }
+	VirtualServer() : limit_client_body_size(-1) { }
 
 	virtual ~VirtualServer()  {
 		close(server_socket);
