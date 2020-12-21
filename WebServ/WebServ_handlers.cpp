@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:42:53 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 13:00:35 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	WebServ::sendResponse(Client* client) {
 	HttpRequest*		request = client->getRequest();
 
 	client->sendResponse();
-	if (!response->getBuffer().size_()) {
+	if (!response->getBuffer().size()) {
 		if (request->findHeader("connection") && request->getHeader("connection") == "close")
 			client->setStage(close_connection_);
 		else
@@ -116,7 +116,7 @@ void WebServ::putMethodHandler(Client* client, Location* location, VirtualServer
 		response->setStatusCode("200");
 	}
 	if (fd > 0)
-		write(fd, request->getBody().c_str(), request->getBody().size_());
+		write(fd, request->getBody().c_str(), request->getBody().size());
 }
 
 void	WebServ::generateResponse(Client *client) {

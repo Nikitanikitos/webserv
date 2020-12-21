@@ -6,14 +6,14 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/19 11:41:09 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/20 13:06:14 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 13:02:11 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "bytes.hpp"
 
 void			bytes::add(const std::string& string) { add(string.c_str(), string.size()); }
-void			bytes::add(const bytes& string) { add(string.c_str(), string.size_()); }
+void			bytes::add(const bytes& string) { add(string.c_str(), string.size()); }
 
 const char*		bytes::c_str() const { return (buffer); }
 size_t			bytes::size() const { return (size_); }

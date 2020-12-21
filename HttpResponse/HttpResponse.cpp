@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:40:42 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 13:01:39 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ const std::map<std::string, std::string>	HttpResponse::message_phrases = {
 		{"413", "Payload Too Large"}
 };
 
-void				HttpResponse::setStatusCode(const std::string& status_code) { status_code = status_code; }
+void				HttpResponse::setStatusCode(const std::string& status_code_) { status_code = status_code_; }
 
 void				HttpResponse::generateResponse() {
 	struct timeval											tv;

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 18:03:37 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:30:08 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:59:06 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ public:
 	HttpRequest() { }
 	virtual ~HttpRequest() { }
 
-	void							setTarget(const std::string& target);
-	void							setMethod(const std::string& method);
+	void							setTarget(const std::string& target_);
+	void							setMethod(const std::string& method_);
 
 	const std::string&				getMethod() const;
 	const std::string&				getTarget() const;

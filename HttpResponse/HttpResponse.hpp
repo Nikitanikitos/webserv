@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:14:03 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:29:51 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:59:06 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ public:
 
 	const std::string&		getStatusCode() const;
 
-	void					setStatusCode(const std::string& status_code);
+	void					setStatusCode(const std::string& status_code_);
 
 	void					generateResponse();
 	int						sendResponse(int client_socket);
