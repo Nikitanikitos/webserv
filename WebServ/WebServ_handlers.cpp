@@ -6,19 +6,30 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 16:23:01 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 22:34:13 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
 #include "WebServ.hpp"
 
 void	WebServ::readRequest(Client *client) {
 	HttpRequest*	request = client->getRequest();
-	char		buff[1025];
-	int 		bytes;
+	char			buff[1025];
+	int 			bytes;
 
 	bytes = recv(client->getSocket(), buff, 1024, 0);
 	buff[bytes] = 0;
+//	request->addToBuffer(buff, bytes);
+//	while (request->getBuffer().size()) {
+//		std::string		q = request->getStringBuffer();
+//		if (request->getMethod().empty()) {
+//			// Парсим первую строку, в случае чего викидываем 404Response
+//		}
+//		else if (q.empty()) {
+//			request->setIsBody();
+//		}
+//	}
 	if (bytes <= 0)
 		client->setStage(close_connection_);
 	else {

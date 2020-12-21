@@ -6,16 +6,29 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/05 18:37:33 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:40:42 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 20:56:09 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "ThreadPool.hpp"
 
 ThreadPool::ThreadPool() {
-	if ((queue_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == nullptr)
+	if ((queue_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == 0)
 		throw std::exception();
 	pthread_mutex_init(queue_mutex, 0);
+
+	if ((read_stage_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == 0)
+		throw std::exception();
+	pthread_mutex_init(read_stage_mutex, 0);
+	if ((parse_stage_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == 0)
+		throw std::exception();
+	pthread_mutex_init(parse_stage_mutex, 0);
+	if ((generate_stage_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == 0)
+		throw std::exception();
+	pthread_mutex_init(generate_stage_mutex, 0);
+	if ((send_stage_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == 0)
+		throw std::exception();
+	pthread_mutex_init(send_stage_mutex, 0);
 }
 
 ThreadPool::~ThreadPool() {

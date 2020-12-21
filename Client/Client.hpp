@@ -49,15 +49,15 @@ public:
 	HttpRequest*				getRequest() const;
 	HttpResponse*				getResponse() const;
 
-	void						setNewConnectionTime();
-
 	void						setProcessed(bool processed);
 
 	void						setStage(int stage_);
 	void						nextStage();
 
 	bool						inTaskQueue();
+
 	bool						connectionTimedOut();
+	void						setNewConnectionTime();
 
 	void						clearResponse();
 	void						clearRequest();

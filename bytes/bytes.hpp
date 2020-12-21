@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/20 15:08:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:37:06 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 13:58:12 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,9 @@ public:
 	size_t			size() const;
 	void			clear();
 	const char*		c_str() const;
+
+	size_t			find(const char* needle);
+	bytes			substr(size_t i);
 };
 
 #endif //WEBSERV_BYTES_HPP

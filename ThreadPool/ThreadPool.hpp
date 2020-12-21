@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/05 18:34:43 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:40:42 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 23:35:08 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,11 @@ private:
 	pthread_mutex_t*		queue_mutex;
 
 public:
+	pthread_mutex_t*		read_stage_mutex;
+	pthread_mutex_t*		parse_stage_mutex;
+	pthread_mutex_t*		generate_stage_mutex;
+	pthread_mutex_t*		send_stage_mutex;
+
 	ThreadPool();
 	~ThreadPool();
 

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/02 14:46:29 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:42:53 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 23:44:40 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,27 +24,34 @@ void*	worker(void* arg) {
 			thread_pool.unlockQueueMutex();
 			switch (client->getStage()) {
 				case read_request_:
+					pthread_mutex_lock(thread_pool.read_stage_mutex);
 					web_serv.readRequest(client);
+					pthread_mutex_unlock(thread_pool.read_stage_mutex);
 					break;
 				case parsing_request_:
+					pthread_mutex_lock(thread_pool.parse_stage_mutex);
 					web_serv.parsingRequest(client);
+					pthread_mutex_unlock(thread_pool.parse_stage_mutex);
 					break;
 				case generate_response_:
+					pthread_mutex_lock(thread_pool.generate_stage_mutex);
 					web_serv.generateResponse(client);
+					pthread_mutex_unlock(thread_pool.generate_stage_mutex);
 					break;
 				case send_response_:
+					pthread_mutex_lock(thread_pool.send_stage_mutex);
 					web_serv.sendResponse(client);
+					pthread_mutex_unlock(thread_pool.send_stage_mutex);
 					break;
 			}
-			if (client->getStage() != read_request_ && client->getStage() != close_connection_ &&
-					client->getStage() != read_request_)
+			if (client->getStage() != read_request_ && client->getStage() != close_connection_ && client->getStage() != read_request_)
 				thread_pool.pushTask(client);
 			else
 				client->setProcessed(false);
 		}
 		else
 			thread_pool.unlockQueueMutex();
-		usleep(500);
+		usleep(1000);
 	}
 	return (0);
 }
@@ -53,7 +60,7 @@ void		WebServ::createWorkers() {
 	pthread_t		worker_thread;
 
 	for (int i = 0; i < number_workers; ++i) {
-		pthread_create(&worker_thread, nullptr, worker, (void*)this);
+		pthread_create(&worker_thread, 0, worker, (void*)this);
 		pthread_detach(worker_thread);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/15 20:06:14 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:30:08 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 22:30:41 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	WebServ::setBadRequestResponse(Client* client) {
 }
 
 void	WebServ::parsingRequest(Client *client) {
-	HttpRequest*					request = client->getRequest();
+	HttpRequest*				request = client->getRequest();
 	bool						take_host;
 	std::vector<std::string>	line;
 	std::vector<std::string>	args;
@@ -115,7 +115,7 @@ void	WebServ::parsingRequest(Client *client) {
 		return;
 	}
 	line = getArgs(args[0], ' ');
-	if (line.size() != 3 || checkMethod(args[0], 6) || line[2] != HTTP_VERSION) {
+	if (line.size() != 3 || checkMethod(args[0], 6)) { // line[2] != "HTTP/1.0"
 		setBadRequestResponse(client);
 		return;
 	}

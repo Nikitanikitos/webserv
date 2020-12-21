@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/21 16:13:26 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 23:48:33 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void				WebServ::addClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set) {
 			it = clients.begin();
 		}
 		else if (!(*it)->inTaskQueue() && (FD_ISSET((*it)->getSocket(), &readfd_set) || FD_ISSET((*it)->getSocket(), &writefd_set)))
-			thread_pool.pushTask((*it));
+			thread_pool.pushTask(*it);
 		if (clients.empty())
 			break ;
 	}
@@ -73,7 +73,10 @@ void				WebServ::runServer() {
 	fd_set		writefd_set;
 	fd_set		readfd_set;
 	int 		max_fd;
+	struct timeval	tv;
 
+	tv.tv_sec = 2;
+	tv.tv_usec = 500;
 	createWorkers();
 	while (WebServ::working) {
 		initSets(writefd_set, readfd_set, max_fd);
@@ -81,7 +84,7 @@ void				WebServ::runServer() {
 
 		select(max_fd + 1, &readfd_set, &writefd_set, 0, 0);
 
-//		std::cout << clients.size() << std::endl;
+		std::cout << clients.size() << std::endl;
 
 		addNewClient(readfd_set);
 		addClientInTaskQueue(readfd_set, writefd_set);

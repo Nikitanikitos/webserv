@@ -42,11 +42,8 @@ void				HttpResponse::generateResponse() {
 	for (it = headers.begin(); it != headers.end(); ++it)
 		buffer.add(it->first + ": " + it->second + CRLF);
 	buffer.add(CRLF);
-	if (body.size()) {
+	if (body.size())
 		buffer.add(body);
-		buffer.add(CRLF);
-		buffer.add(CRLF);
-	}
 }
 
 int					HttpResponse::sendResponse(int client_socket) {

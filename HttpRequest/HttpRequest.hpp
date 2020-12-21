@@ -6,14 +6,14 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/18 18:03:37 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:59:06 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 22:55:45 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WEBSERV_HTTPREQUEST_HPP
 # define WEBSERV_HTTPREQUEST_HPP
 
-#include <HttpObject.hpp>
+# include "HttpObject.hpp"
 
 class	HttpRequest : public HttpObject {
 private:
@@ -31,6 +31,7 @@ public:
 	const std::string&				getTarget() const;
 
 	virtual void					clear();
+	const char*						getStringBuffer();
 };
 
 #endif //WEBSERV_HTTPREQUEST_HPP

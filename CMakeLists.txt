@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.16.5)
-project(webserv)
+project(webservv)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(webserv
+add_executable(webservv
         main.cpp
 
 		libft/ft_memset.cpp
@@ -48,4 +48,4 @@ include_directories(
 		HttpObject
 		)
 
-target_link_libraries(webserv pthread)
+target_link_libraries(webservv pthread)

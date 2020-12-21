@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:42:53 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:59:06 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void								VirtualServer::initSocket() {
 	if (bind(server_socket, (struct sockaddr*) &sock_addr, sizeof(sock_addr)) < 0)
 		throw std::exception();
 	fcntl(server_socket, F_SETFL, O_NONBLOCK);
-	listen(server_socket, 100);
+	listen(server_socket, 1000);
 }
 
 const std::string&					VirtualServer::getHost() const { return (host); }
