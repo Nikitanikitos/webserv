@@ -6,17 +6,17 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/24 18:14:03 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/20 15:27:17 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/21 12:03:59 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef WEBSERV_RESPONSE_HPP
 # define WEBSERV_RESPONSE_HPP
 
-# include <map>
 # include <sys/time.h>
 # include <sys/socket.h>
 
+#include <HttpObject.hpp>
 # include "libft.hpp"
 
 # define HTTP_VERSION	(std::string)"HTTP/1.1"
@@ -24,32 +24,25 @@
 # define CRLF			"\r\n"
 # define SP				" "
 
-class Response {
+class Response : public HttpObject {
 private:
-	std::string								_status_code;
-	std::map<std::string, std::string>		_headers;
-	bytes 									_body;
-	bytes	 								_buffer;
-	std::string								_message_phrase;
+	std::string								status_code;
+	std::string								message_phrase;
 
 public:
-	static const std::map<std::string, std::string>	_message_phrases;
+	static const std::map<std::string, std::string>	message_phrases;
 
 	Response() { }
-	~Response() { }
+	virtual ~Response() { }
 
-	const std::string&		GetHeader(const std::string& key) const;
-	const bytes&			GetBuffer() const;
 	const std::string&		GetStatusCode() const;
 
-	void					AddHeader(const std::string& key, const std::string& value);
 	void					SetStatusCode(const std::string& status_code);
-	void					SetBody(const bytes& body);
 
 	void					GenerateResponse();
 	int						SendResponse(int client_socket);
 
-	void					Clear();
+	virtual void			Clear();
 };
 
 #endif //WEBSERV_RESPONSE_HPP
