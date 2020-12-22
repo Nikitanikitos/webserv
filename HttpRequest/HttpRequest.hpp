@@ -31,7 +31,8 @@ public:
 	const std::string&				getTarget() const;
 
 	virtual void					clear();
-	const char*						getStringBuffer();
+
+	bytes							getRequestLine();
 };
 
 #endif //WEBSERV_HTTPREQUEST_HPP

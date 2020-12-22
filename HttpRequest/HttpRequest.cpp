@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:25:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 13:01:15 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 17:20:09 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,10 @@ void HttpRequest::clear() {
 	target.clear();
 }
 
-//const char* HttpRequest::getStringBuffer() {
-//	return (buffer.substr(buffer.find("\r\n")).c_str());
-//}
+bytes	HttpRequest::getRequestLine() {
+	size_t		i = buffer.find("\r\n");
+	bytes		result = buffer.substr(i);
+
+	(i != -1) ? buffer.erase(i + 2) : buffer.erase(i);
+	return (result);
+}

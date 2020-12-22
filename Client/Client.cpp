@@ -62,3 +62,7 @@ void Client::setNewConnectionTime() {
 	gettimeofday(&tv, 0);
 	connection_time = tv.tv_sec;
 }
+
+bytes Client::getRequestLine() {
+	return (request->getRequestLine());
+}

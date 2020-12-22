@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/19 11:41:09 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 13:58:12 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 17:26:03 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,11 @@ void			bytes::add(const bytes& string) { add(string.c_str(), string.size()); }
 const char*		bytes::c_str() const { return (buffer); }
 size_t			bytes::size() const { return (size_); }
 
-void			bytes::add(const char* string, int i) {
+void			bytes::add(const char* string, size_t i) {
 	char*	temp_buff;
 
-	if (!buffer) {
+	if (!size_) {
+		delete [] buffer;
 		buffer = bytedup(string, i);
 		size_ = i;
 	}
@@ -40,20 +41,61 @@ void			bytes::add(const char* string, int i) {
 void			bytes::clear() {
 	delete []buffer;
 	size_ = 0;
-	buffer = 0;
+	buffer = new char[1];
 }
 
-void			bytes::erase(size_t pos, size_t n)
-	{ if (n >= size_) clear(); }
+void bytes::erase(size_t n) {
+
+	if (n >= size_)
+		clear();
+	else {
+		bytes	temp_buff = *this;
+		size_ -= n;
+		temp_buff.buffer += n;
+		buffer = bytedup(temp_buff, size_);
+		temp_buff.buffer -= n;
+	}
+}
 
 bytes&		bytes::operator=(const bytes& string) {
 	delete []buffer;
-	buffer = bytedup(string.buffer, string.size_);
+	buffer = bytedup(string, string.size_);
 	size_ = string.size_;
 	return (*this);
 }
 
-char*		bytes::bytedup(const char* src, int size) {
+char*		bytes::bytedup(const bytes& src, size_t size) {
+	char	*result;
+	int 	i;
+
+	size = (size < src.size_) ? size : src.size_;
+	result = new char[size + 1];
+	for (i = 0; i < size; ++i)
+		result[i] = src.buffer[i];
+	result[i] = 0;
+	return (result);
+}
+
+size_t		bytes::find(const char* needle) {
+	for (int i = 0; i < size_; ++i) {
+		if (buffer[i] == *needle) {
+			for (int j = 0; needle[j]; ++j)
+				if (buffer[i + j] != needle[j])
+					break;
+			return (i);
+		}
+	}
+	return (-1);
+}
+
+bytes bytes::substr(size_t i) {
+	bytes	result;
+
+	result.buffer = bytedup(*this, i);
+	return (result);
+}
+
+char* bytes::bytedup(const char* src, size_t size) {
 	char	*result;
 	int 	i;
 

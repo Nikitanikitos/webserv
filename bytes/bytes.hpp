@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/20 15:08:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 13:58:12 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 17:10:07 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,11 @@ private:
 	size_t			size_;
 	char*			buffer;
 
-	char*			bytedup(const char* src, int size);
+	char*			bytedup(const bytes& src, size_t size);
+	char*			bytedup(const char* src, size_t size);
 
 public:
-	bytes() : size_(0), buffer() { }
+	bytes() : size_(0), buffer() { buffer = new char[1]; }
 	~bytes() { delete []buffer; }
 
 	bytes(const bytes& string) : size_(string.size_) { buffer = bytedup(string.buffer, size_); }
@@ -32,9 +33,9 @@ public:
 	bytes&			operator=(const bytes& string);
 
 	void			add(const std::string& string);
-	void			add(const char* string, int i);
+	void			add(const char* string, size_t i);
 	void			add(const bytes& string);
-	void			erase(size_t pos = 0, size_t n = -1);
+	void			erase(size_t n);
 
 	size_t			size() const;
 	void			clear();

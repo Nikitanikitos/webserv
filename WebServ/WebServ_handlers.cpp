@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/22 14:33:14 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 17:54:07 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	WebServ::setErrorPage(Client* client, Location* location, VirtualServer* vi
 	if (virtual_server->findErrorPage(response->getStatusCode())) {
 		path_to_target.append(location->getPath() + virtual_server->getErrorPage(response->getStatusCode()));
 		response->addHeader("Location",
-							"http://" + virtual_server->getHost() + ":" + virtual_server->getPort() + path_to_target);
+							"http://" + client->getHost() + ":" + client->getPort() + path_to_target);
 		response->setStatusCode("302");
 	}
 	else
@@ -113,7 +113,7 @@ void WebServ::putMethodHandler(Client* client, Location* location, VirtualServer
 	fd = 0;
 	if (!request->findHeader("content-length"))
 		response->setStatusCode("411");
-	else if (std::strtol(request->getHeader("content-length").c_str(), 0, 10) > virtual_server->getLimitBodySize())
+	else if (ft_atoi(request->getHeader("content-length").c_str()) > virtual_server->getLimitBodySize())
 		response->setStatusCode("413");
 	else if (S_ISDIR(info->info.st_mode))
 		response->setStatusCode("404");
@@ -146,7 +146,7 @@ void	WebServ::generateResponse(Client *client) {
 		response->setStatusCode("405");
 	else if (info.exists != -1 && S_ISDIR(info.info.st_mode) && request->getTarget()[request->getTarget().size() - 1] != '/') {
 		response->setStatusCode("301");
-		response->addHeader("Location", "http://" + virtual_server->getHost() + ":" + virtual_server->getPort() +
+		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() +
 										request->getTarget() + "/");
 	}
 	else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")

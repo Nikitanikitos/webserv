@@ -64,6 +64,8 @@ public:
 
 	void						sendResponse();
 	void 						generateResponse();
+
+	bytes						getRequestLine();
 };
 
 #endif //WEBSERV_CLIENT_HPP

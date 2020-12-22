@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.16.5)
-project(webservv)
+project(webserv)
 
 set(CMAKE_CXX_STANDARD 98)
 
-add_executable(webservv
+add_executable(webserv
         main.cpp
 
 		bytes/bytes.cpp
@@ -50,4 +50,4 @@ include_directories(
 		HttpObject
 		)
 
-target_link_libraries(webservv pthread)
+target_link_libraries(webserv pthread)
