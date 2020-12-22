@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/15 20:06:14 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 22:30:41 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 19:42:34 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,6 @@ std::string WebServ::methods[6] = {
 		"DELETE",
 		"OPTIONS"
 };
-
-int 					WebServ::countSpace(const std::string &line) const {
-	size_t 		count_space = 0;
-
-	for (size_t i; i < line.size(); ++i)
-		if (line[i] == ' ')
-			++count_space;
-	return (count_space);
-}
 
 std::vector<std::string>	WebServ::getArgs(const std::string &line, char separate) const {
 	std::vector<std::string>	result;
@@ -143,4 +134,24 @@ void	WebServ::parsingRequest(Client *client) {
 		request->addHeader(key, line[1]);
 	}
 	(!take_host) ? setBadRequestResponse(client) : client->nextStage();
+}
+
+bool	WebServ::parsingFirstLine(HttpRequest* request, std::string line_request) {
+	if (std::count(line_request.begin(), line_request.end(), ' ') != 3)
+		return (false);
+	std::string		element;
+
+	for (int i = 0; i < 3; ++i) {
+		element = line_request.substr(0, line_request.find(' '));
+		if (i == 0) {
+			if (!checkMethod(element)) return (true);
+			else request->setMethod(element);
+		}
+		else if (i == 1)
+			request->setTarget(element);
+		else if (element != "HTTP/1.1" || "HTTP/1.0")
+			return (true);
+		element.erase(0, line_request.find(' '));
+	}
+	return (false);
 }

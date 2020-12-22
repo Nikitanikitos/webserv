@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:25:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/22 17:20:09 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 19:17:53 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,11 @@
 
 void					HttpRequest::setMethod(const std::string& method_) { method = method_; }
 void					HttpRequest::setTarget(const std::string& target_) { target = target_; }
+void					HttpRequest::setStage(int stage_) { stage = stage_; }
 
 const std::string&		HttpRequest::getMethod() const { return (method); }
 const std::string&		HttpRequest::getTarget() const { return (target); }
+int						HttpRequest::getStage() const { return (stage); }
 
 void HttpRequest::clear() {
 	HttpObject::clear();

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/22 17:54:07 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 20:05:01 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,43 +15,26 @@
 
 void	WebServ::readRequest(Client *client) {
 	HttpRequest*	request = client->getRequest();
+	HttpResponse*	response = client->getResponse();
 	char			buff[1025];
 	int 			read_bytes;
 	bytes			line_request;
-	size_t			pos_find;
 
 	read_bytes = recv(client->getSocket(), buff, 1024, 0);
 	buff[read_bytes] = 0;
 	request->addToBuffer(buff, read_bytes);
 	while (request->getBody().size()) {
 		line_request = request->getRequestLine();
-		switch (client->GetStageReadRequest()) {
-			case parsing_first_line_request:
-				if (countSpace(line_request.c_str()) != 3) {
-					client->SetStageParsingRequest(bad_request);
-					break;
+		switch (request->getStage()) {
+			case parsing_first_line:
+				if (parsingFirstLine(request, line_request.c_str())) {
+					request->setStage(bad_request);
+					response->setStatusCode("400");
 				}
-				else {
-					for (int i = 0; i < 3; ++i) { // TODO выносим в отдельный метод, который будет принимать std::string, а передавть line_request.c_str()
-						pos_find = line_request.find(' ');
-						line_request.erase(pos_find, line_request.find_first_not_of(' '));
-						pos_find = line_request.find(' ');
-						if (i == 0)
-							request->setMethod(line_request.substr(0, pos_find));
-						else if (i == 0)
-							request->setTarget(line_request.substr(0, pos_find));
-						else
-						if (!checkMethod(request->getMethod())) {
-							client->SetStageParsingRequest(bad_request);
-							break;
-						}
-					}
-					client->SetStageParsingRequest(parsing_headers);
-					break;
-				}
+				break;
 			case parsing_headers:
 				if (!line_request.size())
-					client->SetStageParsingRequest(read_body_request);
+					request->setStage(parsing_body);
 //				else
 		}
 

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:07 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/21 14:53:43 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 19:41:02 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ private:
 	static bytes				generateErrorPage(const std::string& code);
 	static bool					isErrorStatus(const std::string& status);
 
-	int 						countSpace(const std::string &line) const;
+	bool						parsingFirstLine(HttpRequest* request, std::string line_request);
 
 public:
 	static int working;
