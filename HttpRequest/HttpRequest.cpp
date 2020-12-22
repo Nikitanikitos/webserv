@@ -24,6 +24,8 @@ void HttpRequest::clear() {
 	target.clear();
 }
 
+
+
 //const char* HttpRequest::getStringBuffer() {
 //	return (buffer.substr(buffer.find("\r\n")).c_str());
 //}

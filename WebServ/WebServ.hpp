@@ -55,7 +55,7 @@ private:
 	std::vector<std::string>	getArgs(const std::string& line, char separate) const;
 	std::vector<std::string>	trimRequest(std::string const& buff, HttpRequest* request) const;
 	bool						checkCountSpace(const std::string& line, int numSpaces) const;
-	bool						checkMethod(std::string method, int size) const;
+	bool 						checkMethod(std::string method) const;
 	void						strToLower(std::string& str) const;
 	void						setBadRequestResponse(Client* client);
 
@@ -68,6 +68,8 @@ private:
 	static void					setErrorPage(Client *client, Location *location, VirtualServer *virtual_server);
 	static bytes				generateErrorPage(const std::string& code);
 	static bool					isErrorStatus(const std::string& status);
+
+	int 						countSpace(const std::string &line) const;
 
 public:
 	static int working;

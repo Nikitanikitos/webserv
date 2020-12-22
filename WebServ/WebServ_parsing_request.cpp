@@ -22,6 +22,15 @@ std::string WebServ::methods[6] = {
 		"OPTIONS"
 };
 
+int 					WebServ::countSpace(const std::string &line) const {
+	size_t 		count_space = 0;
+
+	for (size_t i; i < line.size(); ++i)
+		if (line[i] == ' ')
+			++count_space;
+	return (count_space);
+}
+
 std::vector<std::string>	WebServ::getArgs(const std::string &line, char separate) const {
 	std::vector<std::string>	result;
 	std::string					input(line);
@@ -81,8 +90,8 @@ bool	WebServ::checkCountSpace(std::string const& line, int numSpaces) const {
 	return (count_space == numSpaces);
 }
 
-bool	WebServ::checkMethod(std::string method, int size) const {
-	for (int i = 0; i < size; ++i)
+bool WebServ::checkMethod(std::string method) const {
+	for (int i = 0; i < WebServ::methods->size(); ++i)
 		if (WebServ::methods[i] == method)
 			return (true);
 	return (false);
@@ -115,7 +124,7 @@ void	WebServ::parsingRequest(Client *client) {
 		return;
 	}
 	line = getArgs(args[0], ' ');
-	if (line.size() != 3 || checkMethod(args[0], 6)) { // line[2] != "HTTP/1.0"
+	if (line.size() != 3 || checkMethod(args[0])) { // line[2] != "HTTP/1.0"
 		setBadRequestResponse(client);
 		return;
 	}

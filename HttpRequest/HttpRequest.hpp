@@ -14,6 +14,7 @@
 # define WEBSERV_HTTPREQUEST_HPP
 
 # include "HttpObject.hpp"
+# include <vector>
 
 class	HttpRequest : public HttpObject {
 private:
@@ -26,6 +27,8 @@ public:
 
 	void							setTarget(const std::string& target_);
 	void							setMethod(const std::string& method_);
+	void 							setLocation(const std::string& location);
+	void 							setUriAndQueryString(const std::string& location);
 
 	const std::string&				getMethod() const;
 	const std::string&				getTarget() const;
