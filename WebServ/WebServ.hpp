@@ -69,7 +69,8 @@ private:
 	static bytes				generateErrorPage(const std::string& code);
 	static bool					isErrorStatus(const std::string& status);
 
-	int 						countSpace(const std::string &line) const;
+	int 						countChar(const std::string &line, char c) const;
+	bool 						parseHeader(HttpRequest *request, const std::string& line);
 
 public:
 	static int working;

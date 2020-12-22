@@ -59,9 +59,44 @@ void	WebServ::readRequest(Client *client) {
 					break;
 				}
 			case parsing_headers:
-				if (line_request.empty())
-					client->SetStageParsingRequest(read_body_request);
-				else
+				if (line_request.empty()) {
+					if (!request->finedHeader("host")) {
+						request->SetStatusCode(400);
+						client->SetStageParsingRequest(bad_request);
+						break;
+					}
+					else if (request->getMethod() == "PUT" || request->getMethod() == "POST") {
+						client->SetStageParsingRequest(read_body_request);
+						break;
+					}
+				}
+				else if (!parseHeader(request, line_request)) {
+					request->SetStatusCode(400);
+					client->SetStageParsingRequest(bad_request);
+					break;
+				}
+				client->SetStageParsingRequest(complited_read_request);
+				break;
+			case read_body_request:
+				request->addToBody(line_request);
+				int content_length = ft_atoi(request->getHeader("content-length").c_str());
+				if (request->getBody().size() > limit_client_body_size) {
+					request->setStatusCode(413);
+					client->SetStageParsingRequest(bad_request);
+					break;
+				} else if (request->getBody().size() > content_length) {
+					client->SetStageParsingRequest(complited_read_request);
+					break; // TODO порезать буфер
+				} else if (request->getBody().size() == content_length) {
+					client->SetStageParsingRequest(complited_read_request);
+					break;
+				}
+			case complited_read_request:
+				client->setStage(generate_response_);
+			case bad_request:
+				setErrorPage();
+				generateResponse();
+				client->SetStage(send_response);
 		}
 
 	}

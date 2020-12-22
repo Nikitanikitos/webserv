@@ -22,13 +22,13 @@ std::string WebServ::methods[6] = {
 		"OPTIONS"
 };
 
-int 					WebServ::countSpace(const std::string &line) const {
-	size_t 		count_space = 0;
+int 					WebServ::countChar(const std::string &line, char c) const {
+	size_t 		count_char = 0;
 
 	for (size_t i; i < line.size(); ++i)
-		if (line[i] == ' ')
-			++count_space;
-	return (count_space);
+		if (line[i] == c)
+			++count_char;
+	return (count_char);
 }
 
 std::vector<std::string>	WebServ::getArgs(const std::string &line, char separate) const {
@@ -81,7 +81,7 @@ std::vector<std::string> WebServ::trimRequest(std::string const& buff, HttpReque
 	return (result);
 }
 
-bool	WebServ::checkCountSpace(std::string const& line, int numSpaces) const {
+bool	WebServ::checkCountSpace(std::string const& line, int numSpaces) const { //TODO хуета какая-то убрать мб
 	int count_space = 0;
 
 	for (int i = 0; i < line.size(); ++i)
@@ -143,4 +143,19 @@ void	WebServ::parsingRequest(Client *client) {
 		request->addHeader(key, line[1]);
 	}
 	(!take_host) ? setBadRequestResponse(client) : client->nextStage();
+}
+
+bool WebServ::parseHeader(HttpRequest *request, const std::string &line) {
+	size_t		position;
+	std::string key;
+	std::string value;
+
+	if (countChar(line, ':') != 1)
+		return (false);
+	position = line.find(':');
+	key = line.substr(0, position);
+	value = line.substr(position + 1);
+	strToLower(key);
+	request->addHeader(key, value);
+	return (true);
 }
