@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/21 11:37:57 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:59:06 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 20:18:33 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,8 @@ public:
 
 	void							addToBuffer(char* data, size_t n);
 	void							addHeader(const std::string& key, const std::string& value);
-	void							SetBody(const bytes& body);
+	void							setBody(const bytes& body);
+	void							addToBody(const bytes& data);
 
 	const bytes&					getBody() const;
 	const bytes&					getBuffer() const;

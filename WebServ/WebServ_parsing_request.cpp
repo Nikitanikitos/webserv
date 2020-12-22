@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/15 20:06:14 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/22 19:42:34 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 20:11:45 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,11 +68,11 @@ std::vector<std::string> WebServ::trimRequest(std::string const& buff, HttpReque
 		start = pos + 2;
 	}
 	pos = buff.find("\r\n\r\n", start) + 4;
-	request->SetBody(buff.substr(pos));
+	request->setBody(buff.substr(pos));
 	return (result);
 }
 
-bool	WebServ::checkCountSpace(std::string const& line, int numSpaces) const {
+bool	WebServ::checkCountSpace(std::string const& line, int numSpaces) const { //TODO хуета какая-то убрать мб
 	int count_space = 0;
 
 	for (int i = 0; i < line.size(); ++i)
@@ -97,7 +97,7 @@ void	WebServ::setBadRequestResponse(Client* client) {
 	HttpResponse*	response = client->getResponse();
 
 	response->setStatusCode("400");
-	response->SetBody(generateErrorPage(response->getStatusCode()));
+	response->setBody(generateErrorPage(response->getStatusCode()));
 	response->generateResponse();
 	client->setStage(send_response_);
 }
@@ -139,19 +139,33 @@ void	WebServ::parsingRequest(Client *client) {
 bool	WebServ::parsingFirstLine(HttpRequest* request, std::string line_request) {
 	if (std::count(line_request.begin(), line_request.end(), ' ') != 3)
 		return (false);
-	std::string		element;
+	std::string element;
 
 	for (int i = 0; i < 3; ++i) {
 		element = line_request.substr(0, line_request.find(' '));
 		if (i == 0) {
 			if (!checkMethod(element)) return (true);
 			else request->setMethod(element);
-		}
-		else if (i == 1)
+		} else if (i == 1)
 			request->setTarget(element);
 		else if (element != "HTTP/1.1" || "HTTP/1.0")
 			return (true);
 		element.erase(0, line_request.find(' '));
 	}
 	return (false);
+}
+
+bool WebServ::parseHeader(HttpRequest *request, const std::string &line) {
+	size_t		position;
+	std::string key;
+	std::string value;
+
+	if (std::count(line.begin(), line.end(), ':') != 1)
+		return (false);
+	position = line.find(':');
+	key = line.substr(0, position);
+	value = line.substr(position + 1);
+	strToLower(key);
+	request->addHeader(key, value);
+	return (true);
 }

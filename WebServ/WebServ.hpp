@@ -70,6 +70,7 @@ private:
 	static bool					isErrorStatus(const std::string& status);
 
 	bool						parsingFirstLine(HttpRequest* request, std::string line_request);
+	bool 						parseHeader(HttpRequest *request, const std::string& line);
 
 public:
 	static int working;

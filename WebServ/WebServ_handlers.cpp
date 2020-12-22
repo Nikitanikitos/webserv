@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/22 20:05:01 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 20:20:38 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,21 +31,55 @@ void	WebServ::readRequest(Client *client) {
 					request->setStage(bad_request);
 					response->setStatusCode("400");
 				}
+				else
+					request->setStage(parsing_headers);
 				break;
 			case parsing_headers:
-				if (!line_request.size())
-					request->setStage(parsing_body);
-//				else
+				if (!line_request.size()) {
+					if (!request->findHeader("host")) {
+						response->setStatusCode("400");
+						request->setStage(bad_request);
+					}
+					else if (request->getMethod() == "PUT" || request->getMethod() == "POST") {
+						if (!request->findHeader("content-length")) {
+							response->setStatusCode("411");
+							request->setStage(bad_request);
+						}
+						else
+							request->setStage(parsing_body);
+					}
+					else
+						request->setStage(completed);
+				}
+				else if (!parseHeader(request, line_request.c_str())) {
+					response->setStatusCode("400");
+					request->setStage(bad_request);
+				}
+				break;
+			case parsing_body:
+				request->addToBody(line_request);
+				int content_length = ft_atoi(request->getHeader("content-length").c_str());
+				if (request->getBody().size() > limit_client_body_size) {
+					response->setStatusCode("413");
+					client->setStage(bad_request);
+					break;
+				}
+				else if (request->getBody().size() > content_length) {
+					request->setStage(content_length);
+					break; // TODO порезать буфер
+				}
+				else if (request->getBody().size() == content_length) {
+					request->setStage(completed);
+					break;
+				}
+			case completed:
+				client->setStage(generate_response_);
+			case bad_request:
+				setErrorPage();
+				generateResponse();
+				client->setStage(send_response_);
 		}
-
 	}
-
-//	if (bytes <= 0)
-//		client->setStage(close_connection_);
-//	else {
-//		request->addToBuffer(buff, bytes);
-//		if (bytes < 1024) client->nextStage();
-//	}
 }
 
 void	WebServ::sendResponse(Client* client) {
@@ -74,7 +108,7 @@ void	WebServ::setErrorPage(Client* client, Location* location, VirtualServer* vi
 		response->setStatusCode("302");
 	}
 	else
-		{ response->SetBody(generateErrorPage(response->getStatusCode())); }
+		{ response->setBody(generateErrorPage(response->getStatusCode())); }
 }
 
 void	WebServ::getHeadMethodHandler(Client* client, Location* location, VirtualServer* virtual_server,
@@ -110,7 +144,7 @@ void	WebServ::getHeadMethodHandler(Client* client, Location* location, VirtualSe
 		body = autoindexGenerate(request, path_to_target);
 
 	if (request->getMethod() == "GET" && response->getStatusCode() == "200")
-		response->SetBody(body);
+		response->setBody(body);
 }
 
 void WebServ::putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, t_stat* info,
