@@ -16,26 +16,53 @@
 void	WebServ::readRequest(Client *client) {
 	HttpRequest*	request = client->getRequest();
 	char			buff[1025];
-	int 			bytes;
+	int 			read_bytes;
+	bytes			line_request;
+	size_t			pos_find;
 
-	bytes = recv(client->getSocket(), buff, 1024, 0);
-	buff[bytes] = 0;
-//	request->addToBuffer(buff, bytes);
-//	while (request->getBuffer().size()) {
-//		std::string		q = request->getStringBuffer();
-//		if (request->getMethod().empty()) {
-//			// Парсим первую строку, в случае чего викидываем 404Response
-//		}
-//		else if (q.empty()) {
-//			request->setIsBody();
-//		}
-//	}
-	if (bytes <= 0)
-		client->setStage(close_connection_);
-	else {
-		request->addToBuffer(buff, bytes);
-		if (bytes < 1024) client->nextStage();
+	read_bytes = recv(client->getSocket(), buff, 1024, 0);
+	buff[read_bytes] = 0;
+	request->addToBuffer(buff, read_bytes);
+	while (request->getBody().size()) {
+		line_request = request->getRequestLine();
+		switch (client->GetStageReadRequest()) {
+			case parsing_first_line_request:
+				if (countSpace(line_request.c_str()) != 3) {
+					client->SetStageParsingRequest(bad_request);
+					break;
+				}
+				else {
+					for (int i = 0; i < 3; ++i) { // TODO выносим в отдельный метод, который будет принимать std::string, а передавть line_request.c_str()
+						pos_find = line_request.find(' ');
+						line_request.erase(pos_find, line_request.find_first_not_of(' '));
+						pos_find = line_request.find(' ');
+						if (i == 0)
+							request->setMethod(line_request.substr(0, pos_find));
+						else if (i == 0)
+							request->setTarget(line_request.substr(0, pos_find));
+						else
+						if (!checkMethod(request->getMethod())) {
+							client->SetStageParsingRequest(bad_request);
+							break;
+						}
+					}
+					client->SetStageParsingRequest(parsing_headers);
+					break;
+				}
+			case parsing_headers:
+				if (!line_request.size())
+					client->SetStageParsingRequest(read_body_request);
+//				else
+		}
+
 	}
+
+//	if (bytes <= 0)
+//		client->setStage(close_connection_);
+//	else {
+//		request->addToBuffer(buff, bytes);
+//		if (bytes < 1024) client->nextStage();
+//	}
 }
 
 void	WebServ::sendResponse(Client* client) {
