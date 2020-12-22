@@ -24,24 +24,24 @@ void*	worker(void* arg) {
 			thread_pool.unlockQueueMutex();
 			switch (client->getStage()) {
 				case read_request_:
-					pthread_mutex_lock(thread_pool.read_stage_mutex);
+					thread_pool.lockReadStageMutex();
 					web_serv.readRequest(client);
-					pthread_mutex_unlock(thread_pool.read_stage_mutex);
+					thread_pool.unlockReadStageMutex();
 					break;
 				case parsing_request_:
-					pthread_mutex_lock(thread_pool.parse_stage_mutex);
+					thread_pool.lockParseStageMutex();
 					web_serv.parsingRequest(client);
-					pthread_mutex_unlock(thread_pool.parse_stage_mutex);
+					thread_pool.unlockParseStageMutex();
 					break;
 				case generate_response_:
-					pthread_mutex_lock(thread_pool.generate_stage_mutex);
+					thread_pool.lockGenerateStageMutex();
 					web_serv.generateResponse(client);
-					pthread_mutex_unlock(thread_pool.generate_stage_mutex);
+					thread_pool.unlockGenerateStageMutex();
 					break;
 				case send_response_:
-					pthread_mutex_lock(thread_pool.send_stage_mutex);
+					thread_pool.lockReadStageMutex();
 					web_serv.sendResponse(client);
-					pthread_mutex_unlock(thread_pool.send_stage_mutex);
+					thread_pool.unlockReadStageMutex();
 					break;
 			}
 			if (client->getStage() != read_request_ && client->getStage() != close_connection_ && client->getStage() != read_request_)

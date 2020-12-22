@@ -6,32 +6,32 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 13:01:39 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 14:29:16 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
 #include "HttpResponse.hpp"
 
-const std::pair<const char*, const char*>	HttpResponse::message_phrases[10] = {
-		(const std::pair<char*, const char*>&) ("200", "OK"),
-		(const std::pair<char*, const char*>&) ("201", "Created"),
-		(const std::pair<char*, const char*>&) ("301", "Moved Permanently"),
-		(const std::pair<char*, const char*>&) ("302", "Found"),
-		(const std::pair<char*, const char*>&) ("400", "Bad Request"),
-		(const std::pair<char*, const char*>&) ("403", "Forbidden"),
-		(const std::pair<char*, const char*>&) ("404", "Not Found"),
-		(const std::pair<char*, const char*>&) ("405", "Method Not Allowed"),
-		(const std::pair<char*, const char*>&) ("411", "Length Required"),
-		(const std::pair<char*, const char*>&) ("413", "Payload Too Large")
+const std::string	HttpResponse::message_phrases[10][2] = {
+		{"200", "OK"},
+		{"201", "Created"},
+		{"301", "Moved Permanently"},
+		{"302", "Found"},
+		{"400", "Bad Request"},
+		{"403", "Forbidden"},
+		{"404", "Not Found"},
+		{"405", "Method Not Allowed"},
+		{"411", "Length Required"},
+		{"413", "Payload Too Large"}
 };
 
 void				HttpResponse::setStatusCode(const std::string& status_code_) { status_code = status_code_; }
 
 std::string			HttpResponse::getMessagePhrase(const std::string& code) {
 	for (int i = 0; i < 10; ++i) {
-		if (HttpResponse::message_phrases[i].first == code)
-			return (HttpResponse::message_phrases[i].second);
+		if (HttpResponse::message_phrases[i][0] == code)
+			return (HttpResponse::message_phrases[i][1]);
 	}
 	return ("Unknown code");
 }

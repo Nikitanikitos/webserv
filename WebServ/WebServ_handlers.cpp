@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/22 00:59:00 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 14:33:14 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,7 +144,7 @@ void	WebServ::generateResponse(Client *client) {
 		response->setStatusCode("404");
 	else if (!location->isAllowMethod(request->getMethod()))
 		response->setStatusCode("405");
-	else if (info.exists != -1 && S_ISDIR(info.info.st_mode) && *request->getTarget().end() != '/') {
+	else if (info.exists != -1 && S_ISDIR(info.info.st_mode) && request->getTarget()[request->getTarget().size() - 1] != '/') {
 		response->setStatusCode("301");
 		response->addHeader("Location", "http://" + virtual_server->getHost() + ":" + virtual_server->getPort() +
 										request->getTarget() + "/");
@@ -163,7 +163,7 @@ void	WebServ::generateResponse(Client *client) {
 }
 
 bool	WebServ::isErrorStatus(const std::string& status) {
-	const std::string	status_code[4] = {"400", "403", "404", "405"};
+	const std::string	status_code[6] = {"400", "403", "404", "405", "411", "413"};
 
 	for (int i = 0; i < 4; ++i)
 		if (status == status_code[i])

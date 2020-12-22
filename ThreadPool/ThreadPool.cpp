@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/05 18:37:33 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 20:56:09 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/22 14:59:24 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,18 @@ ThreadPool::ThreadPool() {
 ThreadPool::~ThreadPool() {
 	pthread_mutex_destroy(queue_mutex);
 	delete queue_mutex;
+
+	pthread_mutex_destroy(read_stage_mutex);
+	delete queue_mutex;
+
+	pthread_mutex_destroy(parse_stage_mutex);
+	delete queue_mutex;
+
+	pthread_mutex_destroy(generate_stage_mutex);
+	delete queue_mutex;
+
+	pthread_mutex_destroy(send_stage_mutex);
+	delete queue_mutex;
 }
 
 Client*		ThreadPool::popTask() {
@@ -52,3 +64,15 @@ bool				ThreadPool::queueIsEmpty() const { return (tasks_queue.empty()); }
 
 void				ThreadPool::lockQueueMutex() { pthread_mutex_lock(queue_mutex); }
 void				ThreadPool::unlockQueueMutex() { pthread_mutex_unlock(queue_mutex); }
+
+void				ThreadPool::lockReadStageMutex() { pthread_mutex_lock(read_stage_mutex); }
+void				ThreadPool::unlockReadStageMutex() { pthread_mutex_unlock(read_stage_mutex); }
+
+void				ThreadPool::lockParseStageMutex() { pthread_mutex_lock(parse_stage_mutex); }
+void				ThreadPool::unlockParseStageMutex() { pthread_mutex_unlock(parse_stage_mutex); }
+
+void				ThreadPool::lockGenerateStageMutex() { pthread_mutex_lock(generate_stage_mutex); }
+void				ThreadPool::unlockGenerateStageMutex() { pthread_mutex_unlock(generate_stage_mutex); }
+
+void				ThreadPool::lockSendStageMutex() { pthread_mutex_lock(send_stage_mutex); }
+void				ThreadPool::unlockSendStageMutex() { pthread_mutex_unlock(send_stage_mutex); }

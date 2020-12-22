@@ -35,6 +35,17 @@ public:
 
 	void					lockQueueMutex();
 	void					unlockQueueMutex();
+
+	void					lockReadStageMutex();
+	void					unlockReadStageMutex();
+
+	void					lockParseStageMutex();
+	void					unlockParseStageMutex();
+	void					lockGenerateStageMutex();
+	void					unlockGenerateStageMutex();
+	void					lockSendStageMutex();
+	void					unlockSendStageMutex();
+
 	void 					pushTask(Client* client);
 	Client*					popTask();
 };

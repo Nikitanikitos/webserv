@@ -30,7 +30,7 @@ private:
 	std::string								message_phrase;
 
 public:
-	static const std::pair<const char*, const char*>	message_phrases[10];
+	static const std::string	message_phrases[10][2];
 
 	HttpResponse() { }
 	virtual ~HttpResponse() { }
