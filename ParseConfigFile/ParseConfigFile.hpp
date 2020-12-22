@@ -69,6 +69,7 @@ public:
 		std::string 			_message;
 	public:
 		ParseConfigFileException(std::string const &message) : _message("Config File: " + message) { }
+		virtual ~ParseConfigFileException() throw() { }
 
 		virtual const char*		what() const throw() { return (_message.c_str()); }
 	};

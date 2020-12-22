@@ -113,7 +113,7 @@ void WebServ::putMethodHandler(Client* client, Location* location, VirtualServer
 	fd = 0;
 	if (!request->findHeader("content-length"))
 		response->setStatusCode("411");
-	else if (std::stoi(request->getHeader("content-length")) > virtual_server->getLimitBodySize())
+	else if (std::strtol(request->getHeader("content-length").c_str(), 0, 10) > virtual_server->getLimitBodySize())
 		response->setStatusCode("413");
 	else if (S_ISDIR(info->info.st_mode))
 		response->setStatusCode("404");
@@ -144,7 +144,7 @@ void	WebServ::generateResponse(Client *client) {
 		response->setStatusCode("404");
 	else if (!location->isAllowMethod(request->getMethod()))
 		response->setStatusCode("405");
-	else if (info.exists != -1 && S_ISDIR(info.info.st_mode) && request->getTarget().back() != '/') {
+	else if (info.exists != -1 && S_ISDIR(info.info.st_mode) && *request->getTarget().end() != '/') {
 		response->setStatusCode("301");
 		response->addHeader("Location", "http://" + virtual_server->getHost() + ":" + virtual_server->getPort() +
 										request->getTarget() + "/");

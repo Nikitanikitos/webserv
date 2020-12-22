@@ -30,7 +30,7 @@ private:
 	std::string								message_phrase;
 
 public:
-	static const std::map<std::string, std::string>	message_phrases;
+	static const std::pair<const char*, const char*>	message_phrases[10];
 
 	HttpResponse() { }
 	virtual ~HttpResponse() { }
@@ -43,6 +43,8 @@ public:
 	int						sendResponse(int client_socket);
 
 	virtual void			clear();
+
+	static std::string	getMessagePhrase(const std::string& code);
 };
 
 #endif //WEBSERV_HTTPRESPONSE_HPP

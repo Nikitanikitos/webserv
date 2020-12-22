@@ -96,7 +96,7 @@ VirtualServer*	ParseConfigFile::parseVsDirective() {
 				break;
 			case limit_body_size_d:
 				if (trimmedStr.size() == 2 && ONLY_DIGITS(trimmedStr[1]))
-					virtualServer->setLimitClientBodySize(std::stoi(trimmedStr[1]));
+					virtualServer->setLimitClientBodySize(ft_atoi(trimmedStr[1].c_str()));
 				else
 					throw ParseConfigFileException("Wrong limit body size parameter");
 				break;
@@ -107,7 +107,7 @@ VirtualServer*	ParseConfigFile::parseVsDirective() {
 					throw ParseConfigFileException("Wrong host parameter");
 				break;
 			case port_d:
-				if (trimmedStr.size() == 2 && checkPort(stoi(trimmedStr[1])))
+				if (trimmedStr.size() == 2 && checkPort(ft_atoi(trimmedStr[1].c_str())))
 					virtualServer->setPort(trimmedStr[1]);
 				else
 					throw ParseConfigFileException("Wrong port parameter");

@@ -13,27 +13,25 @@
 #include "ThreadPool.hpp"
 
 ThreadPool::ThreadPool() {
-	if ((queue_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == 0)
-		throw std::exception();
+	queue_mutex = new pthread_mutex_t;
 	pthread_mutex_init(queue_mutex, 0);
 
-	if ((read_stage_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == 0)
-		throw std::exception();
+	read_stage_mutex = new pthread_mutex_t;
 	pthread_mutex_init(read_stage_mutex, 0);
-	if ((parse_stage_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == 0)
-		throw std::exception();
+
+	parse_stage_mutex = new pthread_mutex_t;
 	pthread_mutex_init(parse_stage_mutex, 0);
-	if ((generate_stage_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == 0)
-		throw std::exception();
+
+	generate_stage_mutex = new pthread_mutex_t;
 	pthread_mutex_init(generate_stage_mutex, 0);
-	if ((send_stage_mutex = (pthread_mutex_t*)malloc(sizeof(pthread_mutex_t))) == 0)
-		throw std::exception();
+
+	send_stage_mutex = new pthread_mutex_t;
 	pthread_mutex_init(send_stage_mutex, 0);
 }
 
 ThreadPool::~ThreadPool() {
 	pthread_mutex_destroy(queue_mutex);
-	free(queue_mutex);
+	delete queue_mutex;
 }
 
 Client*		ThreadPool::popTask() {

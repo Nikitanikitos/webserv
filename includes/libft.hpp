@@ -16,11 +16,14 @@
 # include <string>
 #include <sys/stat.h>
 # include "bytes.hpp"
+#include "stdint.h"
 
 struct					t_stat {
 	struct stat			info;
 	int					exists;
 };
+
+char*					ft_itoa(int n);
 
 uint16_t				ft_htons(uint16_t);
 uint32_t				ft_htonl(uint32_t);

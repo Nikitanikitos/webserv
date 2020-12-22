@@ -23,7 +23,7 @@ bytes WebServ::autoindexGenerate(HttpRequest *request, const std::string& path_t
 	body_response.add("<html><head><title>Index of " + request->getTarget() + "</title></head><body>"
 																			  "<h1>Index of " + request->getTarget() +
 					  "</h1><hr><pre><a href=\"../\">../</a><br>");
-	while ((current_file = readdir(directory)) != nullptr) {
+	while ((current_file = readdir(directory))) {
 		std::string		file(current_file->d_name);
 		if (current_file->d_type == 4)
 			file.append("/");
@@ -36,7 +36,7 @@ bytes WebServ::autoindexGenerate(HttpRequest *request, const std::string& path_t
 bytes	WebServ::generateErrorPage(const std::string& code) {
 	return ("<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" "
 			"content=\"width=device-width, initial-scale=1.0\"><meta http-equiv=\"X-UA-Compatible\" "
-			"content=\"ie=edge\"><title>" + code + " " + HttpResponse::message_phrases.at(code) + "</title>"
-			"<style>h1, p {text-align: center;}</style></head><body><h1>" + code + " " +
-			HttpResponse::message_phrases.at(code) + "</h1><hr><p>WebServ/0.1</p></body></html>");
+			"content=\"ie=edge\"><title>" + code + " " + HttpResponse::getMessagePhrase(code) + "</title><style>h1, "
+			"p {text-align: center;}</style></head><body><h1>" + code + " " + HttpResponse::getMessagePhrase(code) +
+			"</h1><hr><p>WebServ/0.1</p></body></html>");
 }

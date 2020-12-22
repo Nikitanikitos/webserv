@@ -24,6 +24,7 @@
 # include <vector>
 # include "Location.hpp"
 # include "HttpRequest.hpp"
+# include <algorithm>
 
 class	VirtualServer {
 private:

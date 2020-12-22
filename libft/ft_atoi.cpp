@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <cstdint>
+#include "stdint.h"
 
 static bool		ft_isspace(char c)
 	{ return ((c == '\n' || c == '\t' || c == '\r' || c == '\v' || c == '\f' || c == ' ')); }

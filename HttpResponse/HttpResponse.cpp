@@ -10,22 +10,31 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
 #include "HttpResponse.hpp"
 
-const std::map<std::string, std::string>	HttpResponse::message_phrases = {
-		{"200", "OK"},
-		{"201", "Created"},
-		{"301", "Moved Permanently"},
-		{"302", "Found"},
-		{"400", "Bad Request"},
-		{"403", "Forbidden"},
-		{"404", "Not Found"},
-		{"405", "Method Not Allowed"},
-		{"411", "Length Required"},
-		{"413", "Payload Too Large"}
+const std::pair<const char*, const char*>	HttpResponse::message_phrases[10] = {
+		(const std::pair<char*, const char*>&) ("200", "OK"),
+		(const std::pair<char*, const char*>&) ("201", "Created"),
+		(const std::pair<char*, const char*>&) ("301", "Moved Permanently"),
+		(const std::pair<char*, const char*>&) ("302", "Found"),
+		(const std::pair<char*, const char*>&) ("400", "Bad Request"),
+		(const std::pair<char*, const char*>&) ("403", "Forbidden"),
+		(const std::pair<char*, const char*>&) ("404", "Not Found"),
+		(const std::pair<char*, const char*>&) ("405", "Method Not Allowed"),
+		(const std::pair<char*, const char*>&) ("411", "Length Required"),
+		(const std::pair<char*, const char*>&) ("413", "Payload Too Large")
 };
 
 void				HttpResponse::setStatusCode(const std::string& status_code_) { status_code = status_code_; }
+
+std::string			HttpResponse::getMessagePhrase(const std::string& code) {
+	for (int i = 0; i < 10; ++i) {
+		if (HttpResponse::message_phrases[i].first == code)
+			return (HttpResponse::message_phrases[i].second);
+	}
+	return ("Unknown code");
+}
 
 void				HttpResponse::generateResponse() {
 	struct timeval											tv;
@@ -33,12 +42,15 @@ void				HttpResponse::generateResponse() {
 
 	gettimeofday(&tv, 0);
 	buffer.add(
-			HTTP_VERSION + SP + status_code + SP + message_phrases.at(status_code) + CRLF
+			HTTP_VERSION + SP + status_code + SP + getMessagePhrase(status_code) + CRLF
 			"Server: " + SERVER_VERSION + CRLF
 			"Date: " + ft_getdate(tv) + CRLF);
 
-	if (body.size())
-		buffer.add("Content-length: " + std::to_string(body.size()) + CRLF);
+	if (body.size()) {
+		char*	size = ft_itoa(body.size());
+		buffer.add("Content-length: " + std::string(size) + CRLF);
+		delete []size;
+	}
 	for (it = headers.begin(); it != headers.end(); ++it)
 		buffer.add(it->first + ": " + it->second + CRLF);
 	buffer.add(CRLF);
