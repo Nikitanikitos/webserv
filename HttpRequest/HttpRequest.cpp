@@ -20,16 +20,20 @@ const std::string&		HttpRequest::getMethod() const { return (method); }
 const std::string&		HttpRequest::getTarget() const { return (target); }
 int						HttpRequest::getStage() const { return (stage); }
 
-void HttpRequest::clear() {
+void					HttpRequest::clear() {
 	HttpObject::clear();
 	method.clear();
 	target.clear();
+	stage = 0;
 }
 
-bytes	HttpRequest::getRequestLine() {
-	size_t		i = buffer.find("\r\n");
+bytes					HttpRequest::getRequestData() {
+	size_t		i;
+	i = (stage != parsing_body) ? buffer.find("\r\n") : buffer.size();
 	bytes		result = buffer.substr(i);
 
 	(i != -1) ? buffer.erase(i + 2) : buffer.erase(i);
 	return (result);
 }
+
+void					HttpRequest::trimBody(size_t n) { body.rtrim(n); }

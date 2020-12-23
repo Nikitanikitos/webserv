@@ -26,11 +26,12 @@ enum stage {
 class	HttpRequest : public HttpObject {
 private:
 	std::string				method;
+	std::string				query;
 	std::string				target;
 	int						stage;
 
 public:
-	HttpRequest() { }
+	HttpRequest() : stage(0) { }
 	virtual ~HttpRequest() { }
 
 	void							setTarget(const std::string& target_);
@@ -43,7 +44,8 @@ public:
 
 	virtual void					clear();
 
-	bytes							getRequestLine();
+	bytes							getRequestData();
+	void							trimBody(size_t n);
 };
 
 #endif //WEBSERV_HTTPREQUEST_HPP

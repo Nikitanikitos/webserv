@@ -18,7 +18,6 @@
 # include <zconf.h>
 
 enum Stage {
-	read_request_,
 	parsing_request_,
 	generate_response_,
 	send_response_,
@@ -52,7 +51,6 @@ public:
 	void						setProcessed(bool processed);
 
 	void						setStage(int stage_);
-	void						nextStage();
 
 	bool						inTaskQueue();
 
@@ -64,8 +62,6 @@ public:
 
 	void						sendResponse();
 	void 						generateResponse();
-
-	bytes						getRequestLine();
 };
 
 #endif //WEBSERV_CLIENT_HPP

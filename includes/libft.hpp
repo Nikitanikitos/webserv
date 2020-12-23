@@ -14,9 +14,9 @@
 # define WEBSERV_LIBFT_HPP
 
 # include <string>
-#include <sys/stat.h>
+# include <sys/stat.h>
 # include "bytes.hpp"
-#include "stdint.h"
+# include "stdint.h"
 
 struct					t_stat {
 	struct stat			info;
@@ -24,12 +24,11 @@ struct					t_stat {
 };
 
 char*					ft_itoa(int n);
-
 uint16_t				ft_htons(uint16_t);
 uint32_t				ft_htonl(uint32_t);
-
 int						ft_atoi(const char* nptr);
 
+void					ft_tolower(char& c);
 void					ft_localtime(tm&, time_t);
 
 std::string				ft_getdate(struct timeval& tv);

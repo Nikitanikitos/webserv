@@ -12,8 +12,9 @@
 
 #include "HttpObject.hpp"
 
-void				HttpObject::setBody(const bytes& body) { body = body; }
+void				HttpObject::setBody(const bytes& body_) { body = body_; }
 
+void				HttpObject::addToBody(const bytes& data) { body.add(data); }
 void				HttpObject::addToBuffer(char* data, size_t n) { buffer.add(data, n); }
 void				HttpObject::addHeader(const std::string& key, const std::string& value)
 	{ headers.insert(std::make_pair(key, value)); }

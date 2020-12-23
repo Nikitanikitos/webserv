@@ -50,9 +50,9 @@ void				WebServ::addClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set) {
 void				WebServ::addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, int& max_fd) {
 	for (int i = 0; i < clients.size(); ++i) {
 		const int&		client_socket = clients[i]->getSocket();
-		if (clients[i]->getStage() == read_request_)
+		if (clients[i]->getStage() == parsing_request_)
 			FD_SET(client_socket, &readfd_set);
-		else if (clients[i]->getStage() != read_request_) // TODO если что то зависнит, посмотрите сюда
+		else if (clients[i]->getStage() != parsing_request_) // TODO если что то зависнит, посмотрите сюда
 			FD_SET(client_socket, &writefd_set);
 		max_fd = (client_socket > max_fd) ? client_socket : max_fd;
 	}
@@ -70,9 +70,9 @@ void				WebServ::addNewClient(fd_set& readfd_set) {
 }
 
 void				WebServ::runServer() {
-	fd_set		writefd_set;
-	fd_set		readfd_set;
-	int 		max_fd;
+	fd_set			writefd_set;
+	fd_set			readfd_set;
+	int 			max_fd;
 	struct timeval	tv;
 
 	tv.tv_sec = 2;
@@ -84,7 +84,7 @@ void				WebServ::runServer() {
 
 		select(max_fd + 1, &readfd_set, &writefd_set, 0, 0);
 
-		std::cout << clients.size() << std::endl;
+//		std::cout << clients.size() << std::endl;
 
 		addNewClient(readfd_set);
 		addClientInTaskQueue(readfd_set, writefd_set);
@@ -114,7 +114,7 @@ std::string		WebServ::getPathToTarget(HttpRequest *request, Location* location) 
 	return (location->getRoot() + "/" + result);
 }
 
-void WebServ::addVirtualServer(VirtualServer *virtual_server) {
+void			WebServ::addVirtualServer(VirtualServer *virtual_server) {
 	for (int i = 0; i < virtual_servers.size(); ++i) {
 		if (virtual_server->getHost() == virtual_servers[i]->getHost() && virtual_server->getPort() ==
 																		  virtual_servers[i]->getPort()) {

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16.5)
 project(webserv)
 
-set(CMAKE_CXX_STANDARD 98)
+set(CMAKE_CXX_STANDARD 20)
 
 add_executable(webserv
         main.cpp
@@ -15,11 +15,11 @@ add_executable(webserv
 		libft/ft_getline.cpp
 		libft/ft_getfile.cpp
 		libft/ft_itoa.cpp
+		libft/ft_tolower.cpp
 
 		WebServ/WebServ.cpp
 		WebServ/WebServ_workers.cpp
 		WebServ/WebServ_handlers.cpp
-		WebServ/WebServ_parsing_request.cpp
 		WebServ/WebServ_page_generators.cpp
 
 		VirtualServer/VirtualServer.cpp
@@ -34,6 +34,7 @@ add_executable(webserv
 		Client/Client.cpp
 		ThreadPool/ThreadPool.cpp
 
+		HandlerHttpObject/HandlerHttpObject.cpp
 		)
 
 include_directories(
@@ -48,6 +49,7 @@ include_directories(
 		ThreadPool
 		bytes
 		HttpObject
+		HandlerHttpObject
 		)
 
 target_link_libraries(webserv pthread)

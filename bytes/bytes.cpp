@@ -92,6 +92,7 @@ bytes bytes::substr(size_t i) {
 	bytes	result;
 
 	result.buffer = bytedup(*this, i);
+	result.size_ = (i < size_) ? i : size_;
 	return (result);
 }
 
@@ -104,4 +105,13 @@ char* bytes::bytedup(const char* src, size_t size) {
 		result[i] = src[i];
 	result[i] = 0;
 	return (result);
+}
+
+void bytes::rtrim(size_t n) {
+	char*	temp_buff = buffer;
+
+	size_ -= n;
+	buffer = new char[size_ + 1];
+	buffer = bytedup(temp_buff, size_);
+	delete []temp_buff;
 }

@@ -18,66 +18,41 @@ void	WebServ::readRequest(Client *client) {
 	HttpResponse*	response = client->getResponse();
 	char			buff[1025];
 	int 			read_bytes;
-	bytes			line_request;
+	bytes			request_data;
 
 	read_bytes = recv(client->getSocket(), buff, 1024, 0);
 	buff[read_bytes] = 0;
 	request->addToBuffer(buff, read_bytes);
-	while (request->getBody().size()) {
-		line_request = request->getRequestLine();
+	while (request->getBuffer().size()) {
+		request_data = request->getRequestData();
 		switch (request->getStage()) {
 			case parsing_first_line:
-				if (parsingFirstLine(request, line_request.c_str())) {
-					request->setStage(bad_request);
-					response->setStatusCode("400");
-				}
-				else
-					request->setStage(parsing_headers);
+				HandlerHttpObject::parsingFirstLine(request, response, request_data.c_str());
 				break;
 			case parsing_headers:
-				if (!line_request.size()) {
-					if (!request->findHeader("host")) {
-						response->setStatusCode("400");
-						request->setStage(bad_request);
-					}
-					else if (request->getMethod() == "PUT" || request->getMethod() == "POST") {
-						if (!request->findHeader("content-length")) {
-							response->setStatusCode("411");
-							request->setStage(bad_request);
-						}
-						else
-							request->setStage(parsing_body);
-					}
-					else
-						request->setStage(completed);
-				}
-				else if (!parseHeader(request, line_request.c_str())) {
+				if (!request_data.size())
+					HandlerHttpObject::endOfHeaders(request, response);
+				else if (!HandlerHttpObject::parseHeader(request, request_data.c_str())) {
 					response->setStatusCode("400");
 					request->setStage(bad_request);
 				}
 				break;
 			case parsing_body:
-				request->addToBody(line_request);
-				int content_length = ft_atoi(request->getHeader("content-length").c_str());
-				if (request->getBody().size() > limit_client_body_size) {
-					response->setStatusCode("413");
-					client->setStage(bad_request);
-					break;
-				}
-				else if (request->getBody().size() > content_length) {
-					request->setStage(content_length);
-					break; // TODO порезать буфер
-				}
-				else if (request->getBody().size() == content_length) {
+				request->addToBody(request_data);
+				if (request->getBody().size() >= ft_atoi(request->getHeader("content-length").c_str())) {
+					request->trimBody(0);
 					request->setStage(completed);
-					break;
 				}
-			case completed:
-				client->setStage(generate_response_);
-			case bad_request:
-				setErrorPage();
-				generateResponse();
-				client->setStage(send_response_);
+		}
+		if (request->getStage() == completed)
+			client->setStage(generate_response_);
+		else if (request->getStage() == bad_request) {
+			VirtualServer*	virtual_server = getVirtualServer(client);
+			Location*		location = virtual_server->getLocation(request);
+
+			setErrorPage(client, location, virtual_server);
+			client->generateResponse();
+			client->setStage(send_response_);
 		}
 	}
 }
@@ -91,20 +66,19 @@ void	WebServ::sendResponse(Client* client) {
 		if (request->findHeader("connection") && request->getHeader("connection") == "close")
 			client->setStage(close_connection_);
 		else
-			client->setStage(read_request_);
+			client->setStage(parsing_request_);
+		client->clearResponse();
+		client->clearRequest();
 	}
-	client->clearResponse();
-	client->clearRequest();
 }
 
 void	WebServ::setErrorPage(Client* client, Location* location, VirtualServer* virtual_server) {
-	HttpResponse*		response = client->getResponse();
+	HttpResponse*	response = client->getResponse();
 	std::string		path_to_target;
 
 	if (virtual_server->findErrorPage(response->getStatusCode())) {
 		path_to_target.append(location->getPath() + virtual_server->getErrorPage(response->getStatusCode()));
-		response->addHeader("Location",
-							"http://" + client->getHost() + ":" + client->getPort() + path_to_target);
+		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() + path_to_target);
 		response->setStatusCode("302");
 	}
 	else
@@ -155,11 +129,7 @@ void WebServ::putMethodHandler(Client* client, Location* location, VirtualServer
 
 	// TODO проверить права на запись - иначе 403
 	fd = 0;
-	if (!request->findHeader("content-length"))
-		response->setStatusCode("411");
-	else if (ft_atoi(request->getHeader("content-length").c_str()) > virtual_server->getLimitBodySize())
-		response->setStatusCode("413");
-	else if (S_ISDIR(info->info.st_mode))
+	if (S_ISDIR(info->info.st_mode))
 		response->setStatusCode("404");
 	else if (info->exists == -1) {
 		if ((fd = open(path_to_target.c_str(), O_WRONLY | O_CREAT, 0666)) > 0)
@@ -200,17 +170,8 @@ void	WebServ::generateResponse(Client *client) {
 
 	if (request->findHeader("connection") && request->getHeader("connection") == "close")
 		response->addHeader("Connection", "Close");
-	if (isErrorStatus(response->getStatusCode()))
+	if (HandlerHttpObject::isErrorStatus(response->getStatusCode()))
 		setErrorPage(client, location, virtual_server);
 	client->generateResponse();
-	client->nextStage();
-}
-
-bool	WebServ::isErrorStatus(const std::string& status) {
-	const std::string	status_code[6] = {"400", "403", "404", "405", "411", "413"};
-
-	for (int i = 0; i < 4; ++i)
-		if (status == status_code[i])
-			return (true);
-	return (false);
+	client->setStage(send_response_);
 }

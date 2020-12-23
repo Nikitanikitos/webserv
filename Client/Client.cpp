@@ -13,7 +13,7 @@
 #include "Client.hpp"
 
 Client::Client(int socket, const std::string& ip, const std::string& port)
-								: socket(socket), stage(read_request_), in_proccessed(false), host(ip), port(port) {
+								: socket(socket), stage(parsing_request_), in_proccessed(false), host(ip), port(port) {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);
@@ -41,28 +41,22 @@ int						Client::getSocket() const { return (socket); }
 
 bool					Client::inTaskQueue() { return (in_proccessed); }
 
-void					Client::nextStage() { stage++; }
-
 void					Client::clearResponse() { response->clear(); }
 void					Client::clearRequest() { request->clear(); }
 
 void					Client::generateResponse() { response->generateResponse(); }
 void					Client::sendResponse() { response->sendResponse(socket); }
 
-bool Client::connectionTimedOut() {
+bool					Client::connectionTimedOut() {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);
 	return ((tv.tv_sec - connection_time) > TimeOut);
 }
 
-void Client::setNewConnectionTime() {
+void					Client::setNewConnectionTime() {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);
 	connection_time = tv.tv_sec;
-}
-
-bytes Client::getRequestLine() {
-	return (request->getRequestLine());
 }
