@@ -12,14 +12,6 @@
 
 #include "HttpRequest.hpp"
 
-void					HttpRequest::setMethod(const std::string& method_) { method = method_; }
-void					HttpRequest::setTarget(const std::string& target_) { target = target_; }
-void					HttpRequest::setStage(int stage_) { stage = stage_; }
-
-const std::string&		HttpRequest::getMethod() const { return (method); }
-const std::string&		HttpRequest::getTarget() const { return (target); }
-int						HttpRequest::getStage() const { return (stage); }
-
 void					HttpRequest::clear() {
 	HttpObject::clear();
 	method.clear();
@@ -36,4 +28,3 @@ bytes					HttpRequest::getRequestData() {
 	return (result);
 }
 
-void					HttpRequest::trimBody(size_t n) { body.rtrim(n); }

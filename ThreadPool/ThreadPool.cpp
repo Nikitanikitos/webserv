@@ -16,11 +16,8 @@ ThreadPool::ThreadPool() {
 	queue_mutex = new pthread_mutex_t;
 	pthread_mutex_init(queue_mutex, 0);
 
-	read_stage_mutex = new pthread_mutex_t;
-	pthread_mutex_init(read_stage_mutex, 0);
-
-	parse_stage_mutex = new pthread_mutex_t;
-	pthread_mutex_init(parse_stage_mutex, 0);
+	parsing_stage_mutex = new pthread_mutex_t;
+	pthread_mutex_init(parsing_stage_mutex, 0);
 
 	generate_stage_mutex = new pthread_mutex_t;
 	pthread_mutex_init(generate_stage_mutex, 0);
@@ -33,10 +30,7 @@ ThreadPool::~ThreadPool() {
 	pthread_mutex_destroy(queue_mutex);
 	delete queue_mutex;
 
-	pthread_mutex_destroy(read_stage_mutex);
-	delete queue_mutex;
-
-	pthread_mutex_destroy(parse_stage_mutex);
+	pthread_mutex_destroy(parsing_stage_mutex);
 	delete queue_mutex;
 
 	pthread_mutex_destroy(generate_stage_mutex);
@@ -59,20 +53,3 @@ void				ThreadPool::pushTask(Client* client) {
 	tasks_queue.push(client);
 	pthread_mutex_unlock(queue_mutex);
 }
-
-bool				ThreadPool::queueIsEmpty() const { return (tasks_queue.empty()); }
-
-void				ThreadPool::lockQueueMutex() { pthread_mutex_lock(queue_mutex); }
-void				ThreadPool::unlockQueueMutex() { pthread_mutex_unlock(queue_mutex); }
-
-void				ThreadPool::lockReadStageMutex() { pthread_mutex_lock(read_stage_mutex); }
-void				ThreadPool::unlockReadStageMutex() { pthread_mutex_unlock(read_stage_mutex); }
-
-void				ThreadPool::lockParseStageMutex() { pthread_mutex_lock(parse_stage_mutex); }
-void				ThreadPool::unlockParseStageMutex() { pthread_mutex_unlock(parse_stage_mutex); }
-
-void				ThreadPool::lockGenerateStageMutex() { pthread_mutex_lock(generate_stage_mutex); }
-void				ThreadPool::unlockGenerateStageMutex() { pthread_mutex_unlock(generate_stage_mutex); }
-
-void				ThreadPool::lockSendStageMutex() { pthread_mutex_lock(send_stage_mutex); }
-void				ThreadPool::unlockSendStageMutex() { pthread_mutex_unlock(send_stage_mutex); }

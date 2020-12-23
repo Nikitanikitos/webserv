@@ -96,7 +96,7 @@ void	WebServ::getHeadMethodHandler(Client* client, Location* location, VirtualSe
 	response->setStatusCode("200");
 	if (info->exists == -1)
 		response->setStatusCode("404");
-	else if (S_ISDIR(info->info.st_mode) && (fd = open((path_to_target + location->getIndex()).c_str(), O_RDONLY)) != -1) {
+	else if (S_ISDIR(info->info.st_mode) && !location->getIndex().empty() && (fd = open((path_to_target + location->getIndex()).c_str(), O_RDONLY)) != -1) {
 		path_to_target.append(location->getIndex());
 		info->exists = stat(path_to_target.c_str(), &info->info);
 		close(fd);

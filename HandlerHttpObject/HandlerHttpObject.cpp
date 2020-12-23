@@ -26,7 +26,7 @@ void HandlerHttpObject::parsingFirstLine(HttpRequest* request, HttpResponse* res
 		}
 		else if (i == 1)
 			request->setTarget(element);
-		else if (element != "HTTP/1.1" || element != "HTTP/1.0") {
+		else if (element != "HTTP/1.1" && element != "HTTP/1.0") {
 			setBadRequest(request, response, "400");
 			return;
 		}

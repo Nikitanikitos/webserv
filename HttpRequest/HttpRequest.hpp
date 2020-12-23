@@ -34,18 +34,18 @@ public:
 	HttpRequest() : stage(0) { }
 	virtual ~HttpRequest() { }
 
-	void							setTarget(const std::string& target_);
-	void							setMethod(const std::string& method_);
-	void							setStage(int stage);
+	inline void							setTarget(const std::string& target_) { target = target_; }
+	inline void							setMethod(const std::string& method_) { method = method_; }
+	inline void							setStage(int stage_) {stage = stage_; }
 
-	const std::string&				getMethod() const;
-	const std::string&				getTarget() const;
-	int								getStage() const;
+	inline const std::string&			getMethod() const { return (method); }
+	inline const std::string&			getTarget() const { return (target); }
+	inline int							getStage() const { return (stage); }
 
 	virtual void					clear();
 
 	bytes							getRequestData();
-	void							trimBody(size_t n);
+	inline void						trimBody(size_t n) { body.rtrim(n); }
 };
 
 #endif //WEBSERV_HTTPREQUEST_HPP

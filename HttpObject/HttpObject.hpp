@@ -29,15 +29,17 @@ public:
 	HttpObject() { }
 	virtual ~HttpObject() { }
 
-	void							addToBuffer(char* data, size_t n);
-	void							addHeader(const std::string& key, const std::string& value);
-	void							setBody(const bytes& body);
-	void							addToBody(const bytes& data);
+	inline void						addToBuffer(char* data, size_t n) { buffer.add(data, n); }
+	inline void						addHeader(const std::string& key, const std::string& value)
+		{ headers.insert(std::make_pair(key, value)); }
 
-	const bytes&					getBody() const;
-	const bytes&					getBuffer() const;
-	bool							findHeader(const std::string& header) const;
-	const std::string&				getHeader(const std::string& header) const;
+	inline void						setBody(const bytes& body_) { body = body_; }
+	inline void						addToBody(const bytes& data) { body.add(data); }
+
+	inline const bytes&				getBody() const { return (body); }
+	inline const bytes&				getBuffer() const { return (buffer); }
+	inline bool						findHeader(const std::string& header) const { return (headers.count(header)); }
+	inline const std::string&		getHeader(const std::string& header) const { return (headers.at(header)); }
 
 	virtual void					clear();
 };

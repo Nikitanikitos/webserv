@@ -35,16 +35,16 @@ public:
 	HttpResponse() { }
 	virtual ~HttpResponse() { }
 
-	const std::string&		getStatusCode() const;
+	inline const std::string&		getStatusCode() const { return (status_code); }
 
-	void					setStatusCode(const std::string& status_code_);
+	inline void						setStatusCode(const std::string& status_code_) { status_code = status_code_; }
 
-	void					generateResponse();
-	int						sendResponse(int client_socket);
+	void							generateResponse();
+	int								sendResponse(int client_socket);
 
-	virtual void			clear();
+	virtual void					clear();
 
-	static std::string	getMessagePhrase(const std::string& code);
+	static std::string				getMessagePhrase(const std::string& code);
 };
 
 #endif //WEBSERV_HTTPRESPONSE_HPP

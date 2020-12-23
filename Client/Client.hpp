@@ -41,27 +41,26 @@ public:
 	Client(int socket, const std::string& ip, const std::string& port);
 	virtual ~Client();
 
-	const std::string&			getPort() const;
-	const std::string&			getHost() const;
-	int							getStage() const;
-	int							getSocket() const;
-	HttpRequest*				getRequest() const;
-	HttpResponse*				getResponse() const;
+	inline const std::string&		getPort() const { return (port); }
+	inline const std::string&		getHost() const  { return (host); }
+	inline int						getStage() const { return (stage); }
+	inline int						getSocket() const { return (socket); }
+	inline HttpRequest*				getRequest() const { return (request); }
+	inline HttpResponse*			getResponse() const { return (response); }
 
-	void						setProcessed(bool processed);
+	inline void						setProcessed(bool processed) { in_proccessed = processed; }
+	inline void						setStage(int stage_) { stage = stage_; }
 
-	void						setStage(int stage_);
-
-	bool						inTaskQueue();
+	inline bool						inTaskQueue() { return (in_proccessed); }
 
 	bool						connectionTimedOut();
 	void						setNewConnectionTime();
 
-	void						clearResponse();
-	void						clearRequest();
+	inline void						clearResponse() { response->clear(); }
+	inline void						clearRequest() { request->clear(); }
 
-	void						sendResponse();
-	void 						generateResponse();
+	inline void						sendResponse() { response->sendResponse(socket); }
+	inline void 					generateResponse() { response->generateResponse(); }
 };
 
 #endif //WEBSERV_CLIENT_HPP

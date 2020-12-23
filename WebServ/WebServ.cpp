@@ -15,13 +15,6 @@
 
 int		WebServ::working = 1;
 
-WebServ::WebServ(int number_of_workers) : number_workers(number_of_workers) { }
-
-WebServ::~WebServ() {
-	for (int i = 0; i < clients.size(); ++i)
-		delete clients[i];
-};
-
 void				WebServ::initSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd) {
 	max_fd = virtual_servers.back()->getSocket();
 	FD_ZERO(&readfd_set);

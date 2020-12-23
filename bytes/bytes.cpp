@@ -15,9 +15,6 @@
 void			bytes::add(const std::string& string) { add(string.c_str(), string.size()); }
 void			bytes::add(const bytes& string) { add(string.c_str(), string.size()); }
 
-const char*		bytes::c_str() const { return (buffer); }
-size_t			bytes::size() const { return (size_); }
-
 void			bytes::add(const char* string, size_t i) {
 	char*	temp_buff;
 

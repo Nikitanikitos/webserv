@@ -38,12 +38,13 @@ public:
 	void			erase(size_t n);
 	void			rtrim(size_t n);
 
-	size_t			size() const;
 	void			clear();
-	const char*		c_str() const;
-
 	size_t			find(const char* needle);
+
 	bytes			substr(size_t i);
+
+	inline size_t			size() const { return (size_); }
+	inline const char*		c_str() const { return (buffer); }
 };
 
 #endif //WEBSERV_BYTES_HPP

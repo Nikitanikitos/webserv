@@ -13,8 +13,6 @@
 #ifndef WEBSERV_LOCATION_HPP
 # define WEBSERV_LOCATION_HPP
 
-# define NUMBER_METHODS		6
-
 # include <vector>
 # include <string>
 
@@ -52,26 +50,24 @@ public:
 	Location();
 	~Location() { }
 
-	void						addAllowMethod(bool method);
-	void 						eraseAcceptedMethods();
-	bool						isAllowMethod(const std::string& method) const;
+	void	 						eraseAcceptedMethods();
+	inline void						addAllowMethod(bool method) { allow_methods[method] = accepted; }
+	bool							isAllowMethod(const std::string& method) const;
 
-	void						setLocationType(bool location_type_);
-	void						setRoot(const std::string& root_);
-	void						setIndex(const std::string& index_);
-	void						setCgiPath(const std::string& cgi_path);
-	void						setAutoindex(bool autoindex_);
-	void						setPath(const std::string& path_);
-	void 						setExtension(const std::string &extension_);
+	inline void						setLocationType(bool location_type_) { location_type = location_type_; }
+	inline void						setRoot(const std::string& root_) { root = root_; }
+	inline void						setIndex(const std::string& index_) { index = index_; }
+	inline void						setCgiPath(const std::string& cgi_path) { cgi_pass = cgi_path; }
+	inline void						setAutoindex(bool autoindex_) { autoindex = autoindex_; }
+	inline void						setPath(const std::string& path_) { path = path_; }
+	inline void 					setExtension(const std::string &extension_) { extension = extension_;}
 
-	const std::string&			getIndex() const;
-	const std::string&			getPath() const;
-	const std::string&			getExtension() const;
-	const std::string&			getRoot() const;
-	const std::vector<bool>&	getAllowMethods() const;
-	bool						getLocationType() const;
-	bool						getAutoindex() const;
-
+	inline const std::string&		getIndex() const { return (index); }
+	inline const std::string&		getPath() const { return (path); }
+	inline const std::string&		getExtension() const { return (extension); }
+	inline const std::string&		getRoot() const { return (root); }
+	inline bool						getLocationType() const { return (location_type); }
+	inline bool						getAutoindex() const { return (autoindex); }
 };
 
 #endif //WEBSERV_LOCATION_HPP

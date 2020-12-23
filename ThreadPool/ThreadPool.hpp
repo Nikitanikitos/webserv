@@ -23,30 +23,26 @@ private:
 	pthread_mutex_t*		queue_mutex;
 
 public:
-	pthread_mutex_t*		read_stage_mutex;
-	pthread_mutex_t*		parse_stage_mutex;
+	pthread_mutex_t*		parsing_stage_mutex;
 	pthread_mutex_t*		generate_stage_mutex;
 	pthread_mutex_t*		send_stage_mutex;
 
 	ThreadPool();
 	~ThreadPool();
 
-	bool					queueIsEmpty() const;
+	inline bool				queueIsEmpty() const { return (tasks_queue.empty()); }
 
-	void					lockQueueMutex();
-	void					unlockQueueMutex();
+	inline void				lockQueueMutex() const { pthread_mutex_lock(queue_mutex); }
+	inline void				unlockQueueMutex() const { pthread_mutex_unlock(queue_mutex); }
 
-	void					lockReadStageMutex();
-	void					unlockReadStageMutex();
+	inline void				lockReadStageMutex() { pthread_mutex_lock(parsing_stage_mutex); }
+	inline void				unlockReadStageMutex() { pthread_mutex_unlock(parsing_stage_mutex); }
+	inline void				lockGenerateStageMutex() { pthread_mutex_lock(generate_stage_mutex); }
+	inline void				unlockGenerateStageMutex() { pthread_mutex_unlock(generate_stage_mutex); }
+	inline void				lockSendStageMutex() { pthread_mutex_lock(send_stage_mutex); }
+	inline void				unlockSendStageMutex() { pthread_mutex_unlock(send_stage_mutex); }
 
-	void					lockParseStageMutex();
-	void					unlockParseStageMutex();
-	void					lockGenerateStageMutex();
-	void					unlockGenerateStageMutex();
-	void					lockSendStageMutex();
-	void					unlockSendStageMutex();
-
-	void 					pushTask(Client* client);
+	void		 			pushTask(Client* client);
 	Client*					popTask();
 };
 

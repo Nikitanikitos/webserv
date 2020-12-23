@@ -26,8 +26,6 @@ const std::string	HttpResponse::message_phrases[10][2] = {
 		{"413", "Payload Too Large"}
 };
 
-void				HttpResponse::setStatusCode(const std::string& status_code_) { status_code = status_code_; }
-
 std::string			HttpResponse::getMessagePhrase(const std::string& code) {
 	for (int i = 0; i < 10; ++i) {
 		if (HttpResponse::message_phrases[i][0] == code)
@@ -71,5 +69,3 @@ void	HttpResponse::clear() {
 	status_code.clear();
 	message_phrase.clear();
 }
-
-const std::string& HttpResponse::getStatusCode() const { return (status_code); }

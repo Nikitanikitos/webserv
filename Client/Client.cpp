@@ -29,24 +29,6 @@ Client::~Client() {
 	close(socket);
 }
 
-void					Client::setProcessed(bool processed) { in_proccessed = processed; }
-void					Client::setStage(int stage_) { stage = stage_; }
-
-HttpRequest*			Client::getRequest() const { return (request); }
-HttpResponse*			Client::getResponse() const { return (response); }
-const std::string&		Client::getHost() const { return (host); }
-const std::string&		Client::getPort() const { return port; }
-int						Client::getStage() const { return (stage); }
-int						Client::getSocket() const { return (socket); }
-
-bool					Client::inTaskQueue() { return (in_proccessed); }
-
-void					Client::clearResponse() { response->clear(); }
-void					Client::clearRequest() { request->clear(); }
-
-void					Client::generateResponse() { response->generateResponse(); }
-void					Client::sendResponse() { response->sendResponse(socket); }
-
 bool					Client::connectionTimedOut() {
 	struct timeval	tv;
 

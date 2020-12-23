@@ -61,8 +61,11 @@ private:
 public:
 	static int working;
 
-	explicit WebServ(int number_of_workers);
-	virtual ~WebServ();
+	explicit WebServ(int number_of_workers) : number_workers(number_of_workers) { }
+	virtual ~WebServ() {
+		for (int i = 0; i < clients.size(); ++i)
+			delete clients[i];
+	};
 
 	void						runServer();
 	void						addVirtualServer(VirtualServer *virtual_server);

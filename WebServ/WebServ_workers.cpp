@@ -34,9 +34,9 @@ void*	worker(void* arg) {
 					thread_pool.unlockGenerateStageMutex();
 					break;
 				case send_response_:
-					thread_pool.lockReadStageMutex();
+					thread_pool.lockSendStageMutex();
 					web_serv.sendResponse(client);
-					thread_pool.unlockReadStageMutex();
+					thread_pool.unlockSendStageMutex();
 					break;
 			}
 			if (client->getStage() != parsing_request_ && client->getStage() != close_connection_ && client->getStage() != parsing_request_)

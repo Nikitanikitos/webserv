@@ -50,22 +50,30 @@ public:
 	void								initSocket();
 	void								sortServerNames();
 
-	int									getSocket() const;
-	bool								findErrorPage(const std::string& error_page) const;
-	const std::string&					getErrorPage(const std::string& status_code) const;
 	Location*							getLocation(HttpRequest *request) const;
-	const std::vector<std::string>&		getServerNames() const;
-	const std::string&					getPort() const;
-	const std::string&					getHost() const;
-	int									getLimitBodySize() const;
+	inline int							getSocket() const { return (server_socket); }
+	inline const std::string&			getPort() const { return (port); }
+	inline const std::string&			getHost() const { return (host); }
+	inline int							getLimitBodySize() const { return (limit_client_body_size); }
 
-	void								addServerName(const std::string& server_name);
-	void								addErrorPage(const std::string& key, const std::string& value);
-	void								addLocation(Location *location);
-	void								setPort(const std::string &port_);
-	void								setLimitClientBodySize(int limit_client_body_size_);
-	void								setHost(const std::string& ip);
-	void								setSocket(int socket);
+	inline const std::vector<std::string>&		getServerNames() const  { return (server_names); }
+
+	inline const std::string&			getErrorPage(const std::string& status_code) const
+		{ return error_pages.at(status_code); }
+	inline void							addServerName(const std::string& server_name)
+		{ server_names.push_back(server_name); }
+	inline void							addErrorPage(const std::string& key, const std::string& value)
+		{ error_pages.insert(std::make_pair(key, value)); }
+	inline void							addLocation(Location *location)
+		{ list_locations.push_back(location); }
+	inline void							setLimitClientBodySize(int limit_client_body_size_)
+		{ limit_client_body_size = limit_client_body_size_; }
+	inline bool							findErrorPage(const std::string& error_page) const
+	{ return (error_pages.count(error_page)); }
+
+	inline void							setPort(const std::string &port_) { port = port_; }
+	inline void							setHost(const std::string& ip) { host = ip; }
+	inline void							setSocket(int socket) { socket = socket; }
 };
 
 bool					operator==(const VirtualServer& virtual_server_l, const VirtualServer& virtual_server_r); // TODO доделать сравнение
