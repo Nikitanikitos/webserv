@@ -53,8 +53,8 @@ public:
 
 	inline bool						inTaskQueue() { return (in_proccessed); }
 
-	bool						connectionTimedOut();
-	void						setNewConnectionTime();
+	bool							connectionTimedOut();
+	void							setNewConnectionTime();
 
 	inline void						clearResponse() { response->clear(); }
 	inline void						clearRequest() { request->clear(); }

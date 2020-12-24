@@ -25,10 +25,17 @@ enum stage {
 
 class	HttpRequest : public HttpObject {
 private:
+	static const std::string		methods[4];
+
 	std::string				method;
 	std::string				query;
 	std::string				target;
 	int						stage;
+
+	void					parsingFirstLine(std::string line_request);
+	bool 					isValidMethod(const std::string& method);
+	void					parseHeader(const std::string& line);
+	void					endOfHeaders();
 
 public:
 	HttpRequest() : stage(0) { }
@@ -42,10 +49,12 @@ public:
 	inline const std::string&			getTarget() const { return (target); }
 	inline int							getStage() const { return (stage); }
 
-	virtual void					clear();
+	void								addDataToRequest(bytes data);
 
-	bytes							getRequestData();
-	inline void						trimBody(size_t n) { body.rtrim(n); }
+	virtual void						clear();
+
+	bytes								getRequestData();
+	inline void							trimBody(size_t n) { body.rtrim(n); }
 };
 
 #endif //WEBSERV_HTTPREQUEST_HPP

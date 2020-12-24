@@ -15,47 +15,29 @@
 
 void	WebServ::readRequest(Client *client) {
 	HttpRequest*	request = client->getRequest();
-	HttpResponse*	response = client->getResponse();
 	char			buff[1025];
 	int 			read_bytes;
-	bytes			request_data;
 
 	read_bytes = recv(client->getSocket(), buff, 1024, 0);
 	buff[read_bytes] = 0;
-	request->addToBuffer(buff, read_bytes);
-	while (request->getBuffer().size()) {
-		request_data = request->getRequestData();
-		switch (request->getStage()) {
-			case parsing_first_line:
-				HandlerHttpObject::parsingFirstLine(request, response, request_data.c_str());
-				break;
-			case parsing_headers:
-				if (!request_data.size())
-					HandlerHttpObject::endOfHeaders(request, response);
-				else if (!HandlerHttpObject::parseHeader(request, request_data.c_str())) {
-					response->setStatusCode("400");
-					request->setStage(bad_request);
-				}
-				break;
-			case parsing_body:
-				request->addToBody(request_data);
-				if (request->getBody().size() >= ft_atoi(request->getHeader("content-length").c_str())) {
-					request->trimBody(0);
-					request->setStage(completed);
-				}
-		}
+
+	bytes	data(buff, read_bytes);
+	try {
+		request->addDataToRequest(data);
 		if (request->getStage() == completed)
 			client->setStage(generate_response_);
-		else if (request->getStage() == bad_request) {
-			VirtualServer*	virtual_server = getVirtualServer(client);
-			Location*		location = virtual_server->getLocation(request);
-
-			setErrorPage(client, location, virtual_server);
-			client->generateResponse();
-			client->setStage(send_response_);
-		}
 	}
-}
+	catch (std::string& status_code) {
+		VirtualServer*	virtual_server = getVirtualServer(client);
+		Location*		location = virtual_server->getLocation(request);
+
+		client->getResponse()->setStatusCode(status_code);
+		setErrorPage(client, location, virtual_server);
+		client->generateResponse();
+		client->setStage(send_response_);
+	}
+
+	}
 
 void	WebServ::sendResponse(Client* client) {
 	HttpResponse*		response = client->getResponse();
