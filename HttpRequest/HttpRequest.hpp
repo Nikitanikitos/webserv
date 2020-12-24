@@ -49,7 +49,7 @@ public:
 	inline const std::string&			getTarget() const { return (target); }
 	inline int							getStage() const { return (stage); }
 
-	void								addDataToRequest(bytes data);
+	void								addDataToRequest(bytes& data);
 
 	virtual void						clear();
 

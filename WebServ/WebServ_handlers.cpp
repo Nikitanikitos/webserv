@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/22 20:20:38 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/24 18:09:42 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ void	WebServ::readRequest(Client *client) {
 	char			buff[1025];
 	int 			read_bytes;
 
-	read_bytes = recv(client->getSocket(), buff, 1024, 0);
+	if ((read_bytes = recv(client->getSocket(), buff, 1024, 0)) <= 0) {
+		client->setStage(close_connection_);
+		return;
+	}
 	buff[read_bytes] = 0;
 
 	bytes	data(buff, read_bytes);
@@ -33,19 +36,19 @@ void	WebServ::readRequest(Client *client) {
 
 		client->getResponse()->setStatusCode(status_code);
 		setErrorPage(client, location, virtual_server);
+		client->getResponse()->addHeader("Connection", "close");
 		client->generateResponse();
 		client->setStage(send_response_);
 	}
 
-	}
+}
 
 void	WebServ::sendResponse(Client* client) {
 	HttpResponse*		response = client->getResponse();
-	HttpRequest*		request = client->getRequest();
 
 	client->sendResponse();
 	if (!response->getBuffer().size()) {
-		if (request->findHeader("connection") && request->getHeader("connection") == "close")
+		if (response->findHeader("Connection") && response->getHeader("Connection") == "close")
 			client->setStage(close_connection_);
 		else
 			client->setStage(parsing_request_);

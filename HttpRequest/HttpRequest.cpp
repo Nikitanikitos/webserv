@@ -6,12 +6,14 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:25:50 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/22 19:17:53 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/24 17:14:59 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <libft.hpp>
 #include "HttpRequest.hpp"
+const std::string		HttpRequest::methods[4] =
+		{"GET", "HEAD", "POST", "PUT"};
 
 void					HttpRequest::clear() {
 	HttpObject::clear();
@@ -29,17 +31,17 @@ bytes					HttpRequest::getRequestData() {
 	return (result);
 }
 
-void HttpRequest::addDataToRequest(bytes data) {
-
-	while (data.size()) {
+void HttpRequest::addDataToRequest(bytes& data) {
+	buffer = data;
+	while (buffer.size()) {
 		bytes	request_data = getRequestData();
-		switch (stage) {
+		switch (getStage()) {
 			case parsing_first_line:
 				parsingFirstLine(request_data.c_str());
 				break;
 			case parsing_headers:
 				if (!request_data.size())
-					HandlerHttpObject::endOfHeaders(request, response);
+					endOfHeaders();
 				else
 					parseHeader(request_data.c_str());
 				break;
@@ -55,19 +57,19 @@ void HttpRequest::addDataToRequest(bytes data) {
 
 void	HttpRequest::parsingFirstLine(std::string line_request) {
 	if (std::count(line_request.begin(), line_request.end(), ' ') != 2)
-		throw "400";
+		throw std::string("400");
 
 	std::string		element;
 	for (int i = 0; i < 3; ++i) {
 		element = line_request.substr(0, line_request.find(' '));
 		if (i == 0) {
 			if (isValidMethod(element)) setMethod(element);
-			else throw "400";
+			else throw std::string("400");
 		}
 		else if (i == 1)
 			setTarget(element);
 		else if (element != "HTTP/1.1" && element != "HTTP/1.0")
-			throw "400";
+			throw std::string("400");
 		line_request.erase(0, line_request.find(' ') + 1);
 	}
 	setStage(parsing_headers);
@@ -85,7 +87,7 @@ void	HttpRequest::parseHeader(const std::string& line) {
 	std::string value;
 
 	if (std::count(line.begin(), line.end(), ':') < 1)
-		throw "400";
+		throw std::string("400");
 	position = line.find(':');
 	key = line.substr(0, position);
 	position += (line[position + 1] == ' ') ? 2 : 1;
@@ -96,10 +98,10 @@ void	HttpRequest::parseHeader(const std::string& line) {
 
 void		HttpRequest::endOfHeaders() {
 	if (!findHeader("host"))
-		throw "400";
+		throw std::string("400");
 	else if (getMethod() == "PUT" || getMethod() == "POST") {
 		if (!findHeader("content-length") && !findHeader("transfer-encoding"))
-			throw "411";
+			throw std::string("411");
 //		else if (ft_atoi(request->getHeader("content-length").c_str()) > limit_client_body_size) {
 //			response->setStatusCode("413");
 //			request->setStage(bad_request);
