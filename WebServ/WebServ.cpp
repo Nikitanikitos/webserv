@@ -93,7 +93,7 @@ VirtualServer*	WebServ::getVirtualServer(Client *client) const {
 		if (client->getHost() == virtual_server->getHost() && client->getPort() == virtual_server->getPort()) {
 			if (!default_vs) default_vs = virtual_server;
 			for (int j = 0; j < virtual_server->getServerNames().size(); ++j)
-				if (request->getHeader("host") == virtual_server->getServerNames()[j])
+				if (request->findHeader("host") && request->getHeader("host") == virtual_server->getServerNames()[j])
 					return (virtual_server);
 		}
 	}

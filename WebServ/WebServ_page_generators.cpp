@@ -29,8 +29,8 @@ bytes WebServ::autoindexGenerate(HttpRequest *request, const std::string& path_t
 		std::string		file(current_file->d_name);
 		stat(path_to_target.c_str(), &info.info);
 #ifdef __linux__
-		tv.tv_sec = info->info.st_mtim.tv_sec;
-		tv.tv_usec = info->info.st_mtim.tv_nsec;
+		tv.tv_sec = info.info.st_mtim.tv_sec;
+		tv.tv_usec = info.info.st_mtim.tv_nsec;
 #else
 		tv.tv_sec = info.info.st_mtimespec.tv_sec;
 		tv.tv_usec = info.info.st_mtimespec.tv_nsec;

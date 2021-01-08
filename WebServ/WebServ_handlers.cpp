@@ -18,17 +18,16 @@ void	WebServ::readRequest(Client *client) {
 	char			buff[1025];
 	int 			read_bytes;
 
-	if ((read_bytes = recv(client->getSocket(), buff, 1024, 0)) <= 0) {
-		client->setStage(close_connection_);
-		return;
-	}
+	read_bytes = recv(client->getSocket(), buff, 1024, 0);
 	buff[read_bytes] = 0;
-
-	bytes	data(buff, read_bytes);
 	try {
-		request->addDataToRequest(data);
-		if (request->getStage() == completed)
-			client->setStage(generate_response_);
+		if (read_bytes > 0) {
+			request->addDataToRequest(bytes(buff, read_bytes));
+			if (request->getStage() == completed)
+				client->setStage(generate_response_);
+		}
+		else
+			client->setStage(close_connection_);
 	}
 	catch (std::string& status_code) {
 		VirtualServer*	virtual_server = getVirtualServer(client);
@@ -40,7 +39,6 @@ void	WebServ::readRequest(Client *client) {
 		client->generateResponse();
 		client->setStage(send_response_);
 	}
-
 }
 
 void	WebServ::sendResponse(Client* client) {
@@ -48,8 +46,10 @@ void	WebServ::sendResponse(Client* client) {
 
 	client->sendResponse();
 	if (!response->getBuffer().size()) {
-		if (response->findHeader("Connection") && response->getHeader("Connection") == "close")
+		if (response->findHeader("Connection") && response->getHeader("Connection") == "close") {
 			client->setStage(close_connection_);
+			close(client->getSocket());
+		}
 		else
 			client->setStage(parsing_request_);
 		client->clearResponse();
@@ -130,6 +130,14 @@ void WebServ::putMethodHandler(Client* client, Location* location, VirtualServer
 		write(fd, request->getBody().c_str(), request->getBody().size());
 }
 
+bool	isErrorStatus(const std::string& status) {
+	const std::string	status_code[6] = {"400", "403", "404", "405", "411", "413"};
+
+	for (int i = 0; i < 6; ++i)
+		if (status == status_code[i]) return (true);
+	return (false);
+}
+
 void	WebServ::generateResponse(Client *client) {
 	VirtualServer*		virtual_server = getVirtualServer(client);
 	Location*			location = virtual_server->getLocation(client->getRequest());
@@ -145,8 +153,7 @@ void	WebServ::generateResponse(Client *client) {
 		response->setStatusCode("405");
 	else if (info.exists != -1 && S_ISDIR(info.info.st_mode) && request->getTarget()[request->getTarget().size() - 1] != '/') {
 		response->setStatusCode("301");
-		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() +
-										request->getTarget() + "/");
+		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() + request->getTarget() + "/");
 	}
 	else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
 		getHeadMethodHandler(client, location, virtual_server, &info, path_to_target);
@@ -155,7 +162,7 @@ void	WebServ::generateResponse(Client *client) {
 
 	if (request->findHeader("connection") && request->getHeader("connection") == "close")
 		response->addHeader("Connection", "Close");
-	if (HandlerHttpObject::isErrorStatus(response->getStatusCode()))
+	if (isErrorStatus(response->getStatusCode()))
 		setErrorPage(client, location, virtual_server);
 	client->generateResponse();
 	client->setStage(send_response_);

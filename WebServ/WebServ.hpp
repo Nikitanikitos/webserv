@@ -21,7 +21,6 @@
 # include "Client.hpp"
 # include "VirtualServer.hpp"
 # include "ThreadPool.hpp"
-# include "HandlerHttpObject.hpp"
 
 class	WebServ {
 private:

@@ -20,7 +20,6 @@ enum stage {
 	parsing_headers,
 	parsing_body,
 	completed,
-	bad_request,
 };
 
 class	HttpRequest : public HttpObject {
@@ -33,7 +32,9 @@ private:
 	int						stage;
 
 	void					parsingFirstLine(std::string line_request);
-	bool 					isValidMethod(const std::string& method);
+	void					parsingBodyByContentLength(const bytes& data);
+	void					parsingBodyByChunked(bytes& data);
+	bool 					isValidMethod(const std::string& method_);
 	void					parseHeader(const std::string& line);
 	void					endOfHeaders();
 
@@ -49,11 +50,11 @@ public:
 	inline const std::string&			getTarget() const { return (target); }
 	inline int							getStage() const { return (stage); }
 
-	void								addDataToRequest(bytes& data);
+	void								addDataToRequest(bytes data);
 
 	virtual void						clear();
 
-	bytes								getRequestData();
+	bytes getRequestData(bytes& data);
 	inline void							trimBody(size_t n) { body.rtrim(n); }
 };
 

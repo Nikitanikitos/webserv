@@ -45,6 +45,7 @@ public:
 	bytes			substr(size_t i);
 
 	inline size_t			size() const { return (size_); }
+	inline bool				empty() const { return (!size_); }
 	inline const char*		c_str() const { return (buffer); }
 };
 

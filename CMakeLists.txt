@@ -33,8 +33,6 @@ add_executable(webserv
 
 		Client/Client.cpp
 		ThreadPool/ThreadPool.cpp
-
-		HandlerHttpObject/HandlerHttpObject.cpp
 		)
 
 include_directories(
@@ -49,7 +47,6 @@ include_directories(
 		ThreadPool
 		bytes
 		HttpObject
-		HandlerHttpObject
 		)
 
 target_link_libraries(webserv pthread)

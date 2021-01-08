@@ -22,36 +22,41 @@ void					HttpRequest::clear() {
 	stage = 0;
 }
 
-bytes					HttpRequest::getRequestData() {
+bytes HttpRequest::getRequestData(bytes& data) {
 	size_t		i;
-	i = (stage != parsing_body) ? buffer.find("\r\n") : buffer.size();
-	bytes		result = buffer.substr(i);
+	i = (stage != parsing_body) ? data.find("\r\n") : data.size();
+	bytes		result = data.substr(i);
 
-	(i != -1) ? buffer.erase(i + 2) : buffer.erase(i);
+	(i != -1) ? data.erase(i + 2) : data.erase(i);
 	return (result);
 }
 
-void HttpRequest::addDataToRequest(bytes& data) {
-	buffer = data;
-	while (buffer.size()) {
-		bytes	request_data = getRequestData();
+void HttpRequest::addDataToRequest(bytes data) {
+	bytes	request_data;
+
+	while (!data.empty()) {
 		switch (getStage()) {
 			case parsing_first_line:
-				parsingFirstLine(request_data.c_str());
+				parsingFirstLine(getRequestData(data).c_str());
 				break;
 			case parsing_headers:
-				if (!request_data.size())
-					endOfHeaders();
-				else
-					parseHeader(request_data.c_str());
+				request_data = getRequestData(data);
+				request_data.empty() ? endOfHeaders() : parseHeader(request_data.c_str());
 				break;
 			case parsing_body:
-				addToBody(request_data);
-				if (getBody().size() >= ft_atoi(getHeader("content-length").c_str())) {
-					trimBody(0);
-					setStage(completed);
-				}
+				if (findHeader("content-length"))
+					parsingBodyByContentLength(data);
+				else if (findHeader("transfer-encoding"))
+					parsingBodyByChunked(data);
 		}
+	}
+}
+
+void HttpRequest::parsingBodyByContentLength(const bytes& data) {
+	addToBody(data);
+	if (getBody().size() >= ft_atoi(getHeader("content-length").c_str())) {
+		trimBody(getBody().size() - ft_atoi(getHeader("content-length").c_str()));
+		setStage(completed);
 	}
 }
 
@@ -75,9 +80,9 @@ void	HttpRequest::parsingFirstLine(std::string line_request) {
 	setStage(parsing_headers);
 }
 
-bool	HttpRequest::isValidMethod(const std::string& method) {
+bool	HttpRequest::isValidMethod(const std::string& method_) {
 	for (size_t i = 0; i < 4; ++i)
-		if (methods[i] == method) return (true);
+		if (methods[i] == method_) return (true);
 	return (false);
 }
 
@@ -102,10 +107,8 @@ void		HttpRequest::endOfHeaders() {
 	else if (getMethod() == "PUT" || getMethod() == "POST") {
 		if (!findHeader("content-length") && !findHeader("transfer-encoding"))
 			throw std::string("411");
-//		else if (ft_atoi(request->getHeader("content-length").c_str()) > limit_client_body_size) {
-//			response->setStatusCode("413");
-//			request->setStage(bad_request);
-//		}
+		else if (findHeader("transfer-encoding") && getHeader("transfer-encoding") != "chunked")
+			throw std::string("501");
 		else
 			setStage(parsing_body);
 	}
@@ -113,3 +116,8 @@ void		HttpRequest::endOfHeaders() {
 		setStage(completed);
 }
 
+void HttpRequest::parsingBodyByChunked(bytes& data) {
+	while (!data.empty()) {
+		int		content_length = ft_atoi(getRequestData(data).c_str());
+	}
+}
