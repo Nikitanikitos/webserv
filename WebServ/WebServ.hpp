@@ -50,6 +50,7 @@ private:
 	static std::string			getPathToTarget(HttpRequest *request, Location* location);
 
 	void						addNewClient(fd_set& readfd_set);
+	void deleteClient(std::vector<Client*>::iterator& client);
 	void						addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, int& max_fd);
 	void						addClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set);
 	void						initSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);

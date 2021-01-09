@@ -26,20 +26,21 @@ class	HttpRequest : public HttpObject {
 private:
 	static const std::string		methods[4];
 
-	std::string				method;
-	std::string				query;
-	std::string				target;
-	int						stage;
+	std::string						method;
+	std::string						query;
+	std::string						target;
+	int								stage;
+	int								chunk_size;
 
-	void					parsingFirstLine(std::string line_request);
-	void					parsingBodyByContentLength(const bytes& data);
-	void					parsingBodyByChunked(bytes& data);
-	bool 					isValidMethod(const std::string& method_);
-	void					parseHeader(const std::string& line);
-	void					endOfHeaders();
+	void							parsingFirstLine(std::string line_request);
+	void							parsingBodyByContentLength(const bytes& data);
+	void							parsingBodyByChunked(bytes& data);
+	bool 							isValidMethod(const std::string& method_);
+	void							parseHeader(const std::string& line);
+	void							endOfHeaders();
 
 public:
-	HttpRequest() : stage(0) { }
+	HttpRequest() : stage(0), chunk_size(-1) { }
 	virtual ~HttpRequest() { }
 
 	inline void							setTarget(const std::string& target_) { target = target_; }
@@ -54,7 +55,7 @@ public:
 
 	virtual void						clear();
 
-	bytes getRequestData(bytes& data);
+	bytes								getRequestData(bytes& data) const;
 	inline void							trimBody(size_t n) { body.rtrim(n); }
 };
 

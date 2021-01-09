@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #ifndef WEBSERV_CLIENT_HPP
-#define WEBSERV_CLIENT_HPP
+# define WEBSERV_CLIENT_HPP
 
 # include "HttpRequest.hpp"
 # include "HttpResponse.hpp"
@@ -24,9 +24,9 @@ enum Stage {
 	close_connection_,
 };
 
-enum TimeOut { TimeOut = 10, };
+enum TimeOut { TimeOut = 40, };
 
-class Client {
+class	Client {
 private:
 	int 					socket;
 	int 					stage;

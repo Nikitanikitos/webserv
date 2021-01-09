@@ -27,6 +27,7 @@ char*					ft_itoa(int n);
 uint16_t				ft_htons(uint16_t);
 uint32_t				ft_htonl(uint32_t);
 int						ft_atoi(const char* nptr);
+int						ft_atoi_hex(const char* nptr);
 
 void					ft_tolower(char& c);
 void					ft_localtime(tm&, time_t);

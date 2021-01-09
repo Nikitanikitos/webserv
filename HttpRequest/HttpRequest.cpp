@@ -15,14 +15,14 @@
 const std::string		HttpRequest::methods[4] =
 		{"GET", "HEAD", "POST", "PUT"};
 
-void					HttpRequest::clear() {
+void		HttpRequest::clear() {
 	HttpObject::clear();
 	method.clear();
 	target.clear();
 	stage = 0;
 }
 
-bytes HttpRequest::getRequestData(bytes& data) {
+bytes		HttpRequest::getRequestData(bytes& data) const {
 	size_t		i;
 	i = (stage != parsing_body) ? data.find("\r\n") : data.size();
 	bytes		result = data.substr(i);
@@ -31,7 +31,7 @@ bytes HttpRequest::getRequestData(bytes& data) {
 	return (result);
 }
 
-void HttpRequest::addDataToRequest(bytes data) {
+void		HttpRequest::addDataToRequest(bytes data) {
 	bytes	request_data;
 
 	while (!data.empty()) {
@@ -52,7 +52,7 @@ void HttpRequest::addDataToRequest(bytes data) {
 	}
 }
 
-void HttpRequest::parsingBodyByContentLength(const bytes& data) {
+void		HttpRequest::parsingBodyByContentLength(const bytes& data) {
 	addToBody(data);
 	if (getBody().size() >= ft_atoi(getHeader("content-length").c_str())) {
 		trimBody(getBody().size() - ft_atoi(getHeader("content-length").c_str()));
@@ -60,7 +60,7 @@ void HttpRequest::parsingBodyByContentLength(const bytes& data) {
 	}
 }
 
-void	HttpRequest::parsingFirstLine(std::string line_request) {
+void		HttpRequest::parsingFirstLine(std::string line_request) {
 	if (std::count(line_request.begin(), line_request.end(), ' ') != 2)
 		throw std::string("400");
 
@@ -80,13 +80,13 @@ void	HttpRequest::parsingFirstLine(std::string line_request) {
 	setStage(parsing_headers);
 }
 
-bool	HttpRequest::isValidMethod(const std::string& method_) {
+bool		HttpRequest::isValidMethod(const std::string& method_) {
 	for (size_t i = 0; i < 4; ++i)
 		if (methods[i] == method_) return (true);
 	return (false);
 }
 
-void	HttpRequest::parseHeader(const std::string& line) {
+void		HttpRequest::parseHeader(const std::string& line) {
 	size_t		position;
 	std::string key;
 	std::string value;
@@ -116,8 +116,16 @@ void		HttpRequest::endOfHeaders() {
 		setStage(completed);
 }
 
-void HttpRequest::parsingBodyByChunked(bytes& data) {
+void		HttpRequest::parsingBodyByChunked(bytes& data) {
 	while (!data.empty()) {
-		int		content_length = ft_atoi(getRequestData(data).c_str());
+		if (chunk_size == -1)
+			chunk_size = ft_atoi_hex(getRequestData(data).c_str());
+		if (chunk_size == 0)
+			setStage(completed);
+		else {
+			addToBody(data.substr(chunk_size));
+			data.erase(chunk_size + 2);
+			chunk_size = -1;
+		}
 	}
 }

@@ -13,7 +13,7 @@
 #include <iostream>
 #include "WebServ.hpp"
 
-void	WebServ::readRequest(Client *client) {
+void	WebServ::readRequest(Client* client) {
 	HttpRequest*	request = client->getRequest();
 	char			buff[1025];
 	int 			read_bytes;
@@ -49,6 +49,7 @@ void	WebServ::sendResponse(Client* client) {
 		if (response->findHeader("Connection") && response->getHeader("Connection") == "close") {
 			client->setStage(close_connection_);
 			close(client->getSocket());
+			write(1, "hello\n", 6);
 		}
 		else
 			client->setStage(parsing_request_);
