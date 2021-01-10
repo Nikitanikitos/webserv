@@ -22,6 +22,7 @@ void	WebServ::readRequest(Client* client) {
 	buff[read_bytes] = 0;
 	try {
 		if (read_bytes > 0) {
+			client->setNewConnectionTime();
 			request->addDataToRequest(bytes(buff, read_bytes));
 			if (request->getStage() == completed)
 				client->setStage(generate_response_);
@@ -45,11 +46,10 @@ void	WebServ::sendResponse(Client* client) {
 	HttpResponse*		response = client->getResponse();
 
 	client->sendResponse();
-	if (!response->getBuffer().size()) {
+	if (response->getBuffer().empty()) {
 		if (response->findHeader("Connection") && response->getHeader("Connection") == "close") {
 			client->setStage(close_connection_);
 			close(client->getSocket());
-			write(1, "hello\n", 6);
 		}
 		else
 			client->setStage(parsing_request_);
@@ -107,7 +107,7 @@ void	WebServ::getHeadMethodHandler(Client* client, Location* location, VirtualSe
 		response->setBody(body);
 }
 
-void WebServ::putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, t_stat* info,
+void	WebServ::putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, t_stat* info,
 							   std::string& path_to_target) {
 	int 			fd;
 	HttpRequest*	request = client->getRequest();
@@ -139,12 +139,34 @@ bool	isErrorStatus(const std::string& status) {
 	return (false);
 }
 
+//bool	WebServ::checkAuth(Client* client, const std::string& root) {
+//	int					fd;
+//	bool				result;
+//	HttpRequest*		request = client->getRequest();
+//	HttpResponse*		response = client->getResponse();
+//	std::string			realm;
+//	std::string			path_to_htpasswd;
+//
+//	result = true;
+//	if ((fd = open((root + ".htaccess").c_str(), O_RDONLY)) != -1) {
+//		getInfoOutHtaccess(realm, path_to_htpasswd);
+//		if (request->findHeader("authorization") && checkValidAuth(request->getHeader("authorization"), path_to_htpasswd))
+//			result = true;
+//		else {
+//			result = false;
+//			response->addHeader("WWW-Authenticate", "Basic realm=" + realm);
+//		}
+//		close(fd);
+//	}
+//	return (result);
+//}
+
 void	WebServ::generateResponse(Client *client) {
 	VirtualServer*		virtual_server = getVirtualServer(client);
 	Location*			location = virtual_server->getLocation(client->getRequest());
 	HttpRequest*		request = client->getRequest();
-	std::string			path_to_target = (location) ? getPathToTarget(request, location) : "";
 	HttpResponse*		response = client->getResponse();
+	std::string			path_to_target = (location) ? getPathToTarget(request, location) : "";
 	t_stat				info;
 
 	info.exists = stat(path_to_target.c_str(), &info.info);

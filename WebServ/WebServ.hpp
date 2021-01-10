@@ -50,7 +50,7 @@ private:
 	static std::string			getPathToTarget(HttpRequest *request, Location* location);
 
 	void						addNewClient(fd_set& readfd_set);
-	void deleteClient(std::vector<Client*>::iterator& client);
+	void						deleteClient(std::vector<Client*>::iterator& client);
 	void						addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, int& max_fd);
 	void						addClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set);
 	void						initSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
@@ -58,6 +58,8 @@ private:
 	static void					setErrorPage(Client *client, Location *location, VirtualServer *virtual_server);
 	static bytes				generateErrorPage(const std::string& code);
 
+	bool						checkAuth(Client* client, const std::string& root);
+	bool						checkExistHtaccess(const std::string& root);
 public:
 	static int working;
 

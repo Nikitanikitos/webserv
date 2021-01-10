@@ -65,10 +65,10 @@ void				WebServ::runServer() {
 	int 			max_fd;
 	struct timeval	tv;
 
-	tv.tv_sec = TimeOut;
-	tv.tv_usec = 0;
 	createWorkers();
+	tv.tv_usec = 0;
 	while (WebServ::working) {
+		tv.tv_sec = TimeOut;
 		initSets(writefd_set, readfd_set, max_fd);
 		addClientSocketInSet(readfd_set, writefd_set, max_fd);
 
