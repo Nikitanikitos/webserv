@@ -24,13 +24,17 @@
 # define CRLF			"\r\n"
 # define SP				" "
 
+enum {
+	count_status_code = 11,
+};
+
 class HttpResponse : public HttpObject {
 private:
 	std::string								status_code;
 	std::string								message_phrase;
 
 public:
-	static const std::string	message_phrases[10][2];
+	static const std::string	message_phrases[count_status_code][2];
 
 	HttpResponse() { }
 	virtual ~HttpResponse() { }

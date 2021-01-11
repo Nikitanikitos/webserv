@@ -33,6 +33,7 @@ void					ft_tolower(char& c);
 void					ft_localtime(tm&, time_t);
 
 std::string				ft_getdate(struct timeval& tv);
+std::string				ft_decode64base(const std::string& data);
 
 bytes					ft_getfile(const char *path);
 

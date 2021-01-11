@@ -74,7 +74,7 @@ void				WebServ::runServer() {
 
 		select(max_fd + 1, &readfd_set, &writefd_set, 0, &tv);
 
-//		std::cout << clients.size() << std::endl;
+		std::cout << clients.size() << std::endl;
 
 		addNewClient(readfd_set);
 		addClientInTaskQueue(readfd_set, writefd_set);
@@ -118,8 +118,6 @@ void			WebServ::addVirtualServer(VirtualServer *virtual_server) {
 }
 
 void			WebServ::deleteClient(std::vector<Client*>::iterator& client) {
-	if ((*client)->connectionTimedOut())
-		close((*client)->getSocket());
 	delete *client;
 	clients.erase(client);
 	client = clients.begin();

@@ -26,7 +26,7 @@ Client::Client(int socket, const std::string& ip, const std::string& port)
 Client::~Client() {
 	delete response;
 	delete request;
-//	close(socket);
+	close(socket);
 }
 
 bool					Client::connectionTimedOut() {
