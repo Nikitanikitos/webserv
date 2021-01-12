@@ -21,13 +21,13 @@ enum {
 	non_accepted = false
 };
 
+enum { count_methods = 4, };
+
 enum {
 	GET,
 	HEAD,
 	POST,
 	PUT,
-	DELETE,
-	OPTIONS,
 };
 
 enum {
@@ -45,13 +45,15 @@ private:
 	std::string			index;
 	bool				autoindex;
 	bool 				location_type;
+	size_t				limit_client_body_size;
+//	                    client_max_body_size // TODO переименовать?
 
 public:
 	Location();
 	~Location() { }
 
-	void	 						eraseAcceptedMethods();
-	inline void						addAllowMethod(bool method) { allow_methods[method] = accepted; }
+	inline void						eraseAcceptedMethods() { allow_methods.assign(count_methods, non_accepted); }
+	inline void						addAllowMethod(int method) { allow_methods[method] = accepted; }
 	bool							isAllowMethod(const std::string& method) const;
 
 	inline void						setLocationType(bool location_type_) { location_type = location_type_; }
@@ -61,8 +63,11 @@ public:
 	inline void						setAutoindex(bool autoindex_) { autoindex = autoindex_; }
 	inline void						setPath(const std::string& path_) { path = path_; }
 	inline void 					setExtension(const std::string &extension_) { extension = extension_;}
+	inline void						setLimitClientBodySize(size_t limitClientBodySize)
+		{ limit_client_body_size = limitClientBodySize; }
 
 	inline const std::string&		getIndex() const { return (index); }
+	inline size_t					getLimitClientBodySize() const { return (limit_client_body_size); }
 	inline const std::string&		getPath() const { return (path); }
 	inline const std::string&		getExtension() const { return (extension); }
 	inline const std::string&		getRoot() const { return (root); }

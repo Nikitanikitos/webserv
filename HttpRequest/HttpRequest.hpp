@@ -33,7 +33,7 @@ private:
 	int								chunk_size;
 
 	void							parsingFirstLine(std::string line_request);
-	void							parsingBodyByContentLength(const bytes& data);
+	void							parsingBodyByContentLength(bytes& data);
 	void							parsingBodyByChunked(bytes& data);
 	bool 							isValidMethod(const std::string& method_);
 	void							parseHeader(const std::string& line);

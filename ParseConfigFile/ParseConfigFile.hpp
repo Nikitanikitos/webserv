@@ -19,7 +19,6 @@
 enum {
     server_names_d,
     error_page_d,
-    limit_body_size_d,
     host_d,
     port_d,
     location_d
@@ -32,6 +31,12 @@ enum {
     index_d,
     cgi_pass_d,
     extension_d,
+	limit_client_body_size_d,
+};
+
+enum {
+	location_directive = 7,
+	virtual_server_directive = 5
 };
 
 class	ParseConfigFile {
@@ -56,13 +61,13 @@ private:
 
 	bool						checkCorrectVs(const VirtualServer *virtual_server, const std::vector<VirtualServer*>& list_virtual_server);
 public:
-	explicit ParseConfigFile(char *filename)  : filename(filename) { }
+	explicit ParseConfigFile(char *filename)  : filename(filename), fd(0) { }
 	~ParseConfigFile() { }
 
 	std::vector<VirtualServer*> ParseFile(std::string &numberOfWorkers);
 
-	static std::string		server_current_fields[6];
-	static std::string		location_current_fields[7];
+	static std::string		server_current_fields[virtual_server_directive];
+	static std::string		location_current_fields[location_directive];
 
 	class ParseConfigFileException: public std::exception {
 	private:

@@ -52,10 +52,12 @@ void		HttpRequest::addDataToRequest(bytes data) {
 	}
 }
 
-void		HttpRequest::parsingBodyByContentLength(const bytes& data) {
+void		HttpRequest::parsingBodyByContentLength(bytes& data) {
 	addToBody(data);
+	data.erase(data.size());
 	if (getBody().size() >= ft_atoi(getHeader("content-length").c_str())) {
-		trimBody(getBody().size() - ft_atoi(getHeader("content-length").c_str()));
+		if (getBody().size() > ft_atoi(getHeader("content-length").c_str()))
+			trimBody(getBody().size() - ft_atoi(getHeader("content-length").c_str()));
 		setStage(completed);
 	}
 }
