@@ -21,7 +21,10 @@
 # include "Client.hpp"
 # include "VirtualServer.hpp"
 # include "ThreadPool.hpp"
-# include "HandlerHttpObject.hpp"
+
+enum {
+	count_error_pages = 7,
+};
 
 class	WebServ {
 private:
@@ -51,12 +54,17 @@ private:
 	static std::string			getPathToTarget(HttpRequest *request, Location* location);
 
 	void						addNewClient(fd_set& readfd_set);
+	void						deleteClient(std::vector<Client*>::iterator& client);
 	void						addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, int& max_fd);
 	void						addClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set);
 	void						initSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd);
 
 	static void					setErrorPage(Client *client, Location *location, VirtualServer *virtual_server);
 	static bytes				generateErrorPage(const std::string& code);
+
+	bool						checkAuth(Client* client, const std::string& root);
+	bool						checkValidAuth(const std::string& login_password, const std::string& path_to_htpasswd);
+	void						getInfoOutHtaccess(int fd, std::string& realm, std::string& path_to_htpasswd);
 
 public:
 	static int working;

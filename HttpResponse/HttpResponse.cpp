@@ -13,12 +13,13 @@
 #include <stdlib.h>
 #include "HttpResponse.hpp"
 
-const std::string	HttpResponse::message_phrases[10][2] = {
+const std::string	HttpResponse::message_phrases[count_status_code][2] = {
 		{"200", "OK"},
 		{"201", "Created"},
 		{"301", "Moved Permanently"},
 		{"302", "Found"},
 		{"400", "Bad Request"},
+		{"401", "Unauthorized"},
 		{"403", "Forbidden"},
 		{"404", "Not Found"},
 		{"405", "Method Not Allowed"},
@@ -27,7 +28,7 @@ const std::string	HttpResponse::message_phrases[10][2] = {
 };
 
 std::string			HttpResponse::getMessagePhrase(const std::string& code) {
-	for (int i = 0; i < 10; ++i) {
+	for (int i = 0; i < count_status_code; ++i) {
 		if (HttpResponse::message_phrases[i][0] == code)
 			return (HttpResponse::message_phrases[i][1]);
 	}

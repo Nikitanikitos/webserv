@@ -20,18 +20,27 @@ enum stage {
 	parsing_headers,
 	parsing_body,
 	completed,
-	bad_request,
 };
 
 class	HttpRequest : public HttpObject {
 private:
-	std::string				method;
-	std::string				query;
-	std::string				target;
-	int						stage;
+	static const std::string		methods[4];
+
+	std::string						method;
+	std::string						query;
+	std::string						target;
+	int								stage;
+	int								chunk_size;
+
+	void							parsingFirstLine(std::string line_request);
+	void							parsingBodyByContentLength(const bytes& data);
+	void							parsingBodyByChunked(bytes& data);
+	bool 							isValidMethod(const std::string& method_);
+	void							parseHeader(const std::string& line);
+	void							endOfHeaders();
 
 public:
-	HttpRequest() : stage(0) { }
+	HttpRequest() : stage(0), chunk_size(-1) { }
 	virtual ~HttpRequest() { }
 
 	inline void							setTarget(const std::string& target_) { target = target_; }
@@ -42,10 +51,12 @@ public:
 	inline const std::string&			getTarget() const { return (target); }
 	inline int							getStage() const { return (stage); }
 
-	virtual void					clear();
+	void								addDataToRequest(bytes data);
 
-	bytes							getRequestData();
-	inline void						trimBody(size_t n) { body.rtrim(n); }
+	virtual void						clear();
+
+	bytes								getRequestData(bytes& data) const;
+	inline void							trimBody(size_t n) { body.rtrim(n); }
 };
 
 #endif //WEBSERV_HTTPREQUEST_HPP

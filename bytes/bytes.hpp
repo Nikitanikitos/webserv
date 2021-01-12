@@ -27,6 +27,7 @@ public:
 	bytes() : size_(0), buffer() { buffer = new char[1]; }
 	~bytes() { delete []buffer; }
 
+	bytes(const char* data, size_t size) : size_(size) { buffer = bytedup(data, size); }
 	bytes(const bytes& string) : size_(string.size_) { buffer = bytedup(string.buffer, size_); }
 	bytes(const std::string& string) : size_(string.size()) { buffer = bytedup(string.c_str(), string.size()); }
 
@@ -44,6 +45,7 @@ public:
 	bytes			substr(size_t i);
 
 	inline size_t			size() const { return (size_); }
+	inline bool				empty() const { return (!size_); }
 	inline const char*		c_str() const { return (buffer); }
 };
 

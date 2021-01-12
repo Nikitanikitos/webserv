@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/18 18:17:41 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:42:53 by imicah           ###   ########.fr       */
+/*   Updated: 2020/12/24 18:24:03 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,25 @@ bytes WebServ::autoindexGenerate(HttpRequest *request, const std::string& path_t
 	bytes			body_response;
 	DIR*			directory;
 	dirent*			current_file;
+	struct timeval	tv;
+	t_stat			info;
 
 	directory = opendir(path_to_target.c_str());
 	current_file = readdir(directory);
 	current_file = readdir(directory);
 	body_response.add("<html><head><title>Index of " + request->getTarget() + "</title></head><body>"
 																			  "<h1>Index of " + request->getTarget() +
-					  "</h1><hr><pre><a href=\"../\">../</a><br>");
+					  "</h1><hr><pre><a href=\"../\">../</a>""<br>");
 	while ((current_file = readdir(directory))) {
 		std::string		file(current_file->d_name);
+		stat(path_to_target.c_str(), &info.info);
+#ifdef __linux__
+		tv.tv_sec = info.info.st_mtim.tv_sec;
+		tv.tv_usec = info.info.st_mtim.tv_nsec;
+#else
+		tv.tv_sec = info.info.st_mtimespec.tv_sec;
+		tv.tv_usec = info.info.st_mtimespec.tv_nsec;
+#endif
 		if (current_file->d_type == 4)
 			file.append("/");
 		body_response.add("<a href=\"" + file + "\">" + file + "</a><br>");

@@ -16,6 +16,7 @@ add_executable(webserv
 		libft/ft_getfile.cpp
 		libft/ft_itoa.cpp
 		libft/ft_tolower.cpp
+		libft/ft_decode64base.cpp
 
 		WebServ/WebServ.cpp
 		WebServ/WebServ_workers.cpp
@@ -33,8 +34,6 @@ add_executable(webserv
 
 		Client/Client.cpp
 		ThreadPool/ThreadPool.cpp
-
-		HandlerHttpObject/HandlerHttpObject.cpp
 		)
 
 include_directories(
@@ -49,7 +48,6 @@ include_directories(
 		ThreadPool
 		bytes
 		HttpObject
-		HandlerHttpObject
 		)
 
 target_link_libraries(webserv pthread)
