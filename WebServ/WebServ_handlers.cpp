@@ -202,14 +202,14 @@ void	WebServ::generateResponse(Client *client) {
 		response->setStatusCode("301");
 		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() + request->getTarget() + "/");
 	}
-	else if (isCgi())
+	else// if (isCgi())
 		cgiHandler(client, path_to_target);
-	else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
-		DefaultHandler(client, location, virtual_server, &info, path_to_target);
-	else if (request->getMethod() == "PUT")
-		putMethodHandler(client, location, virtual_server, &info, path_to_target);
-	else
-		response->setStatusCode("405");
+//	else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
+//		DefaultHandler(client, location, virtual_server, &info, path_to_target);
+//	else if (request->getMethod() == "PUT")
+//		putMethodHandler(client, location, virtual_server, &info, path_to_target);
+//	else
+//		response->setStatusCode("405");
 
 	if (request->findHeader("connection") && request->getHeader("connection") == "close")
 		response->addHeader("Connection", "Close");

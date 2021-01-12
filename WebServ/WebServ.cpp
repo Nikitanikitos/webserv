@@ -144,11 +144,13 @@ void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_t
 //    env[16] = strdup("SERVER_SOFTWARE=web"); // название
 //    env[17] = nullptr;
 
-	env[1] = strdup((std::string("QUERY_STRING=") + client->getRequest()->getQuery()).c_str());
-	if (client->getRequest()->getQuery()) // В случае POST и PUT размер body (из запроса)
-		env[2] = strdup((std::string("CONTENT_LENGTH=") + client->getRequest()->getQuery().size()));
-	else
-		env[2] = strdup((std::string("CONTENT_LENGTH=") + client->getRequest()->getHeader("content-length")).c_str());
+//	env[1] = strdup((std::string("QUERY_STRING=") + client->getRequest()->getQuery()).c_str());
+//	if (client->getRequest()->getQuery()) // В случае POST и PUT размер body (из запроса)
+//		env[2] = strdup((std::string("CONTENT_LENGTH=") + client->getRequest()->getQuery().size()));
+//	else
+//		env[2] = strdup((std::string("CONTENT_LENGTH=") + client->getRequest()->getHeader("content-length")).c_str());
+    env[1] = strdup((std::string("QUERY_STRING=") + "first_name=Lebrus&last_name=Shupay&maths=PEZDA").c_str()); // Get все, что после знака вопроса (поле запроса)
+    env[2] = strdup("CONTENT_LENGTH=46");
 	if (client->getRequest()->findHeader("content-type"))
 		env[3] = strdup((std::string("CONTENT_TYPE=") + client->getRequest()->getHeader("content-type")).c_str());
 	else
@@ -171,6 +173,7 @@ void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_t
 
 void WebServ::cgiHandler(Client *client, const std::string &path_to_target) {
 	int fds[2];
+	int status = 0;
 	pid_t pid;
 	pipe(fds);
 	pid = fork();
@@ -179,20 +182,21 @@ void WebServ::cgiHandler(Client *client, const std::string &path_to_target) {
 		dup2(fds[0], 0);
 		dup2(fds[1], 1);
 		setEnvForCgi(env, client, std::string());
-		char *argv[3] = {const_cast<char *>(path_to_target.c_str()), const_cast<char *>(path_to_target.c_str()), 0}; // добавить путь к интепритатору
+		char *argv[3] = {"/usr/bin/python", const_cast<char *>(path_to_target.c_str()), 0}; // добавить путь к интепритатору
 		if (client->getRequest()->findHeader("content-length"))
 			write(fds[1], client->getRequest()->getBody().c_str(), client->getRequest()->getBody().size());
 		int pp = execve(argv[0], argv, env);
+//		std::cout << "hello" << '\n';
 		exit(pp);
 	} else {
-		wait(0);
+		wait(&status);
 		char buff[1024];
 		int read_bytes;
 
-		while ((read_bytes = (read(fds[0], buff, 1024) > 0)))
+		close(fds[1]);
+		while ((read_bytes = (read(fds[0], buff, 1024))) > 0)
 			client->getResponse()->addToBuffer(buff, read_bytes);
 		close(fds[0]);
-		close(fds[1]);
 	}
 }
 
