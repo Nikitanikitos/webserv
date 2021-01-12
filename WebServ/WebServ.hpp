@@ -66,8 +66,8 @@ private:
 	static bool					checkValidAuth(const std::string& login_password, const std::string& path_to_htpasswd);
 	static void					getInfoOutHtaccess(int fd, std::string& realm, std::string& path_to_htpasswd);
 
-	void 						cgiHandler(Client *client, std::string path_to_target);
-	void 						setEnvForCgi(char **env, Client *client, std::string path_to_target);
+	void 						cgiHandler(Client *client, const std::string &path_to_target);
+	void 						setEnvForCgi(char **env, Client *client, const std::string &path_to_target);
 
 public:
 	static int working;

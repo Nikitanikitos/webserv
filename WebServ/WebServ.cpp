@@ -123,7 +123,7 @@ void			WebServ::deleteClient(std::vector<Client*>::iterator& client) {
 	client = clients.begin();
 }
 
-void WebServ::setEnvForCgi(char **env, Client *client, std::string path_to_target) {
+void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_to_target) {
 	env[0] = strdup("AUTH_TYPE=basic"); // basic
 
 //    env[1] = strdup((std::string("QUERY_STRING=") + "first_name=Lebrus&last_name=Shupay&maths=PEZDA").c_str()); // Get все, что после знака вопроса (поле запроса)
@@ -169,7 +169,7 @@ void WebServ::setEnvForCgi(char **env, Client *client, std::string path_to_targe
 	env[17] = nullptr;
 }
 
-void WebServ::cgiHandler(Client *client, std::string path_to_target) {
+void WebServ::cgiHandler(Client *client, const std::string &path_to_target) {
 	int fds[2];
 	pid_t pid;
 	pipe(fds);
