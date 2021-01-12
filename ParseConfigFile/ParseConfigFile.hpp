@@ -29,13 +29,12 @@ enum {
     root_d,
     autoindex_d,
     index_d,
-    cgi_pass_d,
-    extension_d,
+    cgi_d,
 	limit_client_body_size_d,
 };
 
 enum {
-	location_directive = 7,
+	location_directive = 6,
 	virtual_server_directive = 5
 };
 
@@ -58,28 +57,29 @@ private:
 	void 						setAutoindexInLocation(Location *location, const std::vector<std::string>& trimmedStr);
 	std::string&				checkLocationPath(std::string &path) const;
 	bool 						checkPort(int port) const;
+	bool						checkCorrectVs(const VirtualServer *virtual_server,
+						  										const std::vector<VirtualServer*>& list_virtual_server);
 
-	bool						checkCorrectVs(const VirtualServer *virtual_server, const std::vector<VirtualServer*>& list_virtual_server);
 public:
 	explicit ParseConfigFile(char *filename)  : filename(filename), fd(0) { }
 	~ParseConfigFile() { }
 
 	std::vector<VirtualServer*> ParseFile(std::string &numberOfWorkers);
 
+	void						AddVirtualServer(const std::string& line, std::vector<VirtualServer*>& virtualServers);
+
 	static std::string		server_current_fields[virtual_server_directive];
 	static std::string		location_current_fields[location_directive];
 
-	class ParseConfigFileException: public std::exception {
+	class	ParseConfigFileException: public std::exception {
 	private:
-		std::string 			_message;
+		std::string		_message;
 	public:
 		ParseConfigFileException(std::string const &message) : _message("Config File: " + message) { }
 		virtual ~ParseConfigFileException() throw() { }
 
 		virtual const char*		what() const throw() { return (_message.c_str()); }
 	};
-
-	void AddVirtualServer(const std::string& line, std::vector<VirtualServer*>& virtualServers);
 };
 
 #endif //WEBSERV_PARSECONFIGFILE_HPP

@@ -30,7 +30,6 @@ std::string ParseConfigFile::location_current_fields[location_directive] = {
 		"autoindex",
 		"index",
 		"cgi_pass",
-		"extension",
 		"limit_client_body_size",
 };
 
@@ -186,17 +185,11 @@ Location*			ParseConfigFile::parseLocationDirective(std::string &locationAttribu
 					throw ParseConfigFileException("Index has no parameter");
 				location->setIndex(trimmedStr[1]);
 				break;
-			case cgi_pass_d:
-				if (trimmedStr.size() != 2)
-					throw ParseConfigFileException("Cgi_pass has no parameter");
-				location->setLocationType(cgi_location);
-				location->setCgiPath(trimmedStr[1]);
-				break;
-			case extension_d:
-				if (trimmedStr.size() != 2)
-					throw ParseConfigFileException("Extension has no parameter");
-				location->setExtension(trimmedStr[1]);
-				break;
+//			case cgi_d: // TODO изменить парсинг cgi вот здесь
+//				if (trimmedStr.size() != 2)
+//					throw ParseConfigFileException("Cgi_pass has no parameter");
+//				location->setCgiPath(trimmedStr[1], <#initializer#>);
+//				break;
 			case limit_client_body_size_d:
 				if (trimmedStr.size() == 2 && ONLY_DIGITS(trimmedStr[1]))
 					location->setLimitClientBodySize(ft_atoi(trimmedStr[1].c_str()));
@@ -216,7 +209,6 @@ std::vector<VirtualServer*>		ParseConfigFile::ParseFile(std::string& numberOfWor
 
 	if ((fd = open(filename, O_RDONLY)) < 0)
 		throw ParseConfigFileException("Config file can not be opened");
-	virtualServers.reserve(8);
 	while (!line_surplus.empty() || ft_getline(fd, line)) {
 		if (!line_surplus.empty()) {
 			line = line_surplus;
@@ -248,7 +240,6 @@ void	ParseConfigFile::AddVirtualServer(const std::string& line, std::vector<Virt
 bool	ParseConfigFile::checkCorrectVs(const VirtualServer *virtual_server,
 										const std::vector<VirtualServer*>& list_virtual_server) {
 	for (int i = 0; i < list_virtual_server.size(); ++i)
-		if (*virtual_server == *(list_virtual_server[i]))
-			return (false);
+		if (*virtual_server == *(list_virtual_server[i])) return (false);
 	return (true);
 }
