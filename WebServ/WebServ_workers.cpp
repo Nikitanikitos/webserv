@@ -23,23 +23,23 @@ void*	worker(void* arg) {
 			Client*		client = thread_pool.popTask();
 			thread_pool.unlockQueueMutex();
 			switch (client->getStage()) {
-				case parsing_request_:
+				case parsing_request:
 					thread_pool.lockReadStageMutex();
 					web_serv.readRequest(client);
 					thread_pool.unlockReadStageMutex();
 					break;
-				case generate_response_:
+				case generate_response:
 					thread_pool.lockGenerateStageMutex();
 					web_serv.generateResponse(client);
 					thread_pool.unlockGenerateStageMutex();
 					break;
-				case send_response_:
+				case send_response:
 					thread_pool.lockSendStageMutex();
 					web_serv.sendResponse(client);
 					thread_pool.unlockSendStageMutex();
 					break;
 			}
-			if (client->getStage() != parsing_request_ && client->getStage() != close_connection_ && client->getStage() != parsing_request_)
+			if (client->getStage() != parsing_request && client->getStage() != close_connection && client->getStage() != parsing_request)
 				thread_pool.pushTask(client);
 			else
 				client->setProcessed(false);

@@ -18,10 +18,10 @@
 # include <zconf.h>
 
 enum Stage {
-	parsing_request_,
-	generate_response_,
-	send_response_,
-	close_connection_,
+	parsing_request,
+	generate_response,
+	send_response,
+	close_connection,
 };
 
 enum TimeOut { TimeOut = 40, };

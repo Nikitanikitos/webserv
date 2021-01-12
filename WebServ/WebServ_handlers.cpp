@@ -25,10 +25,10 @@ void	WebServ::readRequest(Client* client) {
 			client->setNewConnectionTime();
 			request->addDataToRequest(bytes(buff, read_bytes));
 			if (request->getStage() == completed)
-				client->setStage(generate_response_);
+				client->setStage(generate_response);
 		}
 		else
-			client->setStage(close_connection_);
+			client->setStage(close_connection);
 	}
 	catch (std::string& status_code) {
 		VirtualServer*	virtual_server = getVirtualServer(client);
@@ -38,7 +38,7 @@ void	WebServ::readRequest(Client* client) {
 		setErrorPage(client, location, virtual_server);
 		client->getResponse()->addHeader("Connection", "close");
 		client->generateResponse();
-		client->setStage(send_response_);
+		client->setStage(send_response);
 	}
 }
 
@@ -48,9 +48,9 @@ void	WebServ::sendResponse(Client* client) {
 	client->sendResponse();
 	if (response->getBuffer().empty()) {
 		if (response->findHeader("Connection") && response->getHeader("Connection") == "close")
-			client->setStage(close_connection_);
+			client->setStage(close_connection);
 		else
-			client->setStage(parsing_request_);
+			client->setStage(parsing_request);
 		client->clearResponse();
 		client->clearRequest();
 	}
@@ -70,23 +70,21 @@ void	WebServ::setErrorPage(Client* client, Location* location, VirtualServer* vi
 }
 
 void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* virtual_server,  // TODO убрать virtual_server если в конце будет не нужен
-								t_stat* info, std::string& path_to_target) {
+																		t_stat* info, std::string& path_to_target) {
 	HttpRequest*		request = client->getRequest();
 	HttpResponse*		response = client->getResponse();
 	struct timeval		tv;
 	int 				fd;
 
 	response->setStatusCode("200");
-	if (info->exists == -1)
-		response->setStatusCode("404");
-	else if (S_ISDIR(info->info.st_mode) && !location->getIndex().empty() && (fd = open((path_to_target + location->getIndex()).c_str(), O_RDONLY)) != -1) {
+	if (S_ISDIR(info->info.st_mode) && (fd = open((path_to_target + location->getIndex()).c_str(), O_RDONLY)) != -1) {
 		path_to_target.append(location->getIndex());
 		info->exists = stat(path_to_target.c_str(), &info->info);
 		close(fd);
 	}
 	else if (S_ISDIR(info->info.st_mode) && !location->getAutoindex())
 		response->setStatusCode("403");
-	if (info->exists != -1 && (S_ISREG(info->info.st_mode) || S_ISLNK(info->info.st_mode))) {
+	if (S_ISREG(info->info.st_mode) || S_ISLNK(info->info.st_mode)) {
 		response->setBody(ft_getfile(path_to_target.c_str()));
 #ifdef __linux__
 		tv.tv_sec = info->info.st_mtim.tv_sec;
@@ -97,7 +95,7 @@ void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* 
 #endif
 		response->addHeader("Last-modified", ft_getdate(tv));
 	}
-	else if (info->exists != -1 && S_ISDIR(info->info.st_mode) && location->getAutoindex())
+	else if (S_ISDIR(info->info.st_mode) && location->getAutoindex())
 		response->setBody(autoindexGenerate(request, path_to_target));
 }
 
@@ -179,17 +177,18 @@ void	WebServ::generateResponse(Client *client) {
 	std::string			path_to_target = (location) ? getPathToTarget(request, location) : "";
 	t_stat				info;
 
-	info.exists = stat(path_to_target.c_str(), &info.info);
-	if (!location)
+	if (!location || ((info.exists = stat(path_to_target.c_str(), &info.info)) == -1 && request->getMethod() != "PUT"))
 		response->setStatusCode("404");
 	else if (!checkAuth(client, location->getRoot()))
 		response->setStatusCode("401");
 	else if (!location->isAllowMethod(request->getMethod()))
 		response->setStatusCode("405");
-	else if (info.exists != -1 && S_ISDIR(info.info.st_mode) && request->getTarget()[request->getTarget().size() - 1] != '/') {
+	else if (S_ISDIR(info.info.st_mode) && request->getTarget()[request->getTarget().size() - 1] != '/') {
 		response->setStatusCode("301");
 		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() + request->getTarget() + "/");
 	}
+
+
 	else if (location->findCgi(path_to_target))
 		"cgiHandler()";
 	else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
@@ -204,5 +203,5 @@ void	WebServ::generateResponse(Client *client) {
 	if (isErrorStatus(response->getStatusCode()))
 		setErrorPage(client, location, virtual_server);
 	client->generateResponse();
-	client->setStage(send_response_);
+	client->setStage(send_response);
 }

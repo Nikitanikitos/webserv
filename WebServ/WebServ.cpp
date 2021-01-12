@@ -28,7 +28,7 @@ void				WebServ::addClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set) {
 	std::vector<Client*>::iterator it;
 
 	for (it = clients.begin(); it != clients.end(); ++it) {
-		if (!(*it)->inTaskQueue() && ((*it)->getStage() == close_connection_ || (*it)->connectionTimedOut()))
+		if (!(*it)->inTaskQueue() && ((*it)->getStage() == close_connection || (*it)->connectionTimedOut()))
 			deleteClient(it);
 		else if (!(*it)->inTaskQueue() && (FD_ISSET((*it)->getSocket(), &readfd_set) || FD_ISSET((*it)->getSocket(), &writefd_set)))
 			thread_pool.pushTask(*it);
@@ -40,9 +40,9 @@ void				WebServ::addClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set) {
 void				WebServ::addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, int& max_fd) {
 	for (int i = 0; i < clients.size(); ++i) {
 		const int&		client_socket = clients[i]->getSocket();
-		if (clients[i]->getStage() == parsing_request_)
+		if (clients[i]->getStage() == parsing_request)
 			FD_SET(client_socket, &readfd_set);
-		else if (clients[i]->getStage() != parsing_request_) // TODO если что то зависнит, посмотрите сюда
+		else if (clients[i]->getStage() != parsing_request) // TODO если что то зависнит, посмотрите сюда
 			FD_SET(client_socket, &writefd_set);
 		max_fd = (client_socket > max_fd) ? client_socket : max_fd;
 	}

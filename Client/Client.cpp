@@ -13,7 +13,7 @@
 #include "Client.hpp"
 
 Client::Client(int socket, const std::string& ip, const std::string& port)
-								: socket(socket), stage(parsing_request_), in_proccessed(false), host(ip), port(port) {
+								: socket(socket), stage(parsing_request), in_proccessed(false), host(ip), port(port) {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);
