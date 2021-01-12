@@ -36,8 +36,8 @@ private:
 	int 							number_workers;
 	ThreadPool						thread_pool;
 
-	static void					getHeadMethodHandler(Client* client, Location* location, VirtualServer* virtual_server,
-																			t_stat* info, std::string& path_to_target);
+	static void					DefaultHandler(Client* client, Location* location, VirtualServer* virtual_server,
+																		t_stat* info, std::string& path_to_target);
 	static void					putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server,
 																			t_stat* info, std::string& path_to_target);
 
@@ -62,9 +62,9 @@ private:
 	static void					setErrorPage(Client *client, Location *location, VirtualServer *virtual_server);
 	static bytes				generateErrorPage(const std::string& code);
 
-	bool						checkAuth(Client* client, const std::string& root);
-	bool						checkValidAuth(const std::string& login_password, const std::string& path_to_htpasswd);
-	void						getInfoOutHtaccess(int fd, std::string& realm, std::string& path_to_htpasswd);
+	static bool						checkAuth(Client* client, const std::string& root);
+	static bool						checkValidAuth(const std::string& login_password, const std::string& path_to_htpasswd);
+	static void						getInfoOutHtaccess(int fd, std::string& realm, std::string& path_to_htpasswd);
 
 public:
 	static int working;

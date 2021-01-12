@@ -69,8 +69,8 @@ void	WebServ::setErrorPage(Client* client, Location* location, VirtualServer* vi
 		{ response->setBody(generateErrorPage(response->getStatusCode())); }
 }
 
-void	WebServ::getHeadMethodHandler(Client* client, Location* location, VirtualServer* virtual_server,
-																		t_stat* info, std::string& path_to_target) {
+void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* virtual_server,
+								t_stat* info, std::string& path_to_target) {
 	HttpRequest*		request = client->getRequest();
 	HttpResponse*		response = client->getResponse();
 	bytes				body;
@@ -105,15 +105,16 @@ void	WebServ::getHeadMethodHandler(Client* client, Location* location, VirtualSe
 		response->setBody(body);
 }
 
-void	WebServ::putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, t_stat* info,
+void	WebServ::putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, t_stat* info, // TODO убрать virtual_server если в конце будет не нужен
 							   std::string& path_to_target) {
-	int 			fd;
+	int 			fd = 0;
 	HttpRequest*	request = client->getRequest();
 	HttpResponse*	response = client->getResponse();
 
 	// TODO проверить права на запись - иначе 403
-	fd = 0;
-	if (S_ISDIR(info->info.st_mode))
+	if (location->getLimitClientBodySize() < request->getBody().size())
+		response->setStatusCode("413");
+	else if (S_ISDIR(info->info.st_mode))
 		response->setStatusCode("404");
 	else if (info->exists == -1) {
 		if ((fd = open(path_to_target.c_str(), O_WRONLY | O_CREAT, 0666)) > 0)
@@ -137,7 +138,7 @@ bool	isErrorStatus(const std::string& status) {
 	return (false);
 }
 
-void WebServ::getInfoOutHtaccess(int fd, std::string& realm, std::string& path_to_htpasswd) {
+void	WebServ::getInfoOutHtaccess(int fd, std::string& realm, std::string& path_to_htpasswd) {
 	std::string		line;
 
 	while (ft_getline(fd, line) > 0) {
@@ -201,10 +202,14 @@ void	WebServ::generateResponse(Client *client) {
 		response->setStatusCode("301");
 		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() + request->getTarget() + "/");
 	}
+//	else if (isCgi())
+//		cgiHandler();
 	else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
-		getHeadMethodHandler(client, location, virtual_server, &info, path_to_target);
+		DefaultHandler(client, location, virtual_server, &info, path_to_target);
 	else if (request->getMethod() == "PUT")
 		putMethodHandler(client, location, virtual_server, &info, path_to_target);
+	else
+		response->setStatusCode("405");
 
 	if (request->findHeader("connection") && request->getHeader("connection") == "close")
 		response->addHeader("Connection", "Close");
