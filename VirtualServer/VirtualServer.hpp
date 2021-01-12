@@ -33,18 +33,17 @@ private:
 	int										server_socket;
 	std::string								host;
 	std::string								port;
-	size_t									limit_client_body_size;
 	std::vector<std::string>				server_names;
 	error_pages_t							error_pages;
-	std::vector<Location*>					list_locations;
+	std::vector<Location*>					locations;
 
 public:
-	VirtualServer() : limit_client_body_size(-1) { }
+	VirtualServer() { }
 
 	virtual ~VirtualServer()  {
 		close(server_socket);
-		for (int i = 0; i < list_locations.size(); ++i)
-			delete list_locations[i];
+		for (int i = 0; i < locations.size(); ++i)
+			delete locations[i];
 	}
 
 	void								initSocket();
@@ -54,7 +53,6 @@ public:
 	inline int							getSocket() const { return (server_socket); }
 	inline const std::string&			getPort() const { return (port); }
 	inline const std::string&			getHost() const { return (host); }
-	inline int							getLimitBodySize() const { return (limit_client_body_size); }
 
 	inline const std::vector<std::string>&		getServerNames() const  { return (server_names); }
 
@@ -65,9 +63,7 @@ public:
 	inline void							addErrorPage(const std::string& key, const std::string& value)
 		{ error_pages.insert(std::make_pair(key, value)); }
 	inline void							addLocation(Location *location)
-		{ list_locations.push_back(location); }
-	inline void							setLimitClientBodySize(int limit_client_body_size_)
-		{ limit_client_body_size = limit_client_body_size_; }
+		{ locations.push_back(location); }
 	inline bool							findErrorPage(const std::string& error_page) const
 	{ return (error_pages.count(error_page)); }
 

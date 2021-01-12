@@ -31,9 +31,9 @@ void		VirtualServer::initSocket() {
 }
 
 Location*	VirtualServer::getLocation(HttpRequest* request) const {
-	for (int i = 0; i < list_locations.size(); ++i) {
-		if (request->getTarget().find(list_locations[i]->getPath()) == 0)
-			return (list_locations[i]);
+	for (int i = 0; i < locations.size(); ++i) {
+		if (request->getTarget().find(locations[i]->getPath()) == 0)
+			return (locations[i]);
 	}
 	return (0);
 }
