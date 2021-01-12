@@ -16,23 +16,22 @@
 # define TAB			"    "
 # define TAB_SIZE		4
 
-std::string ParseConfigFile::server_current_fields[6] = {
+std::string ParseConfigFile::server_current_fields[virtual_server_directive] = {
 		"server_names",
 		"error_page",
-		"limit_body_size",
 		"host",
 		"port",
 		"location"
 };
 
-std::string ParseConfigFile::location_current_fields[7] = {
+std::string ParseConfigFile::location_current_fields[location_directive] = {
 		"allow_methods",
 		"root",
 		"autoindex",
 		"index",
 		"cgi_pass",
 		"extension",
-		"proxy_pass"
+		"limit_client_body_size",
 };
 
 std::vector<std::string>	ParseConfigFile::getArgsFromLine(std::string &input) const {
@@ -83,7 +82,7 @@ VirtualServer*	ParseConfigFile::parseVsDirective() {
 		}
 		std::vector<std::string> trimmedStr = getArgsFromLine(line);
 
-		switch (getIndexOfArg(trimmedStr[0], server_current_fields, 6)) {
+		switch (getIndexOfArg(trimmedStr[0], server_current_fields, virtual_server_directive)) {
 			case server_names_d:
 				for (size_t i = 1; i < trimmedStr.size(); ++i)
 					virtualServer->addServerName(trimmedStr[i]);
@@ -93,12 +92,6 @@ VirtualServer*	ParseConfigFile::parseVsDirective() {
 					virtualServer->addErrorPage(trimmedStr[1], trimmedStr[2]);
 				else
 					throw ParseConfigFileException("Wrong error page parameter");
-				break;
-			case limit_body_size_d:
-				if (trimmedStr.size() == 2 && ONLY_DIGITS(trimmedStr[1]))
-					virtualServer->setLimitClientBodySize(ft_atoi(trimmedStr[1].c_str()));
-				else
-					throw ParseConfigFileException("Wrong limit body size parameter");
 				break;
 			case host_d:
 				if (trimmedStr.size() == 2)
@@ -140,10 +133,6 @@ void				ParseConfigFile::addAllowMethodsToLocation(Location *location, const std
 			location->addAllowMethod(POST);
 		else if (trimmedStr[i] == "PUT")
 			location->addAllowMethod(PUT);
-		else if (trimmedStr[i] == "DELETE")
-			location->addAllowMethod(DELETE);
-		else if (trimmedStr[i] == "OPTIONS")
-			location->addAllowMethod(OPTIONS);
 		else
 			throw ParseConfigFileException("Unknown allow method parameter");
 	}
@@ -180,7 +169,7 @@ Location*			ParseConfigFile::parseLocationDirective(std::string &locationAttribu
 		}
 		std::vector<std::string> trimmedStr = getArgsFromLine(line);
 
-		switch (getIndexOfArg(trimmedStr[0], location_current_fields, 7)) {
+		switch (getIndexOfArg(trimmedStr[0], location_current_fields, location_directive)) {
 			case allow_methods_d:
 				addAllowMethodsToLocation(location, trimmedStr);
 				break;
@@ -207,6 +196,12 @@ Location*			ParseConfigFile::parseLocationDirective(std::string &locationAttribu
 				if (trimmedStr.size() != 2)
 					throw ParseConfigFileException("Extension has no parameter");
 				location->setExtension(trimmedStr[1]);
+				break;
+			case limit_client_body_size_d:
+				if (trimmedStr.size() == 2 && ONLY_DIGITS(trimmedStr[1]))
+					location->setLimitClientBodySize(ft_atoi(trimmedStr[1].c_str()));
+				else
+					throw ParseConfigFileException("Wrong limit body size parameter");
 				break;
 			default:
 				throw ParseConfigFileException("Unknown parameter " + trimmedStr[0]);
