@@ -14,6 +14,7 @@
 # define WEBSERV_LOCATION_HPP
 
 # include <vector>
+# include <map>
 # include <string>
 
 enum {
@@ -30,49 +31,54 @@ enum {
 	PUT,
 };
 
-enum {
-	default_location = true,
-	cgi_location = false,
-};
-
 class	Location {
 private:
-	std::vector<bool>	allow_methods;
-	std::string			extension;
-	std::string			path;
-	std::string			root;
-	std::string			cgi_pass;
-	std::string			index;
-	bool				autoindex;
-	bool 				location_type;
-	size_t				limit_client_body_size;
-//	                    client_max_body_size // TODO переименовать?
+	std::map<std::string, std::string>			cgi;
+	std::vector<bool>							allow_methods;
+	std::string									path;
+	std::string									root;
+	std::string									index;
+	bool										autoindex;
+	size_t										limit_client_body_size;
+//												client_max_body_size // TODO переименовать?
 
 public:
-	Location();
+	Location() : autoindex(non_accepted), limit_client_body_size(-1)
+		{ allow_methods.assign(count_methods, accepted); }
+
 	~Location() { }
 
 	inline void						eraseAcceptedMethods() { allow_methods.assign(count_methods, non_accepted); }
 	inline void						addAllowMethod(int method) { allow_methods[method] = accepted; }
-	bool							isAllowMethod(const std::string& method) const;
 
-	inline void						setLocationType(bool location_type_) { location_type = location_type_; }
 	inline void						setRoot(const std::string& root_) { root = root_; }
 	inline void						setIndex(const std::string& index_) { index = index_; }
-	inline void						setCgiPath(const std::string& cgi_path) { cgi_pass = cgi_path; }
+	inline void						addCgi(const std::string& extension, const std::string path_)
+		{ cgi.insert(std::make_pair(extension, path_)); }
 	inline void						setAutoindex(bool autoindex_) { autoindex = autoindex_; }
 	inline void						setPath(const std::string& path_) { path = path_; }
-	inline void 					setExtension(const std::string &extension_) { extension = extension_;}
 	inline void						setLimitClientBodySize(size_t limitClientBodySize)
 		{ limit_client_body_size = limitClientBodySize; }
 
 	inline const std::string&		getIndex() const { return (index); }
 	inline size_t					getLimitClientBodySize() const { return (limit_client_body_size); }
 	inline const std::string&		getPath() const { return (path); }
-	inline const std::string&		getExtension() const { return (extension); }
 	inline const std::string&		getRoot() const { return (root); }
-	inline bool						getLocationType() const { return (location_type); }
 	inline bool						getAutoindex() const { return (autoindex); }
+
+	inline bool						isAllowMethod(const std::string& method) const {
+		static std::string	methods[count_methods] = {"GET", "HEAD", "POST", "PUT"};
+
+		for (int i = 0; i < count_methods; ++i)
+			if (method == methods[i]) return (allow_methods[i]);
+		return (false);
+	}
+
+	inline bool						findCgi(const std::string& file) const {
+		for (std::map<std::string, std::string>::const_iterator it = cgi.begin(); it != cgi.end(); ++it)
+			if (file.rfind(it->first) != std::string::npos) return (true);
+		return (false);
+	}
 };
 
 #endif //WEBSERV_LOCATION_HPP
