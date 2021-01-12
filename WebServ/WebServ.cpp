@@ -160,10 +160,10 @@ void WebServ::setEnvForCgi(char **env, Client *client, std::string path_to_targe
 	env[8] = strdup("REMOTE_IDENT="); // Имя клиента
 	env[9] = strdup("REMOTE_USER="); // То как клиент назван на сервере (аутентификация)
 	env[10] = strdup((std::string("REQUEST_METHOD=") + client->getRequest()->getMethod()).c_str()); // Метод в реквесте
-	env[11] = strdup(std::string("REQUEST_URI=http://") + client->ge  127.0.0.1:8080/cgi_bin/youpi.bla?first_name=Lebrus&last_name=Shupay&maths=PEZDA);
+	env[11] = strdup((std::string("REQUEST_URI=http://") + client->getHost() + ":" + client->getPort() + client->getRequest()->getTarget()).c_str());
 	env[12] = strdup((std::string("SCRIPT_NAME=") + client->getRequest()->getTarget()).c_str()); // название скрипта // Путь к файлу из локейшена где лежит cgi
 	env[13] = strdup("SERVER_NAME=webserv/1.1"); // название сервера
-	env[14] = strdup("SERVER_PORT=8080"); // порт
+	env[14] = strdup((std::string("SERVER_PORT=") + client->getPort()).c_str()); // порт
 	env[15] = strdup("SERVER_PROTOCOL=HTTP/1.1"); // хттп протокол
 	env[16] = strdup("SERVER_SOFTWARE=web"); // название
 	env[17] = nullptr;
