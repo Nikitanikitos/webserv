@@ -188,7 +188,7 @@ Location*			ParseConfigFile::parseLocationDirective(std::string &locationAttribu
 //			case cgi_d: // TODO изменить парсинг cgi вот здесь
 //				if (trimmedStr.size() != 2)
 //					throw ParseConfigFileException("Cgi_pass has no parameter");
-//				location->setCgiPath(trimmedStr[1], <#initializer#>);
+//				location->addCgi(trimmedStr[1], <#initializer#>);
 //				break;
 			case limit_client_body_size_d:
 				if (trimmedStr.size() == 2 && ONLY_DIGITS(trimmedStr[1]))

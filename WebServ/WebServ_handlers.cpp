@@ -69,11 +69,10 @@ void	WebServ::setErrorPage(Client* client, Location* location, VirtualServer* vi
 		{ response->setBody(generateErrorPage(response->getStatusCode())); }
 }
 
-void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* virtual_server,
+void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* virtual_server,  // TODO убрать virtual_server если в конце будет не нужен
 								t_stat* info, std::string& path_to_target) {
 	HttpRequest*		request = client->getRequest();
 	HttpResponse*		response = client->getResponse();
-	bytes				body;
 	struct timeval		tv;
 	int 				fd;
 
@@ -88,7 +87,7 @@ void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* 
 	else if (S_ISDIR(info->info.st_mode) && !location->getAutoindex())
 		response->setStatusCode("403");
 	if (info->exists != -1 && (S_ISREG(info->info.st_mode) || S_ISLNK(info->info.st_mode))) {
-		body = ft_getfile(path_to_target.c_str());
+		response->setBody(ft_getfile(path_to_target.c_str()));
 #ifdef __linux__
 		tv.tv_sec = info->info.st_mtim.tv_sec;
 		tv.tv_usec = info->info.st_mtim.tv_nsec;
@@ -99,14 +98,11 @@ void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* 
 		response->addHeader("Last-modified", ft_getdate(tv));
 	}
 	else if (info->exists != -1 && S_ISDIR(info->info.st_mode) && location->getAutoindex())
-		body = autoindexGenerate(request, path_to_target);
-
-	if (request->getMethod() == "GET" && response->getStatusCode() == "200")
-		response->setBody(body);
+		response->setBody(autoindexGenerate(request, path_to_target));
 }
 
 void	WebServ::putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, t_stat* info, // TODO убрать virtual_server если в конце будет не нужен
-							   std::string& path_to_target) {
+																						std::string& path_to_target) {
 	int 			fd = 0;
 	HttpRequest*	request = client->getRequest();
 	HttpResponse*	response = client->getResponse();
@@ -202,8 +198,8 @@ void	WebServ::generateResponse(Client *client) {
 		response->setStatusCode("301");
 		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() + request->getTarget() + "/");
 	}
-//	else if (isCgi())
-//		cgiHandler();
+	else if (location->findCgi(path_to_target))
+		cgiHandler();
 	else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
 		DefaultHandler(client, location, virtual_server, &info, path_to_target);
 	else if (request->getMethod() == "PUT")

@@ -45,7 +45,6 @@ private:
 public:
 	Location() : autoindex(non_accepted), limit_client_body_size(-1)
 		{ allow_methods.assign(count_methods, accepted); }
-
 	~Location() { }
 
 	inline void						eraseAcceptedMethods() { allow_methods.assign(count_methods, non_accepted); }
