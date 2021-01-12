@@ -66,19 +66,8 @@ public:
 	inline const std::string&		getRoot() const { return (root); }
 	inline bool						getAutoindex() const { return (autoindex); }
 
-	inline bool						isAllowMethod(const std::string& method) const {
-		static std::string	methods[count_methods] = {"GET", "HEAD", "POST", "PUT"};
-
-		for (int i = 0; i < count_methods; ++i)
-			if (method == methods[i]) return (allow_methods[i]);
-		return (false);
-	}
-
-	inline bool						findCgi(const std::string& file) const {
-		for (std::map<std::string, std::string>::const_iterator it = cgi.begin(); it != cgi.end(); ++it)
-			if (file.rfind(it->first) != std::string::npos) return (true);
-		return (false);
-	}
+	bool							isAllowMethod(const std::string& method) const;
+	bool							findCgi(const std::string& file) const;
 };
 
 #endif //WEBSERV_LOCATION_HPP
