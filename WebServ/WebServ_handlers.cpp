@@ -103,27 +103,19 @@ void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* 
 
 void	WebServ::putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, t_stat* info, // TODO убрать virtual_server если в конце будет не нужен
 																						std::string& path_to_target) {
-	int 			fd = 0;
+	int 			fd;
 	HttpRequest*	request = client->getRequest();
 	HttpResponse*	response = client->getResponse();
 
 	// TODO проверить права на запись - иначе 403
 	if (location->getLimitClientBodySize() < request->getBody().size())
 		response->setStatusCode("413");
-	else if (S_ISDIR(info->info.st_mode))
+	else if (S_ISDIR(info->info.st_mode) || (fd = open(path_to_target.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
 		response->setStatusCode("404");
-	else if (info->exists == -1) {
-		if ((fd = open(path_to_target.c_str(), O_WRONLY | O_CREAT, 0666)) > 0)
-			response->setStatusCode("201");
-		else
-			response->setStatusCode("404");
-	}
 	else {
-		fd = open(path_to_target.c_str(), O_WRONLY | O_EXCL | O_TRUNC);
-		response->setStatusCode("200");
-	}
-	if (fd > 0)
 		write(fd, request->getBody().c_str(), request->getBody().size());
+		(info->exists == -1) ? response->setStatusCode("201") : response->setStatusCode("200");
+	}
 }
 
 bool	isErrorStatus(const std::string& status) {
@@ -199,7 +191,7 @@ void	WebServ::generateResponse(Client *client) {
 		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() + request->getTarget() + "/");
 	}
 	else if (location->findCgi(path_to_target))
-		cgiHandler();
+		"cgiHandler()";
 	else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
 		DefaultHandler(client, location, virtual_server, &info, path_to_target);
 	else if (request->getMethod() == "PUT")
