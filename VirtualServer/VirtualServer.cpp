@@ -41,7 +41,14 @@ Location*	VirtualServer::getLocation(HttpRequest* request) const {
 void		VirtualServer::sortServerNames() { std::sort(server_names.begin(), server_names.end()); }
 
 bool		operator==(const VirtualServer& virtual_server_l, const VirtualServer& virtual_server_r) {
-	return (virtual_server_l.getPort() == virtual_server_r.getPort() &&
-			virtual_server_l.getHost() == virtual_server_r.getHost() &&
-			virtual_server_l.getServerNames() == virtual_server_r.getServerNames());
+	if (virtual_server_l.getPort() == virtual_server_r.getPort() && virtual_server_l.getHost() == virtual_server_r.getHost()) {
+		if (virtual_server_l.getServerNames().empty() && virtual_server_r.getServerNames().empty())
+			return (true);
+		int	q = (virtual_server_l.getServerNames().size() < virtual_server_r.getServerNames().size()) ?
+									virtual_server_l.getServerNames().size() :virtual_server_r.getServerNames().size();
+		for (int i = 0; i < q; ++i)
+			if (virtual_server_l.getServerNames()[i] == virtual_server_r.getServerNames()[i]) return (true);
+		return (false);
+	}
+	return (false);
 }

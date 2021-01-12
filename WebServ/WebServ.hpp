@@ -22,9 +22,7 @@
 # include "VirtualServer.hpp"
 # include "ThreadPool.hpp"
 
-enum {
-	count_error_pages = 7,
-};
+enum { count_error_pages = 7, };
 
 class	WebServ {
 private:
@@ -40,6 +38,7 @@ private:
 																		t_stat* info, std::string& path_to_target);
 	static void					putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server,
 																			t_stat* info, std::string& path_to_target);
+	void 						cgiHandler(Client *client, const std::string &path_to_target);
 
 	static bytes				autoindexGenerate(HttpRequest *request, const std::string& path_to_target);
 
@@ -66,8 +65,10 @@ private:
 	static bool					checkValidAuth(const std::string& login_password, const std::string& path_to_htpasswd);
 	static void					getInfoOutHtaccess(int fd, std::string& realm, std::string& path_to_htpasswd);
 
+	void 						setEnvForCgi(char **env, Client *client, const std::string &path_to_target);
+
 public:
-	static int working;
+	static int		working;
 
 	explicit WebServ(int number_of_workers) : number_workers(number_of_workers) { }
 	virtual ~WebServ() {
