@@ -29,7 +29,7 @@ enum {
     root_d,
     autoindex_d,
     index_d,
-    cgi_d,
+    cgi_pass_d,
 	limit_client_body_size_d,
 };
 

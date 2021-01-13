@@ -185,11 +185,11 @@ Location*			ParseConfigFile::parseLocationDirective(std::string &locationAttribu
 					throw ParseConfigFileException("Index has no parameter");
 				location->setIndex(trimmedStr[1]);
 				break;
-//			case cgi_d: // TODO изменить парсинг cgi вот здесь
-//				if (trimmedStr.size() != 2)
-//					throw ParseConfigFileException("Cgi_pass has no parameter");
-//				location->addCgi(trimmedStr[1], <#initializer#>);
-//				break;
+			case cgi_pass_d: // TODO изменить парсинг cgi вот здесь
+				if (trimmedStr.size() != 3)
+					throw ParseConfigFileException("Cgi_pass has no parameter");
+				location->addCgi(trimmedStr[1], trimmedStr[2]);
+				break;
 			case limit_client_body_size_d:
 				if (trimmedStr.size() == 2 && ONLY_DIGITS(trimmedStr[1]))
 					location->setLimitClientBodySize(ft_atoi(trimmedStr[1].c_str()));
