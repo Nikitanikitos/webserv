@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <libft.hpp>
 #include "HttpRequest.hpp"
+
 const std::string		HttpRequest::methods[4] =
 		{"GET", "HEAD", "POST", "PUT"};
 

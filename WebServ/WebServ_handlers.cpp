@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
 #include "WebServ.hpp"
 
 void	WebServ::readRequest(Client* client) {
@@ -169,32 +168,51 @@ bool	WebServ::checkAuth(Client* client, const std::string& root) {
 	return (result);
 }
 
+std::string WebServ::isErrorRequest(Location* location, t_stat& info, Client* client) {
+	HttpRequest*		request = client->getRequest();
+	HttpResponse*		response = client->getResponse();
+
+	if (!location || (info.exists == -1 && request->getMethod() != "PUT"))
+		return ("404");
+	else if (!checkAuth(client, location->getRoot()))
+		return ("401");
+	else if (!location->isAllowMethod(request->getMethod()))
+		return ("405");
+	else if (S_ISDIR(info.info.st_mode) && request->getTarget()[request->getTarget().size() - 1] != '/') {
+		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() + request->getTarget() + "/");
+		return ("301");
+	}
+	return ("");
+}
+
 void	WebServ::generateResponse(Client *client) {
 	VirtualServer*		virtual_server = getVirtualServer(client);
 	Location*			location = virtual_server->getLocation(client->getRequest());
 	HttpRequest*		request = client->getRequest();
 	HttpResponse*		response = client->getResponse();
 	std::string			path_to_target = (location) ? getPathToTarget(request, location) : "";
-	t_stat				info;
+	t_stat				info = {};
+	std::string			error_code;
+	int					fd;
 
-	if (!location || ((info.exists = stat(path_to_target.c_str(), &info.info)) == -1 && request->getMethod() != "PUT"))
-		response->setStatusCode("404");
-	else if (!checkAuth(client, location->getRoot()))
-		response->setStatusCode("401");
-	else if (!location->isAllowMethod(request->getMethod()))
-		response->setStatusCode("405");
-	else if (S_ISDIR(info.info.st_mode) && request->getTarget()[request->getTarget().size() - 1] != '/') {
-		response->setStatusCode("301");
-		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() + request->getTarget() + "/");
+	info.exists = stat(path_to_target.c_str(), &info.info);
+	if (!(error_code = isErrorRequest(location, info, client)).empty())
+		response->setStatusCode(error_code);
+	else {
+		if (S_ISDIR(info.info.st_mode) && (fd = open((path_to_target + location->getIndex()).c_str(), O_RDONLY)) != -1) {
+			path_to_target.append(location->getIndex());
+			info.exists = stat(path_to_target.c_str(), &info.info);
+			close(fd);
+		}
+		if (location->findCgi(path_to_target))
+			cgiHandler(client, path_to_target);
+		else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
+			DefaultHandler(client, location, virtual_server, &info, path_to_target);
+		else if (request->getMethod() == "PUT")
+			putMethodHandler(client, location, virtual_server, &info, path_to_target);
+		else
+			response->setStatusCode("405");
 	}
-	else// if (location->findCgi(path_to_target))
-		cgiHandler(client, path_to_target);
-//	else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
-//		DefaultHandler(client, location, virtual_server, &info, path_to_target);
-//	else if (request->getMethod() == "PUT")
-//		putMethodHandler(client, location, virtual_server, &info, path_to_target);
-//	else
-//		response->setStatusCode("405");
 
 	if (request->findHeader("connection") && request->getHeader("connection") == "close")
 		response->addHeader("Connection", "Close");

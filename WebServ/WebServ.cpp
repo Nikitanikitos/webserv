@@ -124,7 +124,7 @@ void			WebServ::deleteClient(std::vector<Client*>::iterator& client) {
 }
 
 void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_to_target) {
-	env[0] = strdup("AUTH_TYPE=basic"); // basic
+	env[0] = strdup("AUTH_TYPE=basic"); // basic // TODO не забудь воткнуть ft_strdup
 
 //    env[1] = strdup((std::string("QUERY_STRING=") + "first_name=Lebrus&last_name=Shupay&maths=PEZDA").c_str()); // Get все, что после знака вопроса (поле запроса)
 //    env[2] = strdup("CONTENT_LENGTH=46");
@@ -168,7 +168,7 @@ void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_t
 	env[14] = strdup((std::string("SERVER_PORT=") + client->getPort()).c_str()); // порт
 	env[15] = strdup("SERVER_PROTOCOL=HTTP/1.1"); // хттп протокол
 	env[16] = strdup("SERVER_SOFTWARE=web"); // название
-	env[17] = nullptr;
+	env[17] = 0;
 }
 
 void WebServ::cgiHandler(Client *client, const std::string &path_to_target) {
@@ -199,4 +199,3 @@ void WebServ::cgiHandler(Client *client, const std::string &path_to_target) {
 		close(fds[0]);
 	}
 }
-

@@ -14,6 +14,8 @@
 # define WEBSERV_HTTPREQUEST_HPP
 
 # include "HttpObject.hpp"
+# include "libft.hpp"
+# include <algorithm>
 
 enum stage {
 	parsing_first_line,
