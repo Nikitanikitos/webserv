@@ -195,7 +195,7 @@ void	WebServ::generateResponse(Client *client) {
 			info.exists = stat(path_to_target.c_str(), &info.info);
 		}
 		if (location->findCgi(path_to_target))
-			cgiHandler(client, path_to_target);
+			cgiHandler(client, path_to_target, location);
 		else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
 			DefaultHandler(client, location, virtual_server, &info, path_to_target);
 		else if (request->getMethod() == "PUT")

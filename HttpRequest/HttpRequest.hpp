@@ -47,11 +47,13 @@ public:
 
 	inline void							setTarget(const std::string& target_) { target = target_; }
 	inline void							setMethod(const std::string& method_) { method = method_; }
-	inline void							setStage(int stage_) {stage = stage_; }
+	inline void							setStage(int stage_) { stage = stage_; }
+	inline void 						setQuery(const std::string& query_) { query = query_; }
 
 	inline const std::string&			getMethod() const { return (method); }
 	inline const std::string&			getTarget() const { return (target); }
 	inline int							getStage() const { return (stage); }
+	inline const std::string&			getQuery() const { return (query); }
 
 	void addDataToRequest(char* data, size_t size);
 

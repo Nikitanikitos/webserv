@@ -67,6 +67,7 @@ public:
 
 	bool							isAllowMethod(const std::string& method) const;
 	bool							findCgi(const std::string& file) const;
+	std::string & getCgiIntepritator(const std::string& key);
 };
 
 #endif //WEBSERV_LOCATION_HPP

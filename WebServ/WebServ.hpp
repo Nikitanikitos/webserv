@@ -40,7 +40,7 @@ private:
 																		t_stat* info, std::string& path_to_target);
 	static void					putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server,
 																			t_stat* info, std::string& path_to_target);
-	void 						cgiHandler(Client *client, const std::string &path_to_target);
+	void cgiHandler(Client *client, const std::string &path_to_target, Location *location);
 
 	static bytes				autoindexGenerate(HttpRequest *request, const std::string& path_to_target);
 
