@@ -31,23 +31,26 @@ bytes		HttpRequest::getRequestData(bytes& data) const {
 	return (result);
 }
 
-void		HttpRequest::addDataToRequest(bytes data) {
+void HttpRequest::addDataToRequest(char* data, size_t size) {
 	bytes	request_data;
 
-	while (!data.empty()) {
+	addToBuffer(data, size);
+	if (data[size - 1] != '\n' && data[size - 2] != '\r')
+		return;
+	while (!buffer.empty()) {
 		switch (getStage()) {
 			case parsing_first_line:
-				parsingFirstLine(getRequestData(data).c_str());
+				parsingFirstLine(getRequestData(buffer).c_str());
 				break;
 			case parsing_headers:
-				request_data = getRequestData(data);
+				request_data = getRequestData(buffer);
 				request_data.empty() ? endOfHeaders() : parseHeader(request_data.c_str());
 				break;
 			case parsing_body:
 				if (findHeader("content-length"))
-					parsingBodyByContentLength(data);
+					parsingBodyByContentLength(buffer);
 				else if (findHeader("transfer-encoding"))
-					parsingBodyByChunked(data);
+					parsingBodyByChunked(buffer);
 		}
 	}
 }

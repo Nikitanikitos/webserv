@@ -53,7 +53,7 @@ public:
 	inline const std::string&			getTarget() const { return (target); }
 	inline int							getStage() const { return (stage); }
 
-	void								addDataToRequest(bytes data);
+	void addDataToRequest(char* data, size_t size);
 
 	virtual void						clear();
 
