@@ -45,11 +45,9 @@ void				HttpResponse::generateResponse() {
 			"Server: " + SERVER_VERSION + CRLF
 			"Date: " + ft_getdate(tv) + CRLF);
 
-	if (body.size()) {
-		char*	size = ft_itoa(body.size());
-		buffer.add("Content-length: " + std::string(size) + CRLF);
-		delete []size;
-	}
+	char*	size = ft_itoa(body.size());
+	buffer.add("Content-length: " + std::string(size) + CRLF);
+	delete []size;
 	for (it = headers.begin(); it != headers.end(); ++it)
 		buffer.add(it->first + ": " + it->second + CRLF);
 	buffer.add(CRLF);
