@@ -31,11 +31,16 @@ void		VirtualServer::initSocket() {
 }
 
 Location*	VirtualServer::getLocation(HttpRequest* request) const {
+	Location*	location = 0;
+	int			current_size = 0;
+
 	for (int i = 0; i < locations.size(); ++i) {
-		if (request->getTarget().find(locations[i]->getPath()) == 0)
-			return (locations[i]);
+		if (request->getTarget().find(locations[i]->getPath()) == 0 && current_size < locations[i]->getPath().size()) {
+			location = locations[i];
+			current_size = locations[i]->getPath().size();
+		}
 	}
-	return (0);
+	return (location);
 }
 
 void		VirtualServer::sortServerNames() { std::sort(server_names.begin(), server_names.end()); }
