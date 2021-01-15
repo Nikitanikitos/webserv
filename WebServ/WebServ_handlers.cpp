@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
 #include "WebServ.hpp"
 
 void	WebServ::readRequest(Client* client) {
@@ -22,7 +23,7 @@ void	WebServ::readRequest(Client* client) {
 	try {
 		if (read_bytes > 0) {
 			client->setNewConnectionTime();
-			request->addDataToRequest(bytes(buff, read_bytes));
+			request->addDataToRequest(buff, read_bytes);
 			if (request->getStage() == completed)
 				client->setStage(generate_response);
 		}
@@ -73,18 +74,14 @@ void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* 
 	HttpRequest*		request = client->getRequest();
 	HttpResponse*		response = client->getResponse();
 	struct timeval		tv;
-	int 				fd;
+	bytes				body;
 
 	response->setStatusCode("200");
-	if (S_ISDIR(info->info.st_mode) && (fd = open((path_to_target + location->getIndex()).c_str(), O_RDONLY)) != -1) {
-		path_to_target.append(location->getIndex());
-		info->exists = stat(path_to_target.c_str(), &info->info);
-		close(fd);
-	}
-	else if (S_ISDIR(info->info.st_mode) && !location->getAutoindex())
+	if (S_ISDIR(info->info.st_mode) && !location->getAutoindex())
 		response->setStatusCode("403");
-	if (S_ISREG(info->info.st_mode) || S_ISLNK(info->info.st_mode)) {
-		response->setBody(ft_getfile(path_to_target.c_str()));
+	else if ((S_ISREG(info->info.st_mode) || S_ISLNK(info->info.st_mode))) {
+		if (request->getMethod() == "GET")
+			response->setBody(ft_getfile(path_to_target.c_str()));
 #ifdef __linux__
 		tv.tv_sec = info->info.st_mtim.tv_sec;
 		tv.tv_usec = info->info.st_mtim.tv_nsec;
@@ -94,7 +91,7 @@ void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* 
 #endif
 		response->addHeader("Last-modified", ft_getdate(tv));
 	}
-	else if (S_ISDIR(info->info.st_mode) && location->getAutoindex())
+	else if (S_ISDIR(info->info.st_mode) && location->getAutoindex() && request->getMethod() == "GET")
 		response->setBody(autoindexGenerate(request, path_to_target));
 }
 
@@ -193,16 +190,14 @@ void	WebServ::generateResponse(Client *client) {
 	std::string			path_to_target = (location) ? getPathToTarget(request, location) : "";
 	t_stat				info = {};
 	std::string			error_code;
-	int					fd;
 
 	info.exists = stat(path_to_target.c_str(), &info.info);
 	if (!(error_code = isErrorRequest(location, info, client)).empty())
 		response->setStatusCode(error_code);
 	else {
-		if (S_ISDIR(info.info.st_mode) && (fd = open((path_to_target + location->getIndex()).c_str(), O_RDONLY)) != -1) {
+		if (S_ISDIR(info.info.st_mode) && !location->getIndex().empty()) {
 			path_to_target.append(location->getIndex());
 			info.exists = stat(path_to_target.c_str(), &info.info);
-			close(fd);
 		}
 		if (location->findCgi(path_to_target))
 			cgiHandler(client, path_to_target);
@@ -215,7 +210,7 @@ void	WebServ::generateResponse(Client *client) {
 	}
 
 	if (request->findHeader("connection") && request->getHeader("connection") == "close")
-		response->addHeader("Connection", "Close");
+		response->addHeader("Connection", "close");
 	if (isErrorStatus(response->getStatusCode()))
 		setErrorPage(client, location, virtual_server);
 	client->generateResponse();

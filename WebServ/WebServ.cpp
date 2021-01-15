@@ -74,7 +74,7 @@ void				WebServ::runServer() {
 
 		select(max_fd + 1, &readfd_set, &writefd_set, 0, &tv);
 
-		std::cout << clients.size() << std::endl;
+//		std::cout << clients.size() << std::endl;
 
 		addNewClient(readfd_set);
 		addClientInTaskQueue(readfd_set, writefd_set);
@@ -102,6 +102,7 @@ std::string		WebServ::getPathToTarget(HttpRequest *request, Location* location) 
 
 	result.erase(0, location->getPath().size());
 	return (location->getRoot() + "/" + result);
+//	return (location->getRoot() + "/" + request->getTarget()); // TODO версия nginx
 }
 
 void			WebServ::addVirtualServer(VirtualServer *virtual_server) {
@@ -186,7 +187,6 @@ void WebServ::cgiHandler(Client *client, const std::string &path_to_target) {
 		if (client->getRequest()->findHeader("content-length"))
 			write(fds[1], client->getRequest()->getBody().c_str(), client->getRequest()->getBody().size());
 		int pp = execve(argv[0], argv, env);
-//		std::cout << "hello" << '\n';
 		exit(pp);
 	} else {
 		wait(&status);
