@@ -35,12 +35,12 @@ public:
 	inline void				lockQueueMutex() const { pthread_mutex_lock(queue_mutex); }
 	inline void				unlockQueueMutex() const { pthread_mutex_unlock(queue_mutex); }
 
-	inline void				lockReadStageMutex() { pthread_mutex_lock(parsing_stage_mutex); }
-	inline void				unlockReadStageMutex() { pthread_mutex_unlock(parsing_stage_mutex); }
-	inline void				lockGenerateStageMutex() { pthread_mutex_lock(generate_stage_mutex); }
-	inline void				unlockGenerateStageMutex() { pthread_mutex_unlock(generate_stage_mutex); }
-	inline void				lockSendStageMutex() { pthread_mutex_lock(send_stage_mutex); }
-	inline void				unlockSendStageMutex() { pthread_mutex_unlock(send_stage_mutex); }
+	inline void				lockReadStageMutex() const { pthread_mutex_lock(parsing_stage_mutex); }
+	inline void				unlockReadStageMutex() const { pthread_mutex_unlock(parsing_stage_mutex); }
+	inline void				lockGenerateStageMutex() const { pthread_mutex_lock(generate_stage_mutex); }
+	inline void				unlockGenerateStageMutex() const { pthread_mutex_unlock(generate_stage_mutex); }
+	inline void				lockSendStageMutex() const { pthread_mutex_lock(send_stage_mutex); }
+	inline void				unlockSendStageMutex() const { pthread_mutex_unlock(send_stage_mutex); }
 
 	void		 			pushTask(Client* client);
 	Client*					popTask();
