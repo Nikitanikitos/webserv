@@ -78,7 +78,7 @@ void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* 
 
 	response->setStatusCode("200");
 	if (S_ISDIR(info->info.st_mode) && !location->getAutoindex())
-		response->setStatusCode("403");
+		response->setStatusCode("404");
 	else if ((S_ISREG(info->info.st_mode) || S_ISLNK(info->info.st_mode))) {
 		if (request->getMethod() == "GET")
 			response->setBody(ft_getfile(path_to_target.c_str()));
@@ -110,14 +110,6 @@ void	WebServ::putMethodHandler(Client* client, Location* location, VirtualServer
 		write(fd, request->getBody().c_str(), request->getBody().size());
 		(info->exists == -1) ? response->setStatusCode("201") : response->setStatusCode("200");
 	}
-}
-
-bool	isErrorStatus(const std::string& status) {
-	const std::string	status_code[count_error_pages] = {"400", "401", "403", "404", "405", "411", "413"};
-
-	for (int i = 0; i < count_error_pages; ++i)
-		if (status == status_code[i]) return (true);
-	return (false);
 }
 
 void	WebServ::getInfoOutHtaccess(int fd, std::string& realm, std::string& path_to_htpasswd) {
@@ -185,14 +177,16 @@ void	WebServ::generateResponse(Client *client) {
 	std::string			path_to_target = (location) ? getPathToTarget(request, location) : "";
 	t_stat				info = {};
 	std::string			error_code;
+	int 				fd;
 
 	info.exists = stat(path_to_target.c_str(), &info.info);
 	if (!(error_code = isErrorRequest(location, info, client)).empty())
 		response->setStatusCode(error_code);
 	else {
-		if (S_ISDIR(info.info.st_mode) && !location->getIndex().empty()) {
+		if (S_ISDIR(info.info.st_mode) && (fd = open((path_to_target + "/" + location->getIndex()).c_str(), O_RDONLY)) != -1) {
 			path_to_target.append("/" + location->getIndex());
 			info.exists = stat(path_to_target.c_str(), &info.info);
+			close(fd);
 		}
 		if (location->findCgi(path_to_target))
 			cgiHandler(client, path_to_target, location);

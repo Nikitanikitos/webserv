@@ -105,7 +105,6 @@ std::string		WebServ::getPathToTarget(HttpRequest *request, Location* location) 
 
 	result.erase(0, location->getPath().size());
 	return (location->getRoot() + "/" + result);
-//	return (location->getRoot() + "/" + request->getTarget()); // TODO версия nginx
 }
 
 void			WebServ::addVirtualServer(VirtualServer *virtual_server) {
@@ -130,55 +129,6 @@ void			WebServ::deleteClient(std::vector<Client*>::iterator& client) {
 void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_to_target) {
 	HttpRequest*	request = client->getRequest();
 
-//	env[0] = strdup("AUTH_TYPE=basic"); // basic // TODO не забудь воткнуть ft_strdup
-
-//    env[1] = strdup((std::string("QUERY_STRING=") + "first_name=Lebrus&last_name=Shupay&maths=PEZDA").c_str()); // Get все, что после знака вопроса (поле запроса)
-//    env[2] = strdup("CONTENT_LENGTH=46");
-//    env[3] = strdup("CONTENT_TYPE=text/html"); // пустой или от запроса (application/x-www-form-urlencoded для меня)
-//    env[4] = strdup("GATEWAY_INTERFACE=cgi/1.1"); // Дефолтный
-//    env[5] = strdup("PATH_INFO=/cgi_bin/youpi.bla"); // Выдергивается с URI (второй аргумент в запросе GET / 123)
-//    env[6] = strdup("PATH_TRANSLATED=/Users/casubmar/school/cpp/cpp08_home/webserv/cgi_bin/cgi_tester"); // Физический адрес (путь к файлу из лакейшена, где лежит cgi)
-//    env[7] = strdup("REMOTE_ADDR=178.207.154.253"); // Адрес Клиента
-//    env[8] = strdup("REMOTE_IDENT="); // Имя клиента
-//    env[9] = strdup("REMOTE_USER="); // То как клиент назван на сервере (аутентификация)
-//    env[10] = strdup("REQUEST_METHOD=POST"); // Метод в реквесте
-//    env[11] = strdup("REQUEST_URI=http://127.0.0.1:8080/cgi_bin/youpi.bla?first_name=Lebrus&last_name=Shupay&maths=PEZDA"); // строка запроса
-//    env[12] = strdup("SCRIPT_NAME=cgi_tester"); // название скрипта // Путь к файлу из локейшена где лежит cgi
-//    env[13] = strdup("SERVER_NAME=webserv/1.1"); // название сервера
-//    env[14] = strdup("SERVER_PORT=8080"); // порт
-//    env[15] = strdup("SERVER_PROTOCOL=HTTP/1.1"); // хттп протокол
-//    env[16] = strdup("SERVER_SOFTWARE=web"); // название
-//    env[17] = nullptr;
-
-//	env[1] = strdup((std::string("QUERY_STRING=") + client->getRequest()->ge).c_str());
-//	if (client->getRequest()->getQuery()) // В случае POST и PUT размер body (из запроса)
-//		env[2] = strdup((std::string("CONTENT_LENGTH=") + client->getRequest()->getQuery().size()));
-//	else
-//		env[2] = strdup((std::string("CONTENT_LENGTH=") + client->getRequest()->getHeader("content-length")).c_str());
-//    env[1] = strdup((std::string("QUERY_STRING=")).c_str()); // Get все, что после знака вопроса (поле запроса)     + "first_name=Lebrus&last_name=Shupay&maths=PEZDA"
-//    env[2] = strdup("CONTENT_LENGTH="); //46
-//	if (client->getRequest()->findHeader("content-type"))
-//		env[3] = strdup((std::string("CONTENT_TYPE=") + client->getRequest()->getHeader("content-type")).c_str());
-//	else
-//		env[3] = strdup("CONTENT_TYPE=");
-//	env[4] = strdup("GATEWAY_INTERFACE=cgi/1.1");
-//	env[5] = strdup((std::string("PATH_INFO=http://") + client->getHost() + ":" + client->getPort() + client->getRequest()->getTarget()).c_str());
-//	env[5] = strdup(std::string(("PATH_INFO=") + client->getRequest()->getTarget()).c_str());
-//	env[5] = strdup((std::string("PATH_INFO=") + path_to_target).c_str());
-//	env[5] = strdup("PATH_INFO=/home/casubmar/school/webserv/static_files/cgi_bin/ubuntu_cgi_tester");
-//	env[6] = strdup((std::string("PATH_TRANSLATED=") + path_to_target).c_str());
-//	env[7] = strdup("REMOTE_ADDR=178.207.154.253"); // Адрес Клиента
-//	env[8] = strdup("REMOTE_IDENT="); // Имя клиента
-//	env[9] = strdup("REMOTE_USER="); // То как клиент назван на сервере (аутентификация)
-//	env[10] = strdup((std::string("REQUEST_METHOD=") + client->getRequest()->getMethod()).c_str()); // Метод в реквесте
-//	env[11] = strdup((std::string("REQUEST_URI=http://") + client->getHost() + ":" + client->getPort() + client->getRequest()->getTarget()).c_str());
-//	env[12] = strdup((std::string("SCRIPT_NAME=") + client->getRequest()->getTarget()).c_str()); // название скрипта // Путь к файлу из локейшена где лежит cgi
-//	env[13] = strdup("SERVER_NAME=webserv/1.1"); // название сервера
-//	env[14] = strdup((std::string("SERVER_PORT=") + client->getPort()).c_str()); // порт
-//	env[15] = strdup("SERVER_PROTOCOL=HTTP/1.1"); // хттп протокол
-//	env[16] = strdup("SERVER_SOFTWARE=web"); // название
-//	env[17] = 0;
-
 	env[0] = strdup("AUTH_TYPE=basic");
 	env[1] = strdup(("CONTENT_LENGTH=" + (request->findHeader("content-length") ? request->getHeader("content-length") : "1")).c_str());
 	env[2] = strdup(("CONTENT_TYPE=" + (request->findHeader("content-type") ? request->getHeader("content-type") : "")).c_str());
@@ -200,32 +150,54 @@ void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_t
 }
 
 void WebServ::cgiHandler(Client *client, const std::string &path_to_target, Location *location) {
-	int		fds[2];
-	int		status = 0;
-	char	*env[18];
-	char	buff[1024];
-	int		read_bytes;
-	pid_t	pid;
+	HttpRequest*	request = client->getRequest();
+	HttpResponse*	response = client->getResponse();
+	int				fds[2];
+	int				status;
+	char*			env[18];
+	char			buff[1024];
+	std::string		data;
+	int				read_bytes;
 
 	pipe(fds);
-	pid = fork();
-	if (pid == 0) {
+	if (fork() == 0) {
 		dup2(fds[0], 0);
 		dup2(fds[1], 1);
 		setEnvForCgi(env, client, path_to_target);
 		std::string extention = std::string(path_to_target.begin() + path_to_target.rfind('.'), path_to_target.end());
 		char *argv[3] = {const_cast<char *>(location->getCgiIntepritator(extention).c_str()), const_cast<char *>(path_to_target.c_str()), 0}; // добавить путь к интепритатору
-		if (client->getRequest()->findHeader("content-length"))
-			write(fds[1], client->getRequest()->getBody().c_str(), client->getRequest()->getBody().size());
 		exit(execve(argv[0], argv, env));
 	}
 	else {
+		if (!request->getBody().empty())
+			write(fds[1], request->getBody().c_str(), request->getBody().size());
+		else
+			write(fds[1], "\0", 1);
+		close(fds[1]);
 		wait(&status);
 
-		close(fds[1]);
-		while ((read_bytes = (read(fds[0], buff, 1024))) > 0)
-			client->getResponse()->addToBuffer(buff, read_bytes);
-		std::cout << buff << std::endl;
+		while ((read_bytes = (read(fds[0], buff, 1024))) > 0) {
+			buff[read_bytes] = 0;
+			data.append(buff, read_bytes);
+		}
 		close(fds[0]);
+
+		parsingCgiResponse(response, data);
+	}
+}
+
+void	WebServ::parsingCgiResponse(HttpResponse* response, std::string& data) {
+	std::string		q;
+
+	while (!data.empty() && data[0] != 0) {
+		std::cout << data.size() << std::endl;
+		q = data.substr(0, data.find("\r\n"));
+		if (!q.find("Status"))
+			response->setStatusCode(q.substr(q.find(' ') + 1, 3));
+		else if (!q.empty())
+			response->addHeader(q.substr(0, q.find(':')), q.substr(q.find(':') + 2));
+		else
+			response->setBody(q);
+		data.erase(0, data.find("\r\n") + 2);
 	}
 }
