@@ -16,6 +16,7 @@
 # include "HttpRequest.hpp"
 # include "HttpResponse.hpp"
 # include <zconf.h>
+# include <arpa/inet.h>
 
 enum Stage {
 	parsing_request,
@@ -33,14 +34,16 @@ private:
 	bool 					in_proccessed;
 	std::string				host;
 	std::string				port;
+	std::string				address;
 	HttpRequest*			request;
 	HttpResponse*			response;
 	long					connection_time;
 
 public:
-	Client(int socket, const std::string& ip, const std::string& port);
+	Client(int socket, const std::string& ip, const std::string& port, sockaddr_in& address_client);
 	virtual ~Client();
 
+	inline const std::string&		getAddress() const { return (address); }
 	inline const std::string&		getPort() const { return (port); }
 	inline const std::string&		getHost() const  { return (host); }
 	inline int						getStage() const { return (stage); }

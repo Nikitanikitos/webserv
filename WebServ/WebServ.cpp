@@ -49,12 +49,15 @@ void				WebServ::addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, i
 }
 
 void				WebServ::addNewClient(fd_set& readfd_set) {
-	int 	client_socket;
+	int 				client_socket;
+	struct sockaddr_in	sockaddr;
+	socklen_t			sockaddr_len;
 
 	for (int i = 0; i < virtual_servers.size(); ++i) {
 		if (FD_ISSET(virtual_servers[i]->getSocket(), &readfd_set)) {
-			if ((client_socket = accept(virtual_servers[i]->getSocket(), 0, 0)) > 0)
-				clients.push_back(new Client(client_socket, virtual_servers[i]->getHost(), virtual_servers[i]->getPort()));
+			ft_memset(&sockaddr, 0, sizeof(sockaddr));
+			if ((client_socket = accept(virtual_servers[i]->getSocket(), (struct sockaddr*)&sockaddr, &sockaddr_len)) > 0)
+				clients.push_back(new Client(client_socket, virtual_servers[i]->getHost(), virtual_servers[i]->getPort(), sockaddr));
 		}
 	}
 }
@@ -125,7 +128,9 @@ void			WebServ::deleteClient(std::vector<Client*>::iterator& client) {
 }
 
 void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_to_target) {
-	env[0] = strdup("AUTH_TYPE=basic"); // basic // TODO не забудь воткнуть ft_strdup
+	HttpRequest*	request = client->getRequest();
+
+//	env[0] = strdup("AUTH_TYPE=basic"); // basic // TODO не забудь воткнуть ft_strdup
 
 //    env[1] = strdup((std::string("QUERY_STRING=") + "first_name=Lebrus&last_name=Shupay&maths=PEZDA").c_str()); // Get все, что после знака вопроса (поле запроса)
 //    env[2] = strdup("CONTENT_LENGTH=46");
@@ -150,39 +155,61 @@ void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_t
 //		env[2] = strdup((std::string("CONTENT_LENGTH=") + client->getRequest()->getQuery().size()));
 //	else
 //		env[2] = strdup((std::string("CONTENT_LENGTH=") + client->getRequest()->getHeader("content-length")).c_str());
-    env[1] = strdup((std::string("QUERY_STRING=")).c_str()); // Get все, что после знака вопроса (поле запроса)     + "first_name=Lebrus&last_name=Shupay&maths=PEZDA"
-    env[2] = strdup("CONTENT_LENGTH="); //46
-	if (client->getRequest()->findHeader("content-type"))
-		env[3] = strdup((std::string("CONTENT_TYPE=") + client->getRequest()->getHeader("content-type")).c_str());
-	else
-		env[3] = strdup("CONTENT_TYPE=");
-	env[4] = strdup("GATEWAY_INTERFACE=cgi/1.1");
-	env[5] = strdup((std::string("PATH_INFO=http://") + client->getHost() + ":" + client->getPort() + client->getRequest()->getTarget()).c_str());
+//    env[1] = strdup((std::string("QUERY_STRING=")).c_str()); // Get все, что после знака вопроса (поле запроса)     + "first_name=Lebrus&last_name=Shupay&maths=PEZDA"
+//    env[2] = strdup("CONTENT_LENGTH="); //46
+//	if (client->getRequest()->findHeader("content-type"))
+//		env[3] = strdup((std::string("CONTENT_TYPE=") + client->getRequest()->getHeader("content-type")).c_str());
+//	else
+//		env[3] = strdup("CONTENT_TYPE=");
+//	env[4] = strdup("GATEWAY_INTERFACE=cgi/1.1");
+//	env[5] = strdup((std::string("PATH_INFO=http://") + client->getHost() + ":" + client->getPort() + client->getRequest()->getTarget()).c_str());
 //	env[5] = strdup(std::string(("PATH_INFO=") + client->getRequest()->getTarget()).c_str());
 //	env[5] = strdup((std::string("PATH_INFO=") + path_to_target).c_str());
 //	env[5] = strdup("PATH_INFO=/home/casubmar/school/webserv/static_files/cgi_bin/ubuntu_cgi_tester");
-	env[6] = strdup((std::string("PATH_TRANSLATED=") + path_to_target).c_str());
-	env[7] = strdup("REMOTE_ADDR=178.207.154.253"); // Адрес Клиента
-	env[8] = strdup("REMOTE_IDENT="); // Имя клиента
-	env[9] = strdup("REMOTE_USER="); // То как клиент назван на сервере (аутентификация)
-	env[10] = strdup((std::string("REQUEST_METHOD=") + client->getRequest()->getMethod()).c_str()); // Метод в реквесте
-	env[11] = strdup((std::string("REQUEST_URI=http://") + client->getHost() + ":" + client->getPort() + client->getRequest()->getTarget()).c_str());
-	env[12] = strdup((std::string("SCRIPT_NAME=") + client->getRequest()->getTarget()).c_str()); // название скрипта // Путь к файлу из локейшена где лежит cgi
-	env[13] = strdup("SERVER_NAME=webserv/1.1"); // название сервера
-	env[14] = strdup((std::string("SERVER_PORT=") + client->getPort()).c_str()); // порт
-	env[15] = strdup("SERVER_PROTOCOL=HTTP/1.1"); // хттп протокол
-	env[16] = strdup("SERVER_SOFTWARE=web"); // название
+//	env[6] = strdup((std::string("PATH_TRANSLATED=") + path_to_target).c_str());
+//	env[7] = strdup("REMOTE_ADDR=178.207.154.253"); // Адрес Клиента
+//	env[8] = strdup("REMOTE_IDENT="); // Имя клиента
+//	env[9] = strdup("REMOTE_USER="); // То как клиент назван на сервере (аутентификация)
+//	env[10] = strdup((std::string("REQUEST_METHOD=") + client->getRequest()->getMethod()).c_str()); // Метод в реквесте
+//	env[11] = strdup((std::string("REQUEST_URI=http://") + client->getHost() + ":" + client->getPort() + client->getRequest()->getTarget()).c_str());
+//	env[12] = strdup((std::string("SCRIPT_NAME=") + client->getRequest()->getTarget()).c_str()); // название скрипта // Путь к файлу из локейшена где лежит cgi
+//	env[13] = strdup("SERVER_NAME=webserv/1.1"); // название сервера
+//	env[14] = strdup((std::string("SERVER_PORT=") + client->getPort()).c_str()); // порт
+//	env[15] = strdup("SERVER_PROTOCOL=HTTP/1.1"); // хттп протокол
+//	env[16] = strdup("SERVER_SOFTWARE=web"); // название
+//	env[17] = 0;
+
+	env[0] = strdup("AUTH_TYPE=basic");
+	env[1] = strdup(("CONTENT_LENGTH=" + (request->findHeader("content-length") ? request->getHeader("content-length") : "1")).c_str());
+	env[2] = strdup(("CONTENT_TYPE=" + (request->findHeader("content-type") ? request->getHeader("content-type") : "")).c_str());
+	env[3] = strdup("GATEWAY_INTERFACE=cgi/1.1");
+	env[4] = strdup(("PATH_INFO=" + request->getTarget()).c_str()); // TODO че за значение
+	env[5] = strdup(("PATH_TRANSLATED=" + path_to_target).c_str());
+	env[6] = strdup(("QUERY_STRING=" + request->getQuery()).c_str());
+	env[7] = strdup(("REMOTE_ADDR=" + client->getAddress()).c_str());
+	env[8] = strdup("REMOTE_IDENT=");
+	env[9] = strdup("REMOTE_USER="); // TODO добавить в client имя клиента
+	env[10] = strdup(("REQUEST_METHOD=" + request->getMethod()).c_str());
+	env[11] = strdup(("REQUEST_URI=http://" + client->getHost() + ":" + client->getPort() + request->getTarget()).c_str());
+	env[12] = strdup(("SCRIPT_NAME=" + request->getTarget()).c_str());
+	env[13] = strdup(("SERVER_NAME=" + client->getHost()).c_str());
+	env[14] = strdup(("SERVER_PORT=" + client->getPort()).c_str());
+	env[15] = strdup("SERVER_PROTOCOL=HTTP/1.1");
+	env[16] = strdup("SERVER_SOFTWARE=webserv/0.1");
 	env[17] = 0;
 }
 
 void WebServ::cgiHandler(Client *client, const std::string &path_to_target, Location *location) {
-	int fds[2];
-	int status = 0;
-	pid_t pid;
+	int		fds[2];
+	int		status = 0;
+	char	*env[18];
+	char	buff[1024];
+	int		read_bytes;
+	pid_t	pid;
+
 	pipe(fds);
 	pid = fork();
 	if (pid == 0) {
-		char *env[18];
 		dup2(fds[0], 0);
 		dup2(fds[1], 1);
 		setEnvForCgi(env, client, path_to_target);
@@ -191,10 +218,9 @@ void WebServ::cgiHandler(Client *client, const std::string &path_to_target, Loca
 		if (client->getRequest()->findHeader("content-length"))
 			write(fds[1], client->getRequest()->getBody().c_str(), client->getRequest()->getBody().size());
 		exit(execve(argv[0], argv, env));
-	} else {
+	}
+	else {
 		wait(&status);
-		char buff[1024];
-		int read_bytes;
 
 		close(fds[1]);
 		while ((read_bytes = (read(fds[0], buff, 1024))) > 0)
