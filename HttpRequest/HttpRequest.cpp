@@ -23,8 +23,7 @@ void		HttpRequest::clear() {
 }
 
 bytes		HttpRequest::getRequestData(bytes& data) const {
-	size_t		i;
-	i = (stage != parsing_body) ? data.find("\r\n") : data.size();
+	size_t		i = data.find("\r\n");
 	bytes		result = data.substr(i);
 
 	(i != -1) ? data.erase(i + 2) : data.erase(i);
