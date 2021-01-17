@@ -55,7 +55,7 @@ int				ft_atoi_hex(const char* nptr) {
 		if (*(nptr++) == '-')
 			pos_or_neg = -1;
 	while (ft_ishex(*nptr)) {
-		result = result * 10 + ft_convert_hex_to_dec(*nptr);
+		result = result * 16 + ft_convert_hex_to_dec(*nptr);
 		nptr++;
 	}
 	return (result * pos_or_neg);
