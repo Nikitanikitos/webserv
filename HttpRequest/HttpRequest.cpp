@@ -22,11 +22,12 @@ void		HttpRequest::clear() {
 	stage = 0;
 }
 
-bytes		HttpRequest::getRequestData(bytes& data) const {
-	size_t		i = data.find("\r\n");
-	bytes		result = data.substr(i);
+bytes HttpRequest::getRequestData() {
+	size_t		i = buffer.find("\r\n");
+	(i != (size_t)-1) ? (i += 2) : 0;
+	bytes		result = buffer.substr(i);
 
-	(i != -1) ? data.erase(i + 2) : data.erase(i);
+	buffer.erase(i);
 	return (result);
 }
 
@@ -34,32 +35,40 @@ void HttpRequest::addDataToRequest(char* data, size_t size) {
 	bytes	request_data;
 
 	addToBuffer(data, size);
-	if (data[size - 1] != '\n' && data[size - 2] != '\r')
-		return;
-	while (!buffer.empty()) {
+	while (!getBuffer().empty()) {
 		switch (getStage()) {
 			case parsing_first_line:
-				parsingFirstLine(getRequestData(buffer).c_str());
+				request_data = getRequestData();
+				if (request_data.find("\r\n") != (size_t)-1) // TODO написать метод rfind
+					parsingFirstLine(request_data.c_str());
+				else
+					{ addToBuffer(request_data); return; }
 				break;
 			case parsing_headers:
-				request_data = getRequestData(buffer);
-				request_data.empty() ? endOfHeaders() : parseHeader(request_data.c_str());
+				request_data = getRequestData();
+				if (request_data.find("\r\n") != (size_t)-1)
+					(request_data.find("\r\n") == 0) ? endOfHeaders() : parseHeader(request_data.c_str());
+				else
+					{ addToBuffer(request_data); return; }
 				break;
 			case parsing_body:
 				if (findHeader("content-length"))
-					parsingBodyByContentLength(buffer);
+					parsingBodyByContentLength();
 				else if (findHeader("transfer-encoding"))
-					parsingBodyByChunked(buffer);
+					parsingBodyByChunked();
+				return;
 		}
 	}
 }
 
-void		HttpRequest::parsingBodyByContentLength(bytes& data) {
-	addToBody(data);
-	data.erase(data.size());
-	if (getBody().size() >= ft_atoi(getHeader("content-length").c_str())) {
-		if (getBody().size() > ft_atoi(getHeader("content-length").c_str()))
-			trimBody(getBody().size() - ft_atoi(getHeader("content-length").c_str()));
+void HttpRequest::parsingBodyByContentLength() {
+	const int&	content_length = ft_atoi(getHeader("content-length").c_str());
+
+	addToBody(getBuffer());
+	buffer.clear();
+	if (getBody().size() >= content_length) {
+		if (getBody().size() > content_length)
+			trimBody(getBody().size() - content_length);
 		setStage(completed);
 	}
 }
@@ -77,7 +86,7 @@ void		HttpRequest::parsingFirstLine(std::string line_request) {
 		}
 		else if (i == 1)
 			setTarget(element);
-		else if (element != "HTTP/1.1" && element != "HTTP/1.0")
+		else if (element != "HTTP/1.1\r\n" && element != "HTTP/1.0\r\n")
 			throw std::string("400");
 		line_request.erase(0, line_request.find(' ') + 1);
 	}
@@ -100,7 +109,7 @@ void		HttpRequest::parseHeader(const std::string& line) {
 	position = line.find(':');
 	key = line.substr(0, position);
 	position += (line[position + 1] == ' ') ? 2 : 1;
-	value = line.substr(position);
+	value = line.substr(position, line.size() - 2 - position);
 	std::for_each(key.begin(), key.end(), ft_tolower);
 	addHeader(key, value);
 }
@@ -120,16 +129,23 @@ void		HttpRequest::endOfHeaders() {
 		setStage(completed);
 }
 
-void		HttpRequest::parsingBodyByChunked(bytes& data) {
-	while (!data.empty()) {
-		if (chunk_size == -1)
-			chunk_size = ft_atoi_hex(getRequestData(data).c_str());
-		if (chunk_size == 0)
-			setStage(completed);
-		else {
-			addToBody(data.substr(chunk_size));
-			data.erase(chunk_size + 2);
-			chunk_size = -1;
+void HttpRequest::parsingBodyByChunked() {
+	bytes	request_data;
+
+	while (!getBuffer().empty()) {
+		request_data = getRequestData();
+		if (request_data.find("\r\n") != (size_t)-1) {
+			if (chunk_size == -1)
+				chunk_size = ft_atoi_hex(request_data.c_str());
+			if (chunk_size == 0)
+				setStage(completed);
+			else {
+				addToBody(buffer.substr(chunk_size));
+				buffer.erase(chunk_size + 2);
+				chunk_size = -1;
+			}
 		}
+		else
+			{ addToBuffer(request_data); return; }
 	}
 }

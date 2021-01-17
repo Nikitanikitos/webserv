@@ -35,8 +35,8 @@ private:
 	int								chunk_size;
 
 	void							parsingFirstLine(std::string line_request);
-	void							parsingBodyByContentLength(bytes& data);
-	void							parsingBodyByChunked(bytes& data);
+	void							parsingBodyByContentLength();
+	void							parsingBodyByChunked();
 	bool 							isValidMethod(const std::string& method_);
 	void							parseHeader(const std::string& line);
 	void							endOfHeaders();
@@ -59,7 +59,7 @@ public:
 
 	virtual void						clear();
 
-	bytes								getRequestData(bytes& data) const;
+	bytes getRequestData();
 	inline void							trimBody(size_t n) { body.rtrim(n); }
 };
 
