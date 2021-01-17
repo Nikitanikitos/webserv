@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "WebServ.hpp"
-#include <iostream>
 
 int		WebServ::working = 1;
 
@@ -190,7 +189,6 @@ void	WebServ::parsingCgiResponse(HttpResponse* response, std::string& data) {
 	std::string		q;
 
 	while (!data.empty() && data[0] != 0) {
-		std::cout << data.size() << std::endl;
 		q = data.substr(0, data.find("\r\n"));
 		if (!q.find("Status"))
 			response->setStatusCode(q.substr(q.find(' ') + 1, 3));
