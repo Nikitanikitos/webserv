@@ -137,12 +137,13 @@ void HttpRequest::parsingBodyByChunked() {
 		if (request_data.find("\r\n") != (size_t)-1) {
 			if (chunk_size == -1)
 				chunk_size = ft_atoi_hex(request_data.c_str());
-			if (chunk_size == 0)
-				setStage(completed);
 			else {
-				addToBody(buffer.substr(chunk_size));
-				buffer.erase(chunk_size + 2);
-				chunk_size = -1;
+				if (chunk_size == 0)
+					setStage(completed);
+				else {
+					addToBody(request_data.substr(chunk_size));
+					chunk_size = -1;
+				}
 			}
 		}
 		else
