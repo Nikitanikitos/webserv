@@ -76,10 +76,10 @@ char*		bytes::bytedup(const bytes& src, size_t size) {
 size_t		bytes::find(const char* needle) {
 	for (int i = 0; i < size_; ++i) {
 		if (buffer[i] == *needle) {
-			for (int j = 0; needle[j]; ++j)
-				if (buffer[i + j] != needle[j])
-					break;
-			return (i);
+			int 	j;
+			for (j = 0; needle[j]; ++j)
+				if (buffer[i + j] != needle[j]) break;
+			if (!needle[j])	return (i);
 		}
 	}
 	return (-1);
@@ -88,8 +88,9 @@ size_t		bytes::find(const char* needle) {
 bytes bytes::substr(size_t i) {
 	bytes	result;
 
+	i = (i < size_) ? i : size_;
 	result.buffer = bytedup(*this, i);
-	result.size_ = (i < size_) ? i : size_;
+	result.size_ = i;
 	return (result);
 }
 
