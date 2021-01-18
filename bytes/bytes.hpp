@@ -15,21 +15,27 @@
 
 # include <string>
 
-struct		bytes {
+extern void			ft_memcopy(const void* src, void* dst, size_t size);
+
+class	bytes {
 private:
 	size_t			size_;
+	size_t			capacity;
 	char*			buffer;
 
-	inline char*	bytedup(const bytes& src, size_t size) { return (bytedup(src.buffer, size)); }
-	char*			bytedup(const char* src, size_t size);
+	inline void		byte_init(const char* data) {
+		buffer = new char[capacity];
+		ft_memcopy(data, buffer, size_);
+		buffer[size_] = 0;
+	}
 
 public:
-	bytes() : size_(0), buffer() { buffer = new char[1]; }
+	bytes() : size_(0), capacity(10) { buffer = new char[capacity]; }
 	~bytes() { delete []buffer; }
 
-	bytes(const char* data, size_t size) : size_(size) { buffer = bytedup(data, size); }
-	bytes(const bytes& string) : size_(string.size_) { buffer = bytedup(string.buffer, size_); }
-	bytes(const std::string& string) : size_(string.size()) { buffer = bytedup(string.c_str(), string.size()); }
+	bytes(const char* data, size_t size) : size_(size), capacity(size * 2) { byte_init(data); }
+	bytes(const bytes& string) : size_(string.size_), capacity(string.capacity) { byte_init(string.c_str()); }
+	bytes(const std::string& string) : size_(string.size()), capacity(string.size() * 2) { byte_init(string.c_str()); }
 
 	bytes&			operator=(const bytes& string);
 
@@ -43,8 +49,7 @@ public:
 	size_t					find(const char* needle) const ;
 	size_t					rfind(const char* needle) const;
 
-	bytes					substr(size_t i);
-
+	inline bytes			substr(size_t i) { return (bytes(buffer, (i < size_) ? i : size_)); }
 	inline size_t			size() const { return (size_); }
 	inline bool				empty() const { return (!size_); }
 	inline const char*		c_str() const { return (buffer); }

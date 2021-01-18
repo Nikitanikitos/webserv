@@ -12,71 +12,49 @@
 
 #include "bytes.hpp"
 
-void			memcpy(const void* src, void* dst, size_t size) {
-	unsigned char*	b_src = (unsigned char*)src;
-	unsigned char*	b_dst = (unsigned char*)dst;
-
-	unsigned int*	w_src = (unsigned int*)b_src;
-	unsigned int*	w_dst = (unsigned int*)b_dst;
-
-	while (size >= 4) {
-		*w_dst++ = *w_src++;
-		size -= 4;
-	}
-
-	if (size) {
-		b_dst = (unsigned char*)w_dst;
-		b_src = (unsigned char*)w_src;
-		while (size > 0)
-		{
-			*b_dst++ = *b_src++;
-			size--;
-		}
-	}
-}
-
 void			bytes::add(const char* string, size_t i) {
-	char*	temp_buff;
+	const char*		temp_buff = buffer;
 
-	if (!size_) {
-		delete [] buffer;
-		buffer = bytedup(string, i);
-		size_ = i;
-	}
-	else {
-		temp_buff = buffer;
-		buffer = new char[size_ + i + 1];
-		memcpy(temp_buff, buffer, size_);
-		memcpy(string, buffer + size_, i);
-		size_ += i;
-		buffer[size_] = 0;
+	if (size_ + i > capacity) {
+		capacity = (capacity < i ) ? i * 2: capacity * 2;
+		buffer = new char[capacity];
+		ft_memcopy(temp_buff, buffer, size_);
 		delete []temp_buff;
 	}
+	ft_memcopy(string, buffer + size_, i);
+	size_ += i;
+	buffer[size_] = 0;
 }
 
 void			bytes::clear() {
 	delete []buffer;
 	size_ = 0;
-	buffer = new char[1];
+	capacity = 10;
+	buffer = new char[capacity];
 }
 
 void			bytes::erase(size_t n) {
+	char*	temp_buff = buffer;
+
 	if (n >= size_)
 		clear();
 	else {
-		char*	temp_buff = buffer;
-
-		buffer = new char[size_ - n + 1];
-		memcpy(temp_buff + n, buffer, size_ - n);
+		capacity -= n + 1;
 		size_ -= n;
+		buffer = new char[capacity];
+		ft_memcopy(temp_buff + n, buffer, size_);
+		buffer[size_] = 0;
 		delete[] temp_buff;
 	}
 }
 
 bytes&		bytes::operator=(const bytes& string) {
 	delete []buffer;
-	buffer = bytedup(string, string.size_);
-	size_ = string.size_;
+	capacity = string.capacity;
+	size_ = string.size();
+	buffer = new char[capacity];
+	ft_memcopy(string.c_str(), buffer, size_);
+	buffer[size_] = 0;
 	return (*this);
 }
 
@@ -107,28 +85,7 @@ size_t		bytes::rfind(const char* needle) const {
 	return (-1);
 }
 
-bytes	bytes::substr(size_t i) {
-	bytes	result;
-
-	i = (i < size_) ? i : size_;
-	result.buffer = bytedup(*this, i);
-	result.size_ = i;
-	return (result);
-}
-
-char*	bytes::bytedup(const char* src, size_t size) {
-	char*			dst = new char[size + 1];
-
-	memcpy(src, dst, size);
-	dst[size] = 0;
-	return (dst);
-}
-
 void	bytes::rtrim(size_t n) {
-	char*	temp_buff = buffer;
-
 	size_ -= n;
-	buffer = new char[size_ + 1];
-	buffer = bytedup(temp_buff, size_);
-	delete []temp_buff;
+	buffer[size_] = 0;
 }
