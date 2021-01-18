@@ -12,8 +12,7 @@
 
 #include "HttpRequest.hpp"
 
-const std::string		HttpRequest::methods[4] =
-		{"GET", "HEAD", "POST", "PUT"};
+const std::string		HttpRequest::methods[4] = {"GET", "HEAD", "POST", "PUT"};
 
 void		HttpRequest::clear() {
 	HttpObject::clear();
@@ -23,7 +22,7 @@ void		HttpRequest::clear() {
 	stage = 0;
 }
 
-bytes HttpRequest::getRequestData() {
+bytes	HttpRequest::getRequestData() {
 	size_t		i = buffer.find("\r\n");
 	(i != (size_t)-1) ? (i += 2) : 0;
 	bytes		result = buffer.substr(i);
@@ -40,14 +39,14 @@ void HttpRequest::addDataToRequest(char* data, size_t size) {
 		switch (getStage()) {
 			case parsing_first_line:
 				request_data = getRequestData();
-				if (request_data.find("\r\n") != (size_t)-1) // TODO написать метод rfind
+				if (request_data.rfind("\r\n") != (size_t)-1)
 					parsingFirstLine(request_data.c_str());
 				else
 					{ addToBuffer(request_data); return; }
 				break;
 			case parsing_headers:
 				request_data = getRequestData();
-				if (request_data.find("\r\n") != (size_t)-1)
+				if (request_data.rfind("\r\n") != (size_t)-1)
 					(request_data.find("\r\n") == 0) ? endOfHeaders() : parseHeader(request_data.c_str());
 				else
 					{ addToBuffer(request_data); return; }
@@ -135,7 +134,7 @@ void HttpRequest::parsingBodyByChunked() {
 
 	while (!getBuffer().empty()) {
 		request_data = getRequestData();
-		if (request_data.find("\r\n") != (size_t)-1) {
+		if (request_data.rfind("\r\n") != (size_t)-1) {
 			if (chunk_size == -1)
 				chunk_size = ft_atoi_hex(request_data.c_str());
 			else {

@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
 #include "WebServ.hpp"
 
 void	WebServ::readRequest(Client* client) {
@@ -108,7 +107,7 @@ void	WebServ::putMethodHandler(Client* client, Location* location, VirtualServer
 	else if (S_ISDIR(info->info.st_mode) || (fd = open(path_to_target.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
 		response->setStatusCode("404");
 	else {
-		int i = write(fd, request->getBody().c_str(), request->getBody().size());
+		write(fd, request->getBody().c_str(), request->getBody().size());
 		(info->exists == -1) ? response->setStatusCode("201") : response->setStatusCode("200");
 	}
 }

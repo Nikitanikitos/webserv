@@ -32,7 +32,7 @@ private:
 	std::string						query;
 	std::string						target;
 	int								stage;
-	int								chunk_size;
+	int 							chunk_size;
 
 	void							parsingFirstLine(std::string line_request);
 	void							parsingBodyByContentLength();
