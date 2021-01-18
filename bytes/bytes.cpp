@@ -61,20 +61,25 @@ bytes&		bytes::operator=(const bytes& string) {
 	return (*this);
 }
 
-char*		bytes::bytedup(const bytes& src, size_t size) {
-	char	*result;
-	int 	i;
-
-	size = (size < src.size_) ? size : src.size_;
-	result = new char[size + 1];
-	for (i = 0; i < size; ++i)
-		result[i] = src.buffer[i];
-	result[i] = 0;
-	return (result);
-}
+char*		bytes::bytedup(const bytes& src, size_t size) { return (bytedup(src.buffer, size)); }
 
 size_t		bytes::find(const char* needle) {
 	for (int i = 0; i < size_; ++i) {
+		if (buffer[i] == *needle) {
+			int 	j;
+			for (j = 0; needle[j]; ++j)
+				if (buffer[i + j] != needle[j]) break;
+			if (!needle[j])	return (i);
+		}
+	}
+	return (-1);
+}
+
+size_t		bytes::rfind(const char* needle) {
+	int i = size_;
+
+	i--;
+	for (; i >= 0; --i) {
 		if (buffer[i] == *needle) {
 			int 	j;
 			for (j = 0; needle[j]; ++j)
@@ -94,15 +99,31 @@ bytes bytes::substr(size_t i) {
 	return (result);
 }
 
-char* bytes::bytedup(const char* src, size_t size) {
-	char	*result;
-	int 	i;
+char*	bytes::bytedup(const char* src, size_t size) {
+	char*			dst = new char[size + 1];
 
-	result = new char[size + 1];
-	for (i = 0; i < size; ++i)
-		result[i] = src[i];
-	result[i] = 0;
-	return (result);
+	dst[size] = 0;
+	unsigned char*	b_src = (unsigned char*)src;
+	unsigned char*	b_dst = (unsigned char*)dst;
+
+	unsigned int*	w_src = (unsigned int*)b_src;
+	unsigned int*	w_dst = (unsigned int*)b_dst;
+
+	while (size >= 4) {
+		*w_dst++ = *w_src++;
+		size -= 4;
+	}
+
+	if (size) {
+		b_dst = (unsigned char*)w_dst;
+		b_src = (unsigned char*)w_src;
+		while (size > 0)
+		{
+			*b_dst++ = *b_src++;
+			size--;
+		}
+	}
+	return (dst);
 }
 
 void bytes::rtrim(size_t n) {

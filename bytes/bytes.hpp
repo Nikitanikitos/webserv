@@ -41,6 +41,7 @@ public:
 
 	void			clear();
 	size_t			find(const char* needle);
+	size_t			rfind(const char* needle);
 
 	bytes			substr(size_t i);
 
