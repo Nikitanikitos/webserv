@@ -36,6 +36,7 @@ public:
 
 	inline void						setBody(const bytes& body_) { body = body_; }
 	inline void						addToBody(const bytes& data) { body.add(data); }
+	inline void						addToBody(const bytes& data, int size) { body.add(data.c_str(), size); }
 
 	inline const bytes&				getBody() const { return (body); }
 	inline const bytes&				getBuffer() const { return (buffer); }
