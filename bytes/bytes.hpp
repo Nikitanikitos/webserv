@@ -20,7 +20,7 @@ private:
 	size_t			size_;
 	char*			buffer;
 
-	char*			bytedup(const bytes& src, size_t size);
+	inline char*	bytedup(const bytes& src, size_t size) { return (bytedup(src.buffer, size)); }
 	char*			bytedup(const char* src, size_t size);
 
 public:
@@ -33,9 +33,9 @@ public:
 
 	bytes&			operator=(const bytes& string);
 
-	void			add(const std::string& string);
+	inline void		add(const std::string& string) { add(string.c_str(), string.size()); }
 	void			add(const char* string, size_t i);
-	void			add(const bytes& string);
+	inline void		add(const bytes& string) { add(string.c_str(), string.size()); }
 	void			erase(size_t n);
 	void			rtrim(size_t n);
 

@@ -12,8 +12,28 @@
 
 #include "bytes.hpp"
 
-void			bytes::add(const std::string& string) { add(string.c_str(), string.size()); }
-void			bytes::add(const bytes& string) { add(string.c_str(), string.size()); }
+void			memcpy(const void* src, void* dst, size_t size) {
+	unsigned char*	b_src = (unsigned char*)src;
+	unsigned char*	b_dst = (unsigned char*)dst;
+
+	unsigned int*	w_src = (unsigned int*)b_src;
+	unsigned int*	w_dst = (unsigned int*)b_dst;
+
+	while (size >= 4) {
+		*w_dst++ = *w_src++;
+		size -= 4;
+	}
+
+	if (size) {
+		b_dst = (unsigned char*)w_dst;
+		b_src = (unsigned char*)w_src;
+		while (size > 0)
+		{
+			*b_dst++ = *b_src++;
+			size--;
+		}
+	}
+}
 
 void			bytes::add(const char* string, size_t i) {
 	char*	temp_buff;
@@ -26,10 +46,9 @@ void			bytes::add(const char* string, size_t i) {
 	else {
 		temp_buff = buffer;
 		buffer = new char[size_ + i + 1];
-		for (int j = 0; j < size_ ; ++j)
-			buffer[j] = temp_buff[j];
-		for (int k = 0; k < i; ++k)
-			buffer[size_++] = string[k];
+		memcpy(temp_buff, buffer, size_);
+		memcpy(string, buffer + size_, i);
+		size_ += i;
 		buffer[size_] = 0;
 		delete []temp_buff;
 	}
@@ -41,16 +60,16 @@ void			bytes::clear() {
 	buffer = new char[1];
 }
 
-void bytes::erase(size_t n) {
-
+void			bytes::erase(size_t n) {
 	if (n >= size_)
 		clear();
 	else {
-		bytes	temp_buff = *this;
+		char*	temp_buff = buffer;
+
+		buffer = new char[size_ - n + 1];
+		memcpy(temp_buff + n, buffer, size_ - n);
 		size_ -= n;
-		temp_buff.buffer += n;
-		buffer = bytedup(temp_buff, size_);
-		temp_buff.buffer -= n;
+		delete[] temp_buff;
 	}
 }
 
@@ -60,8 +79,6 @@ bytes&		bytes::operator=(const bytes& string) {
 	size_ = string.size_;
 	return (*this);
 }
-
-char*		bytes::bytedup(const bytes& src, size_t size) { return (bytedup(src.buffer, size)); }
 
 size_t		bytes::find(const char* needle) {
 	for (int i = 0; i < size_; ++i) {
@@ -90,7 +107,7 @@ size_t		bytes::rfind(const char* needle) {
 	return (-1);
 }
 
-bytes bytes::substr(size_t i) {
+bytes	bytes::substr(size_t i) {
 	bytes	result;
 
 	i = (i < size_) ? i : size_;
@@ -102,31 +119,12 @@ bytes bytes::substr(size_t i) {
 char*	bytes::bytedup(const char* src, size_t size) {
 	char*			dst = new char[size + 1];
 
+	memcpy(src, dst, size);
 	dst[size] = 0;
-	unsigned char*	b_src = (unsigned char*)src;
-	unsigned char*	b_dst = (unsigned char*)dst;
-
-	unsigned int*	w_src = (unsigned int*)b_src;
-	unsigned int*	w_dst = (unsigned int*)b_dst;
-
-	while (size >= 4) {
-		*w_dst++ = *w_src++;
-		size -= 4;
-	}
-
-	if (size) {
-		b_dst = (unsigned char*)w_dst;
-		b_src = (unsigned char*)w_src;
-		while (size > 0)
-		{
-			*b_dst++ = *b_src++;
-			size--;
-		}
-	}
 	return (dst);
 }
 
-void bytes::rtrim(size_t n) {
+void	bytes::rtrim(size_t n) {
 	char*	temp_buff = buffer;
 
 	size_ -= n;
