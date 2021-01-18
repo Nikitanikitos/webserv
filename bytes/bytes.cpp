@@ -80,7 +80,7 @@ bytes&		bytes::operator=(const bytes& string) {
 	return (*this);
 }
 
-size_t		bytes::find(const char* needle) {
+size_t		bytes::find(const char* needle) const {
 	for (int i = 0; i < size_; ++i) {
 		if (buffer[i] == *needle) {
 			int 	j;
@@ -92,7 +92,7 @@ size_t		bytes::find(const char* needle) {
 	return (-1);
 }
 
-size_t		bytes::rfind(const char* needle) {
+size_t		bytes::rfind(const char* needle) const {
 	int i = size_;
 
 	i--;

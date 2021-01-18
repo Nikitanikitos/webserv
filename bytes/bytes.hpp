@@ -33,17 +33,17 @@ public:
 
 	bytes&			operator=(const bytes& string);
 
-	inline void		add(const std::string& string) { add(string.c_str(), string.size()); }
-	void			add(const char* string, size_t i);
-	inline void		add(const bytes& string) { add(string.c_str(), string.size()); }
-	void			erase(size_t n);
-	void			rtrim(size_t n);
+	inline void				add(const std::string& string) { add(string.c_str(), string.size()); }
+	void					add(const char* string, size_t i);
+	inline void				add(const bytes& string) { add(string.c_str(), string.size()); }
+	void					erase(size_t n);
+	void					rtrim(size_t n);
 
-	void			clear();
-	size_t			find(const char* needle);
-	size_t			rfind(const char* needle);
+	void					clear();
+	size_t					find(const char* needle) const ;
+	size_t					rfind(const char* needle) const;
 
-	bytes			substr(size_t i);
+	bytes					substr(size_t i);
 
 	inline size_t			size() const { return (size_); }
 	inline bool				empty() const { return (!size_); }
