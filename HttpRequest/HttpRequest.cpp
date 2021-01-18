@@ -14,7 +14,7 @@
 
 const std::string		HttpRequest::methods[4] = {"GET", "HEAD", "POST", "PUT"};
 
-void		HttpRequest::clear() {
+void	HttpRequest::clear() {
 	HttpObject::clear();
 	method.clear();
 	target.clear();
@@ -23,33 +23,29 @@ void		HttpRequest::clear() {
 }
 
 bytes	HttpRequest::getRequestData() {
-	size_t		i = buffer.find("\r\n");
-	(i != (size_t)-1) ? (i += 2) : 0;
+	size_t		i = buffer.find("\r\n") + 2;
 	bytes		result = buffer.substr(i);
 
 	buffer.erase(i);
 	return (result);
 }
 
-void HttpRequest::addDataToRequest(char* data, size_t size) {
-	bytes	request_data;
-
+void	HttpRequest::addDataToRequest(char* data, size_t size) {
 	addToBuffer(data, size);
 	while (!getBuffer().empty()) {
 		switch (getStage()) {
 			case parsing_first_line:
-				request_data = getRequestData();
-				if (request_data.rfind("\r\n") != (size_t)-1)
-					parsingFirstLine(request_data.c_str());
+				if (getBuffer().find("\r\n") != (size_t)-1)
+					parsingFirstLine(getRequestData().c_str());
 				else
-					{ addToBuffer(request_data); return; }
-				break;
+					return;
 			case parsing_headers:
-				request_data = getRequestData();
-				if (request_data.rfind("\r\n") != (size_t)-1)
-					(request_data.find("\r\n") == 0) ? endOfHeaders() : parseHeader(request_data.c_str());
+				if (getBuffer().find("\r\n") == 0)
+					endOfHeaders();
+				else if (getBuffer().find("\r\n") != (size_t)-1)
+					parseHeader(getRequestData().c_str());
 				else
-					{ addToBuffer(request_data); return; }
+					return;
 				break;
 			case parsing_body:
 				if (findHeader("content-length"))
@@ -58,6 +54,27 @@ void HttpRequest::addDataToRequest(char* data, size_t size) {
 					parsingBodyByChunked();
 				return;
 		}
+	}
+}
+
+void HttpRequest::parsingBodyByChunked() {
+	while (!getBuffer().empty()) {
+		if (getBuffer().find("\r\n") != (size_t)-1) {
+			if (chunk_size == -1)
+				chunk_size = ft_atoi_hex(getRequestData().c_str());
+			else {
+				if (chunk_size == 0) {
+					setStage(completed);
+					buffer.clear();
+				}
+				else {
+					addToBody(getRequestData(), chunk_size);
+					chunk_size = -1;
+				}
+			}
+		}
+		else
+			return;
 	}
 }
 
@@ -115,6 +132,7 @@ void		HttpRequest::parseHeader(const std::string& line) {
 }
 
 void		HttpRequest::endOfHeaders() {
+	buffer.erase(2);
 	if (!findHeader("host"))
 		throw std::string("400");
 	else if (getMethod() == "PUT" || getMethod() == "POST") {
@@ -127,26 +145,4 @@ void		HttpRequest::endOfHeaders() {
 	}
 	else
 		setStage(completed);
-}
-
-void HttpRequest::parsingBodyByChunked() {
-	bytes	request_data;
-
-	while (!getBuffer().empty()) {
-		request_data = getRequestData();
-		if (request_data.rfind("\r\n") != (size_t)-1) {
-			if (chunk_size == -1)
-				chunk_size = ft_atoi_hex(request_data.c_str());
-			else {
- 				if (chunk_size == 0)
-					setStage(completed);
-				else {
-					addToBody(request_data.substr(chunk_size));
-					chunk_size = -1;
-				}
-			}
-		}
-		else
-			{ addToBuffer(request_data); return; }
-	}
 }
