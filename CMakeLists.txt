@@ -17,6 +17,7 @@ add_executable(webserv
 		libft/ft_itoa.cpp
 		libft/ft_tolower.cpp
 		libft/ft_decode64base.cpp
+		libft/ft_memcopy.cpp
 
 		WebServ/WebServ.cpp
 		WebServ/WebServ_workers.cpp

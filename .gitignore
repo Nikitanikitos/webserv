@@ -3,3 +3,4 @@ cmake-build-debug
 solid/
 lagoona/
 default.conf
+static_files/file_should_exist_after
