@@ -63,11 +63,11 @@ public:
 	inline size_t					getLimitClientBodySize() const { return (limit_client_body_size); }
 	inline const std::string&		getPath() const { return (path); }
 	inline const std::string&		getRoot() const { return (root); }
+	inline const std::string&		getCgiInterpreter(const std::string& key) { return cgi.at(key); }
 	inline bool						getAutoindex() const { return (autoindex); }
 
 	bool							isAllowMethod(const std::string& method) const;
 	bool							findCgi(const std::string& file) const;
-	std::string & getCgiIntepritator(const std::string& key);
 };
 
 #endif //WEBSERV_LOCATION_HPP

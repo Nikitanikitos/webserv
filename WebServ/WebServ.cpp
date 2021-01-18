@@ -164,7 +164,7 @@ void WebServ::cgiHandler(Client *client, const std::string &path_to_target, Loca
 		dup2(fds[1], 1);
 		setEnvForCgi(env, client, path_to_target);
 		std::string extention = std::string(path_to_target.begin() + path_to_target.rfind('.'), path_to_target.end());
-		char *argv[3] = {const_cast<char *>(location->getCgiIntepritator(extention).c_str()), const_cast<char *>(path_to_target.c_str()), 0}; // добавить путь к интепритатору
+		char *argv[3] = {const_cast<char *>(location->getCgiInterpreter(extention).c_str()), const_cast<char *>(path_to_target.c_str()), 0}; // добавить путь к интепритатору
 		exit(execve(argv[0], argv, env));
 	}
 	else {

@@ -15,10 +15,11 @@
 
 void	WebServ::readRequest(Client* client) {
 	HttpRequest*	request = client->getRequest();
-	char			buff[1025];
+	int				size_buff = (request->getChunkSize() == -1 ? 2048 : request->getChunkSize());
+	char			buff[size_buff + 1];
 	int 			read_bytes;
 
-	read_bytes = recv(client->getSocket(), buff, 1024, 0);
+	read_bytes = recv(client->getSocket(), buff, size_buff, 0);
 	buff[read_bytes] = 0;
 	try {
 		if (read_bytes > 0) {
@@ -107,7 +108,7 @@ void	WebServ::putMethodHandler(Client* client, Location* location, VirtualServer
 	else if (S_ISDIR(info->info.st_mode) || (fd = open(path_to_target.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
 		response->setStatusCode("404");
 	else {
-		write(fd, request->getBody().c_str(), request->getBody().size());
+		int i = write(fd, request->getBody().c_str(), request->getBody().size());
 		(info->exists == -1) ? response->setStatusCode("201") : response->setStatusCode("200");
 	}
 }

@@ -53,6 +53,7 @@ public:
 	inline const std::string&			getMethod() const { return (method); }
 	inline const std::string&			getTarget() const { return (target); }
 	inline int							getStage() const { return (stage); }
+	inline int							getChunkSize() const { return (chunk_size); }
 	inline const std::string&			getQuery() const { return (query); }
 
 	void addDataToRequest(char* data, size_t size);

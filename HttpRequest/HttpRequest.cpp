@@ -19,6 +19,7 @@ void		HttpRequest::clear() {
 	HttpObject::clear();
 	method.clear();
 	target.clear();
+	chunk_size = -1;
 	stage = 0;
 }
 
@@ -138,7 +139,7 @@ void HttpRequest::parsingBodyByChunked() {
 			if (chunk_size == -1)
 				chunk_size = ft_atoi_hex(request_data.c_str());
 			else {
-				if (chunk_size == 0)
+ 				if (chunk_size == 0)
 					setStage(completed);
 				else {
 					addToBody(request_data.substr(chunk_size));

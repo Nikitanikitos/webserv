@@ -25,13 +25,3 @@ bool Location::findCgi(const std::string& file) const {
 		if (file.rfind(it->first) != std::string::npos) return (true);
 	return (false);
 }
-
-std::string & Location::getCgiIntepritator(const std::string &key) { // TODO хуита
-//	for (std::map<std::string, std::string>::iterator it = cgi.begin(); it != cgi.end(); ++it)
-//	{
-//		if (it->first == key)
-//			return it->second;
-//	}
-//	return (NULL);
-	return cgi[key];
-}
