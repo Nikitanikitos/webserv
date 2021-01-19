@@ -160,12 +160,14 @@ bool	WebServ::checkAuth(Client* client, const std::string& root) {
 std::string WebServ::isErrorRequest(Location* location, t_stat& info, Client* client) {
 	HttpRequest*		request = client->getRequest();
 
-	if (!location || (info.exists == -1 && request->getMethod() != "PUT"))
+	if (!location || (info.exists == -1 && (request->getMethod() != "PUT" && request->getMethod() != "POST")))
 		return ("404");
 	else if (!checkAuth(client, location->getRoot()))
 		return ("401");
 	else if (!location->isAllowMethod(request->getMethod()))
 		return ("405");
+	else if (request->getBody().size() > location->getLimitClientBodySize())
+		return ("413");
 	return ("");
 }
 
@@ -188,7 +190,7 @@ void	WebServ::generateResponse(Client *client) {
 			info.exists = stat(path_to_target.c_str(), &info.info);
 			close(fd);
 		}
-		if (location->findCgi(path_to_target))
+		if (location->findCgi(path_to_target) || (request->getMethod() == "POST" && S_ISDIR(info.info.st_mode) && location->findCgi(".bla")))
 			cgiHandler(client, path_to_target, location);
 		else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
 			DefaultHandler(client, location, virtual_server, &info, path_to_target);

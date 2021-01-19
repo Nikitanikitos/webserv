@@ -145,19 +145,25 @@ void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_t
 	env[14] = strdup(("SERVER_PORT=" + client->getPort()).c_str());
 	env[15] = strdup("SERVER_PROTOCOL=HTTP/1.1");
 	env[16] = strdup("SERVER_SOFTWARE=webserv/0.1");
-	env[17] = 0;
+	env[17] = strdup("HTTP_X_SECRET_HEADER_FOR_TEST=1");
+	env[18] = 0;
 }
 
 void WebServ::cgiHandler(Client *client, const std::string &path_to_target, Location *location) {
 	HttpRequest*	request = client->getRequest();
 	HttpResponse*	response = client->getResponse();
 	int				status;
-	char*			env[18];
+	char*			env[19];
 	bytes			data;
 	int				read_bytes;
 	int 			fds[2];
 
 	pipe(fds);
+	std::string		extension;
+	if (path_to_target.rfind('.') != (size_t)-1)
+		extension.append(path_to_target.substr(path_to_target.rfind('.')));
+	else
+		extension.append(".bla");
 	const char* fname = "/Users/casubmar/school/cpp/cpp08_home/webserv/static_files/file";
 	int fd = open(fname, O_CREAT | O_RDWR | O_TRUNC, 0666);
 	if (fork() == 0) {
@@ -167,8 +173,7 @@ void WebServ::cgiHandler(Client *client, const std::string &path_to_target, Loca
 		dup2(fd, 1);
 		close(fd);
 		setEnvForCgi(env, client, path_to_target);
-		std::string extention = std::string(path_to_target.begin() + path_to_target.rfind('.'), path_to_target.end());
-		char *argv[3] = {const_cast<char *>(location->getCgiInterpreter(extention).c_str()), const_cast<char *>(path_to_target.c_str()), 0}; // добавить путь к интепритатору
+		char *argv[3] = {const_cast<char *>(location->getCgiInterpreter(extension).c_str()), const_cast<char *>(path_to_target.c_str()), 0}; // добавить путь к интепритатору
 		exit(execve(argv[0], argv, env));
 	}
 	else {
