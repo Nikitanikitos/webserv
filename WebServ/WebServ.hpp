@@ -73,7 +73,7 @@ private:
 	inline bool					isErrorStatus(const std::string& status)  { return (status[0] == '4' || status[0] == '5'); }
 	std::string					isErrorRequest(Location* location, t_stat& info, Client* client);
 	void 						setEnvForCgi(char **env, Client *client, const std::string &path_to_target);
-	void						parsingCgiResponse(HttpResponse* response, bytes &data);
+	static void						parsingCgiResponse(HttpResponse* response, bytes &data);
 
 public:
 	static int		working;

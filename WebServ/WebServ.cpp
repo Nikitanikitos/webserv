@@ -189,21 +189,35 @@ void WebServ::cgiHandler(Client *client, const std::string &path_to_target, Loca
 
 		parsingCgiResponse(response, data);
 		delete [] buff;
+		unlink("/Users/casubmar/school/cpp/cpp08_home/webserv/static_files/file");
 	}
 }
 
-void	WebServ::parsingCgiResponse(HttpResponse* response, bytes &data) {
-	std::string		q;
-	std::string		data_ = data.c_str();
+void	WebServ::parsingCgiResponse(HttpResponse* response, bytes& data) {
+	int 	stage = 0;
+	int 	pos;
 
-	while (!data.empty() && data_[0] != 0) {
-		q = data_.substr(0, data_.find("\r\n"));
-		if (!q.find("Status"))
-			response->setStatusCode(q.substr(q.find(' ') + 1, 3));
-		else if (!q.empty())
-			response->addHeader(q.substr(0, q.find(':')), q.substr(q.find(':') + 2));
-		else
-			response->setBody(q);
-		data_.erase(0, data.find("\r\n") + 2);
+	while (!data.empty()) {
+		pos = data.find("\r\n");
+		std::string		q = data.substr((size_t)pos).c_str();
+		switch (stage) {
+			case 0:
+				stage++;
+				if (!q.find("Status")) {
+					response->setStatusCode(q.substr(q.find(' ') + 1, 3));
+					break;
+				}
+				else
+					response->setStatusCode("200");
+			case 1:
+				if (q.empty())
+					stage++;
+				else
+					response->addHeader(q.substr(0, q.find(':')), q.substr(q.find(':') + 2));
+				break;
+			case 2:
+				response->setBody(q);
+		}
+		(pos == -1) ? data.clear() : data.erase(pos + 2);
 	}
 }
