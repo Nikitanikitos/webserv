@@ -24,7 +24,8 @@ const std::string	HttpResponse::message_phrases[count_status_code][2] = {
 		{"404", "Not Found"},
 		{"405", "Method Not Allowed"},
 		{"411", "Length Required"},
-		{"413", "Payload Too Large"}
+		{"413", "Payload Too Large"},
+		{"501", "Not Implemented"}
 };
 
 std::string			HttpResponse::getMessagePhrase(const std::string& code) {
