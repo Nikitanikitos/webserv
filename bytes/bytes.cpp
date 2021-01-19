@@ -16,7 +16,7 @@ void			bytes::add(const char* string, size_t i) {
 	const char*		temp_buff = buffer;
 
 	if (size_ + i > capacity) {
-		capacity = (capacity < i ) ? i * 2: capacity * 2;
+		capacity = (capacity < i ) ? i * 2 + 1: capacity * 2;
 		buffer = new char[capacity];
 		ft_memcopy(temp_buff, buffer, size_);
 		delete []temp_buff;

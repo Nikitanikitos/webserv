@@ -17,7 +17,10 @@
 # include <sys/stat.h>
 # include <dirent.h>
 # include <cstring>
+
+#ifdef __linux__
 # include <wait.h>
+#endif
 
 # include "libft.hpp"
 # include "Client.hpp"
@@ -70,7 +73,7 @@ private:
 	inline bool					isErrorStatus(const std::string& status)  { return (status[0] == '4' || status[0] == '5'); }
 	std::string					isErrorRequest(Location* location, t_stat& info, Client* client);
 	void 						setEnvForCgi(char **env, Client *client, const std::string &path_to_target);
-	void						parsingCgiResponse(HttpResponse* response, std::string& data);
+	void						parsingCgiResponse(HttpResponse* response, bytes &data);
 
 public:
 	static int		working;

@@ -1,0 +1,3 @@
+AuthType Basic
+AuthName "Directory Name"
+AuthUserFile /home/nikita/CLionProjects/webserv/.htpasswd

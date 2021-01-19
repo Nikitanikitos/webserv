@@ -129,7 +129,7 @@ void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_t
 	HttpRequest*	request = client->getRequest();
 
 	env[0] = strdup("AUTH_TYPE=basic");
-	env[1] = strdup(("CONTENT_LENGTH=" + (request->findHeader("content-length") ? request->getHeader("content-length") : "1")).c_str());
+	env[1] = strdup(("CONTENT_LENGTH=" + std::string(request->getBody().size() ? ft_itoa(request->getBody().size()) : "")).c_str()); // TODO нужно добавить рр query и отчистить память
 	env[2] = strdup(("CONTENT_TYPE=" + (request->findHeader("content-type") ? request->getHeader("content-type") : "")).c_str());
 	env[3] = strdup("GATEWAY_INTERFACE=cgi/1.1");
 	env[4] = strdup(("PATH_INFO=" + request->getTarget()).c_str()); // TODO че за значение
@@ -151,51 +151,59 @@ void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_t
 void WebServ::cgiHandler(Client *client, const std::string &path_to_target, Location *location) {
 	HttpRequest*	request = client->getRequest();
 	HttpResponse*	response = client->getResponse();
-	int				fds[2];
 	int				status;
 	char*			env[18];
-	char			buff[1024];
-	std::string		data;
+	bytes			data;
 	int				read_bytes;
+	int 			fds[2];
 
 	pipe(fds);
+	const char* fname = "/Users/casubmar/school/cpp/cpp08_home/webserv/static_files/file";
+	int fd = open(fname, O_CREAT | O_RDWR | O_TRUNC, 0666);
 	if (fork() == 0) {
+		close(fds[1]);
 		dup2(fds[0], 0);
-		dup2(fds[1], 1);
+		close(fds[0]);
+		dup2(fd, 1);
+		close(fd);
 		setEnvForCgi(env, client, path_to_target);
 		std::string extention = std::string(path_to_target.begin() + path_to_target.rfind('.'), path_to_target.end());
 		char *argv[3] = {const_cast<char *>(location->getCgiInterpreter(extention).c_str()), const_cast<char *>(path_to_target.c_str()), 0}; // добавить путь к интепритатору
 		exit(execve(argv[0], argv, env));
 	}
 	else {
+		int		w = 1000000;
+		close(fds[0]);
 		if (!request->getBody().empty())
-			write(fds[1], request->getBody().c_str(), request->getBody().size());
-		else
-			write(fds[1], "\0", 1);
+			w = write(fds[1], request->getBody().c_str(), request->getBody().size());
 		close(fds[1]);
 		wait(&status);
 
-		while ((read_bytes = (read(fds[0], buff, 1024))) > 0) {
+		char*	buff = new char[w + 1];
+		lseek(fd, 0, 0);
+		while ((read_bytes = (read(fd, buff, w))) > 0) {
 			buff[read_bytes] = 0;
-			data.append(buff, read_bytes);
+			data.add(buff, read_bytes);
 		}
-		close(fds[0]);
+		close(fd);
 
 		parsingCgiResponse(response, data);
+		delete [] buff;
 	}
 }
 
-void	WebServ::parsingCgiResponse(HttpResponse* response, std::string& data) {
+void	WebServ::parsingCgiResponse(HttpResponse* response, bytes &data) {
 	std::string		q;
+	std::string		data_ = data.c_str();
 
-	while (!data.empty() && data[0] != 0) {
-		q = data.substr(0, data.find("\r\n"));
+	while (!data.empty() && data_[0] != 0) {
+		q = data_.substr(0, data_.find("\r\n"));
 		if (!q.find("Status"))
 			response->setStatusCode(q.substr(q.find(' ') + 1, 3));
 		else if (!q.empty())
 			response->addHeader(q.substr(0, q.find(':')), q.substr(q.find(':') + 2));
 		else
 			response->setBody(q);
-		data.erase(0, data.find("\r\n") + 2);
+		data_.erase(0, data.find("\r\n") + 2);
 	}
 }
