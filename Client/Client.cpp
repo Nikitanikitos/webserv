@@ -13,8 +13,8 @@
 #include "Client.hpp"
 
 Client::Client(int socket, const std::string& ip, const std::string& port, sockaddr_in& address_client)
-								: socket(socket), stage(parsing_request), in_proccessed(false), host(ip), port(port),
-									address(inet_ntoa((in_addr&)address_client)) { // TODO написать свою функцию
+								: socket(socket), stage(parsing_request), in_proccessed(false), socket_closed(false),
+																								host(ip), port(port) {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);
@@ -27,7 +27,7 @@ Client::Client(int socket, const std::string& ip, const std::string& port, socka
 Client::~Client() {
 	delete response;
 	delete request;
-	close(socket);
+	close_socket();
 }
 
 bool					Client::connectionTimedOut() {
