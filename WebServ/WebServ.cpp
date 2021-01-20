@@ -49,8 +49,8 @@ void				WebServ::addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, i
 
 void				WebServ::addNewClient(fd_set& readfd_set) {
 	int 				client_socket;
-	struct sockaddr_in	sockaddr;
-	socklen_t			sockaddr_len;
+	struct sockaddr_in	sockaddr = {};
+	socklen_t			sockaddr_len = 0;
 
 	for (int i = 0; i < virtual_servers.size(); ++i) {
 		if (FD_ISSET(virtual_servers[i]->getSocket(), &readfd_set)) {

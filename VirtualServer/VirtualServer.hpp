@@ -69,7 +69,7 @@ public:
 
 	inline void							setPort(const std::string &port_) { port = port_; }
 	inline void							setHost(const std::string& ip) { host = ip; }
-	inline void							setSocket(int socket) { socket = socket; }
+	inline void							setSocket(int socket) { server_socket = socket; }
 };
 
 bool					operator==(const VirtualServer& virtual_server_l, const VirtualServer& virtual_server_r); // TODO доделать сравнение
