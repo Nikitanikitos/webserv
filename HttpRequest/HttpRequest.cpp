@@ -57,7 +57,7 @@ void	HttpRequest::addDataToRequest(char* data, size_t size) {
 	}
 }
 
-void HttpRequest::parsingBodyByChunked() {
+void	HttpRequest::parsingBodyByChunked() {
 	while (!getBuffer().empty()) {
 		if (getBuffer().find("\r\n") != (size_t)-1) {
 			if (chunk_size == -1)
@@ -78,7 +78,7 @@ void HttpRequest::parsingBodyByChunked() {
 	}
 }
 
-void HttpRequest::parsingBodyByContentLength() {
+void		HttpRequest::parsingBodyByContentLength() {
 	const int&	content_length = ft_atoi(getHeader("content-length").c_str());
 
 	addToBody(getBuffer());

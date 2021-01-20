@@ -14,7 +14,7 @@
 
 void	WebServ::readRequest(Client* client) {
 	HttpRequest*	request = client->getRequest();
-	int				size_buff = (request->getChunkSize() == -1 ? 2048 : request->getChunkSize());
+	int				size_buff = (request->getChunkSize() > 0 ? request->getChunkSize() : 2048);
 	char			buff[size_buff + 1];
 	int 			read_bytes;
 

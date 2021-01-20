@@ -119,13 +119,13 @@ void			WebServ::addVirtualServer(VirtualServer *virtual_server) {
 	virtual_servers.push_back(virtual_server);
 }
 
-void			WebServ::deleteClient(std::vector<Client*>::iterator& client) {
+void		WebServ::deleteClient(std::vector<Client*>::iterator& client) {
 	delete *client;
 	clients.erase(client);
 	client = clients.begin();
 }
 
-void WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_to_target) {
+void		WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_to_target) {
 	HttpRequest*	request = client->getRequest();
 
 	env[0] = strdup("AUTH_TYPE=basic");
@@ -164,7 +164,7 @@ void WebServ::cgiHandler(Client *client, const std::string &path_to_target, Loca
 		extension.append(path_to_target.substr(path_to_target.rfind('.')));
 	else
 		extension.append(".bla");
-	const char* fname = "/Users/casubmar/school/cpp/cpp08_home/webserv/static_files/file";
+	const char* fname = "static_files/file";
 	int fd = open(fname, O_CREAT | O_RDWR | O_TRUNC, 0666);
 	if (fork() == 0) {
 		close(fds[1]);
@@ -194,7 +194,7 @@ void WebServ::cgiHandler(Client *client, const std::string &path_to_target, Loca
 
 		parsingCgiResponse(response, data);
 		delete [] buff;
-		unlink("/Users/casubmar/school/cpp/cpp08_home/webserv/static_files/file");
+		unlink(fname);
 	}
 }
 
