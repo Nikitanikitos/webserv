@@ -39,11 +39,9 @@ private:
 	int 							number_workers;
 	ThreadPool						thread_pool;
 
-	static void					DefaultHandler(Client* client, Location* location, VirtualServer* virtual_server,
-																		t_stat* info, std::string& path_to_target);
-	static void					putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server,
-																			t_stat* info, std::string& path_to_target);
-	void cgiHandler(Client *client, const std::string &path_to_target, Location *location);
+	static void					DefaultHandler(Client* client, Location* location, t_stat* info, std::string& path_to_target);
+	static void					putMethodHandler(Client* client, Location* location, t_stat* info, std::string& path_to_target);
+	void						cgiHandler(Client *client, const std::string &path_to_target, Location *location);
 
 	static bytes				autoindexGenerate(HttpRequest *request, const std::string& path_to_target);
 

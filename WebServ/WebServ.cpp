@@ -92,7 +92,7 @@ VirtualServer*	WebServ::getVirtualServer(Client *client) const {
 		if (client->getHost() == virtual_server->getHost() && client->getPort() == virtual_server->getPort()) {
 			if (!default_vs) default_vs = virtual_server;
 			for (int j = 0; j < virtual_server->getServerNames().size(); ++j)
-				if (request->findHeader("host") && request->getHeader("host") == virtual_server->getServerNames()[j])
+				if (request->findHeader("host") && request->getHeader("host").substr(0, request->getHeader("host").find(':')) == virtual_server->getServerNames()[j])
 					return (virtual_server);
 		}
 	}
@@ -135,9 +135,9 @@ void		WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_
 	env[4] = strdup(("PATH_INFO=" + request->getTarget()).c_str()); // TODO че за значение
 	env[5] = strdup(("PATH_TRANSLATED=" + path_to_target).c_str());
 	env[6] = strdup(("QUERY_STRING=" + request->getQuery()).c_str());
-	env[7] = strdup(("REMOTE_ADDR=" + client->getAddress()).c_str());
+	env[7] = strdup("REMOTE_ADDR=");
 	env[8] = strdup("REMOTE_IDENT=");
-	env[9] = strdup("REMOTE_USER="); // TODO добавить в client имя клиента
+	env[9] = strdup("REMOTE_USER=");
 	env[10] = strdup(("REQUEST_METHOD=" + request->getMethod()).c_str());
 	env[11] = strdup(("REQUEST_URI=http://" + client->getHost() + ":" + client->getPort() + request->getTarget()).c_str());
 	env[12] = strdup(("SCRIPT_NAME=" + request->getTarget()).c_str());
