@@ -59,7 +59,7 @@ bytes&		bytes::operator=(const bytes& string) {
 }
 
 size_t		bytes::find(const char* needle) const {
-	for (int i = 0; i < size_; ++i) {
+	for (size_t i = 0; i < size_; ++i) {
 		if (buffer[i] == *needle) {
 			int 	j;
 			for (j = 0; needle[j]; ++j)

@@ -32,9 +32,9 @@ void		VirtualServer::initSocket() {
 
 Location*	VirtualServer::getLocation(HttpRequest* request) const {
 	Location*	location = 0;
-	int			current_size = 0;
+	size_t		current_size = 0;
 
-	for (int i = 0; i < locations.size(); ++i) {
+	for (size_t i = 0; i < locations.size(); ++i) {
 		if (request->getTarget().find(locations[i]->getPath()) == 0 && current_size < locations[i]->getPath().size()) {
 			location = locations[i];
 			current_size = locations[i]->getPath().size();

@@ -83,8 +83,8 @@ void		HttpRequest::parsingBodyByContentLength() {
 
 	addToBody(getBuffer());
 	buffer.clear();
-	if (getBody().size() >= content_length) {
-		if (getBody().size() > content_length)
+	if ((int)getBody().size() >= content_length) {
+		if ((int)getBody().size() > content_length)
 			trimBody(getBody().size() - content_length);
 		setStage(completed);
 	}

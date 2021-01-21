@@ -24,11 +24,11 @@ int		exit() {
 int		main(int ac, char **av) {
 	std::string					number_of_workers;
 	try {
-		ParseConfigFile				parse(((ac == 2) ? av[1] : (char*)"default.conf"));
+		ParseConfigFile				parse(((ac == 2) ? av[1] : (char*)"/home/casubmar/school/webserv/default.conf"));
 		std::vector<VirtualServer*>	list_virtual_server = parse.ParseFile(number_of_workers);
 		WebServ						server(ft_atoi(number_of_workers.c_str()));
 
-		for (int i = 0; i < list_virtual_server.size(); ++i)
+		for (size_t i = 0; i < list_virtual_server.size(); ++i)
 			server.addVirtualServer(list_virtual_server[i]);
 
 		signal(SIGINT, exit);

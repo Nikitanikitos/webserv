@@ -12,7 +12,7 @@
 
 #include "Client.hpp"
 
-Client::Client(int socket, const std::string& ip, const std::string& port, sockaddr_in& address_client)
+Client::Client(int socket, const std::string &ip, const std::string &port)
 								: socket(socket), stage(parsing_request), in_proccessed(false), socket_closed(false),
 																								host(ip), port(port) {
 	struct timeval	tv;

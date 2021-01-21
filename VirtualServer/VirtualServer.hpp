@@ -42,7 +42,7 @@ public:
 
 	virtual ~VirtualServer()  {
 		close(server_socket);
-		for (int i = 0; i < locations.size(); ++i)
+		for (size_t i = 0; i < locations.size(); ++i)
 			delete locations[i];
 	}
 

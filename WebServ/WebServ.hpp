@@ -78,7 +78,7 @@ public:
 
 	explicit WebServ(int number_of_workers) : number_workers(number_of_workers) { }
 	virtual ~WebServ() {
-		for (int i = 0; i < clients.size(); ++i)
+		for (size_t i = 0; i < clients.size(); ++i)
 			delete clients[i];
 	};
 
