@@ -19,7 +19,7 @@ void				WebServ::initSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd) 
 	FD_ZERO(&readfd_set);
 	FD_ZERO(&writefd_set);
 
-	for (int i = 0; i < virtual_servers.size(); ++i)
+	for (size_t i = 0; i < virtual_servers.size(); ++i)
 		FD_SET(virtual_servers[i]->getSocket(), &readfd_set);
 }
 
@@ -37,7 +37,7 @@ void				WebServ::addClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set) {
 }
 
 void				WebServ::addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, int& max_fd) {
-	for (int i = 0; i < clients.size(); ++i) {
+	for (size_t i = 0; i < clients.size(); ++i) {
 		const int&		client_socket = clients[i]->getSocket();
 		if (clients[i]->getStage() == parsing_request)
 			FD_SET(client_socket, &readfd_set);
@@ -50,7 +50,7 @@ void				WebServ::addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, i
 void				WebServ::addNewClient(fd_set& readfd_set) {
 	int 				client_socket;
 
-	for (int i = 0; i < virtual_servers.size(); ++i) {
+	for (size_t i = 0; i < virtual_servers.size(); ++i) {
 		if (FD_ISSET(virtual_servers[i]->getSocket(), &readfd_set)) {
 			if ((client_socket = accept(virtual_servers[i]->getSocket(), 0, 0)) > 0)
 				clients.push_back(new Client(client_socket, virtual_servers[i]->getHost(),
@@ -85,11 +85,11 @@ VirtualServer*	WebServ::getVirtualServer(Client *client) const {
 	VirtualServer*		default_vs = 0;
 	HttpRequest*		request = client->getRequest();
 
-	for (int i = 0; i < virtual_servers.size(); ++i) {
+	for (size_t i = 0; i < virtual_servers.size(); ++i) {
 		VirtualServer*		virtual_server = virtual_servers[i];
 		if (client->getHost() == virtual_server->getHost() && client->getPort() == virtual_server->getPort()) {
 			if (!default_vs) default_vs = virtual_server;
-			for (int j = 0; j < virtual_server->getServerNames().size(); ++j)
+			for (size_t j = 0; j < virtual_server->getServerNames().size(); ++j)
 				if (request->findHeader("host") && request->getHeader("host").substr(0, request->getHeader("host").find(':')) == virtual_server->getServerNames()[j])
 					return (virtual_server);
 		}
@@ -105,7 +105,7 @@ std::string		WebServ::getPathToTarget(HttpRequest *request, Location* location) 
 }
 
 void			WebServ::addVirtualServer(VirtualServer *virtual_server) {
-	for (int i = 0; i < virtual_servers.size(); ++i) {
+	for (size_t i = 0; i < virtual_servers.size(); ++i) {
 		if (virtual_server->getHost() == virtual_servers[i]->getHost() && virtual_server->getPort() ==
 																		  virtual_servers[i]->getPort()) {
 			virtual_server->setSocket(virtual_servers[i]->getSocket());

@@ -79,7 +79,7 @@ void	HttpRequest::parsingBodyByChunked() {
 }
 
 void		HttpRequest::parsingBodyByContentLength() {
-	const int&	content_length = ft_atoi(getHeader("content-length").c_str());
+	const size_t&	content_length = (size_t)ft_atoi(getHeader("content-length").c_str());
 
 	addToBody(getBuffer());
 	buffer.clear();

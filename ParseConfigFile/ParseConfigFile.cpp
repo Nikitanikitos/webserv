@@ -81,20 +81,29 @@ VirtualServer*	ParseConfigFile::parseVsDirective() {
 		}
 		std::vector<std::string> trimmedStr = getArgsFromLine(line);
 
-		switch (getIndexOfArg(trimmedStr[0], server_current_fields, virtual_server_directive)) {
+		switch (getIndexOfArg(trimmedStr[0], server_current_fields, virtual_server_directive)) { //TODO хуй знает про find
 			case server_names_d:
-				for (size_t i = 1; i < trimmedStr.size(); ++i)
+				for (size_t i = 1; i < trimmedStr.size(); ++i) {
+					if (std::find(virtualServer->getServerNames().begin(), virtualServer->getServerNames().end(), trimmedStr[i]) != virtualServer->getServerNames().end())
+						throw ParseConfigFileException("Bad config, double server name");
 					virtualServer->addServerName(trimmedStr[i]);
+				}
 				break;
 			case error_page_d:
-				if (trimmedStr.size() == 3)
+				if (trimmedStr.size() == 3) {
+					if (!virtualServer->getErrorPage(trimmedStr[1]).empty())
+						throw ParseConfigFileException("Bad config, double error page");
 					virtualServer->addErrorPage(trimmedStr[1], trimmedStr[2]);
+				}
 				else
 					throw ParseConfigFileException("Wrong error page parameter");
 				break;
 			case host_d:
-				if (trimmedStr.size() == 2)
+				if (trimmedStr.size() == 2) {
+					if (!virtualServer->getHost().empty())
+						throw ParseConfigFileException("Bad config, double host");
 					virtualServer->setHost(trimmedStr[1]);
+				}
 				else
 					throw ParseConfigFileException("Wrong host parameter");
 				break;
@@ -123,7 +132,7 @@ void				ParseConfigFile::addAllowMethodsToLocation(Location *location, const std
 	if (trimmedStr.size() == 1)
 		throw ParseConfigFileException("Allow methods must contain at least 1 parameter");
 	location->eraseAcceptedMethods();
-	for (int i = 1; i < trimmedStr.size(); ++i) {
+	for (size_t i = 1; i < trimmedStr.size(); ++i) {
 		if (trimmedStr[i] == "GET")
 			location->addAllowMethod(GET);
 		else if (trimmedStr[i] == "HEAD")
@@ -241,7 +250,7 @@ void	ParseConfigFile::AddVirtualServer(const std::string& line, std::vector<Virt
 
 bool	ParseConfigFile::checkCorrectVs(const VirtualServer *virtual_server,
 										const std::vector<VirtualServer*>& list_virtual_server) {
-	for (int i = 0; i < list_virtual_server.size(); ++i)
+	for (size_t i = 0; i < list_virtual_server.size(); ++i)
 		if (*virtual_server == *(list_virtual_server[i])) return (false);
 	return (true);
 }
