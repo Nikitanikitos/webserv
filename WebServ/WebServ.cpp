@@ -165,7 +165,7 @@ void WebServ::cgiHandler(Client *client, const std::string &path_to_target, Loca
 		extension.append(path_to_target.substr(path_to_target.rfind('.')));
 	else
 		extension.append(".bla");
-	const char* fname = "/home/casubmar/school/webserv/static_files/file";
+	const char* fname = "static_files/file";
 	int fd = open(fname, O_CREAT | O_RDWR | O_TRUNC, 0666);
 	if (fork() == 0) {
 		close(fds[1]);
