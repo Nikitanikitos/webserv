@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include <cstdlib>
+#include <iostream>
 #include "HttpResponse.hpp"
 
 const std::string	HttpResponse::message_phrases[count_status_code][2] = {
@@ -25,6 +26,7 @@ const std::string	HttpResponse::message_phrases[count_status_code][2] = {
 		{"405", "Method Not Allowed"},
 		{"411", "Length Required"},
 		{"413", "Payload Too Large"},
+		{"500", "Internal server error"},
 		{"501", "Not Implemented"}
 };
 
@@ -52,15 +54,19 @@ void			HttpResponse::generateResponse() {
 	for (it = headers.begin(); it != headers.end(); ++it)
 		buffer.add(it->first + ": " + it->second + CRLF);
 	buffer.add(CRLF);
-	if (body.size())
+	if (!body.empty())
 		buffer.add(body);
 }
 
 int				HttpResponse::sendResponse(int client_socket) {
 	int 	bytes;
 
-	bytes = send(client_socket, buffer.c_str(), buffer.size(), 0);
-	buffer.erase(bytes);
+	if ((bytes = send(client_socket, buffer.c_str(), buffer.size(), 0)) == -1) {
+		addHeader("Connection", "close");
+		buffer.clear();
+	}
+	else
+		buffer.erase(bytes);
 	return (bytes);
 }
 
