@@ -49,14 +49,12 @@ void				WebServ::addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, i
 
 void				WebServ::addNewClient(fd_set& readfd_set) {
 	int 				client_socket;
-	struct sockaddr_in	sockaddr = {};
-	socklen_t			sockaddr_len = 0;
 
 	for (int i = 0; i < virtual_servers.size(); ++i) {
 		if (FD_ISSET(virtual_servers[i]->getSocket(), &readfd_set)) {
-			ft_memset(&sockaddr, 0, sizeof(sockaddr));
-			if ((client_socket = accept(virtual_servers[i]->getSocket(), (struct sockaddr*)&sockaddr, &sockaddr_len)) > 0)
-				clients.push_back(new Client(client_socket, virtual_servers[i]->getHost(), virtual_servers[i]->getPort(), sockaddr));
+			if ((client_socket = accept(virtual_servers[i]->getSocket(), 0, 0)) > 0)
+				clients.push_back(new Client(client_socket, virtual_servers[i]->getHost(),
+											 virtual_servers[i]->getPort()));
 		}
 	}
 }

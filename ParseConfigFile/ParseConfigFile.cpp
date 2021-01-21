@@ -151,6 +151,8 @@ void				ParseConfigFile::setAutoindexInLocation(Location *location, const std::v
 std::string&		ParseConfigFile::checkLocationPath(std::string &path) const {
 	if (path[0] != '/')
 		path.insert(path.begin(), '/');
+	else if (path.size() > 1 && path[path.size() - 1] == '/')
+		path.erase(--path.end());
 	return (path);
 }
 
