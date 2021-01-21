@@ -26,20 +26,20 @@ enum stage {
 
 class	HttpRequest : public HttpObject {
 private:
-	static const std::string		methods[4];
+	static const std::string	methods[4];
 
-	std::string						method;
-	std::string						query;
-	std::string						target;
-	int								stage;
-	int 							chunk_size;
+	std::string		method;
+	std::string		query;
+	std::string		target;
+	int				stage;
+	int 			chunk_size;
 
-	void							parsingFirstLine(std::string line_request);
-	void							parsingBodyByContentLength();
-	void							parsingBodyByChunked();
-	bool 							isValidMethod(const std::string& method_);
-	void							parseHeader(const std::string& line);
-	void							endOfHeaders();
+	void								parsingFirstLine(std::string line_request);
+	void								parsingBodyByContentLength();
+	void								parsingBodyByChunked();
+	bool 								isValidMethod(const std::string& method_);
+	void								parseHeader(const std::string& line);
+	void								endOfHeaders();
 
 public:
 	HttpRequest() : stage(0), chunk_size(-1) { }
@@ -56,11 +56,11 @@ public:
 	inline int							getChunkSize() const { return (chunk_size); }
 	inline const std::string&			getQuery() const { return (query); }
 
-	void addDataToRequest(char* data, size_t size);
+	void								addDataToRequest(char* data, size_t size);
 
 	virtual void						clear();
 
-	bytes getRequestData();
+	bytes								getRequestData();
 	inline void							trimBody(size_t n) { body.rtrim(n); }
 };
 

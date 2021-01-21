@@ -56,7 +56,7 @@ private:
 	void 						addAllowMethodsToLocation(Location *location, const std::vector<std::string>& trimmedStr);
 	void 						setAutoindexInLocation(Location *location, const std::vector<std::string>& trimmedStr);
 	std::string&				checkLocationPath(std::string &path) const;
-	bool 						checkPort(int port) const;
+	inline bool 				checkPort(int port) const { return (port <= 262143 && port >= 1024); }
 	bool						checkCorrectVs(const VirtualServer *virtual_server,
 						  										const std::vector<VirtualServer*>& list_virtual_server);
 

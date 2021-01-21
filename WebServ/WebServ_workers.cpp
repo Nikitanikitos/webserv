@@ -39,7 +39,7 @@ void*	worker(void* arg) {
 					thread_pool.unlockSendStageMutex();
 					break;
 			}
-			if (client->getStage() != parsing_request && client->getStage() != close_connection && client->getStage() != parsing_request)
+			if (client->getStage() != parsing_request && client->getStage() != close_connection)
 				thread_pool.pushTask(client);
 			else
 				client->setProcessed(false);
@@ -51,11 +51,12 @@ void*	worker(void* arg) {
 	return (0);
 }
 
-void		WebServ::createWorkers() {
+void	WebServ::createWorkers() {
 	pthread_t		worker_thread;
 
+	workers.reserve(number_workers);
 	for (int i = 0; i < number_workers; ++i) {
 		pthread_create(&worker_thread, 0, worker, (void*)this);
-		pthread_detach(worker_thread);
+		workers.push_back(worker_thread);
 	}
 }

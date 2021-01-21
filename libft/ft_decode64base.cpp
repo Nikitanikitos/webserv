@@ -1,6 +1,6 @@
 # include "libft.hpp"
 
-uint32_t			get_index_64base(uint8_t chr) {
+static uint32_t		get_index_64base(uint8_t chr) {
 	if ('A' <= chr && chr <= 'Z')
 		return (chr - 65);
 	else if ('a' <= chr && chr <= 'z')
@@ -15,7 +15,7 @@ uint32_t			get_index_64base(uint8_t chr) {
 		return (0);
 }
 
-std::string		ft_decode64base(const std::string& data) {
+std::string			ft_decode64base(const std::string& data) {
 	std::string		result;
 	uint32_t		bytes;
 	char			chars[4];

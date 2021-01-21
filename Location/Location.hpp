@@ -40,7 +40,6 @@ private:
 	std::string									index;
 	bool										autoindex;
 	size_t										limit_client_body_size;
-//												client_max_body_size // TODO переименовать?
 
 public:
 	Location() : autoindex(non_accepted), limit_client_body_size(-1)

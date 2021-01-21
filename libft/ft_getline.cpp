@@ -30,7 +30,8 @@ bool			ft_getline(int fd, std::string &line) {
 	if (pos == std::string::npos) {
 		line = surplus;
 		surplus.clear();
-	} else {
+	}
+	else {
 		line = surplus.substr(0, pos);
 		surplus = surplus.substr(pos + 1);
 	}

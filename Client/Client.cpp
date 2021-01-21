@@ -29,14 +29,14 @@ Client::~Client() {
 	close_socket();
 }
 
-bool					Client::connectionTimedOut() {
+bool	Client::connectionTimedOut() {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);
 	return ((tv.tv_sec - connection_time) > TimeOut);
 }
 
-void					Client::setNewConnectionTime() {
+void	Client::setNewConnectionTime() {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);

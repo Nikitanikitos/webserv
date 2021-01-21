@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
+#include <cstdlib>
 #include "HttpResponse.hpp"
 
 const std::string	HttpResponse::message_phrases[count_status_code][2] = {
@@ -28,7 +28,7 @@ const std::string	HttpResponse::message_phrases[count_status_code][2] = {
 		{"501", "Not Implemented"}
 };
 
-std::string			HttpResponse::getMessagePhrase(const std::string& code) {
+std::string		HttpResponse::getMessagePhrase(const std::string& code) {
 	for (int i = 0; i < count_status_code; ++i) {
 		if (HttpResponse::message_phrases[i][0] == code)
 			return (HttpResponse::message_phrases[i][1]);
@@ -36,7 +36,7 @@ std::string			HttpResponse::getMessagePhrase(const std::string& code) {
 	return ("Unknown code");
 }
 
-void				HttpResponse::generateResponse() {
+void			HttpResponse::generateResponse() {
 	struct timeval											tv;
 	std::map<std::string, std::string>::const_iterator		it;
 
@@ -56,7 +56,7 @@ void				HttpResponse::generateResponse() {
 		buffer.add(body);
 }
 
-int					HttpResponse::sendResponse(int client_socket) {
+int				HttpResponse::sendResponse(int client_socket) {
 	int 	bytes;
 
 	bytes = send(client_socket, buffer.c_str(), buffer.size(), 0);
@@ -64,7 +64,7 @@ int					HttpResponse::sendResponse(int client_socket) {
 	return (bytes);
 }
 
-void	HttpResponse::clear() {
+void			HttpResponse::clear() {
 	HttpObject::clear();
 	status_code.clear();
 	message_phrase.clear();

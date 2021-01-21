@@ -13,8 +13,19 @@
 #include <sys/time.h>
 #include <ctime>
 
-#define SEC_PER_DAY		86400
-int 	get_number_days(time_t &seconds) {
+enum {
+	SEC_PER_31DAY = 2678400,
+	SEC_PER_30DAY = 2592000,
+	SEC_PER_29DAY = 2505600,
+	SEC_PER_28DAY = 2419200,
+	SEC_PER_DAY = 86400,
+	SEC_PER_HOUR = 3600,
+	SEC_PER_MIN = 60,
+	SEC_PER_LEAP_YEAR = 31622400,
+	SEC_PER_YEAR = 31536000
+};
+
+static int 		get_number_days(time_t &seconds) {
 	int 	result = 0;
 
 	while (seconds > SEC_PER_DAY) {
@@ -24,8 +35,7 @@ int 	get_number_days(time_t &seconds) {
 	return (result);
 }
 
-#define SEC_PER_HOUR	3600
-int		get_number_hours(time_t& seconds) {
+static int		get_number_hours(time_t& seconds) {
 	int 	result = 0;
 
 	while (seconds > SEC_PER_HOUR) {
@@ -35,8 +45,7 @@ int		get_number_hours(time_t& seconds) {
 	return (result);
 }
 
-#define SEC_PER_MIN			60
-int		get_number_min(time_t& seconds) {
+static int		get_number_min(time_t& seconds) {
 	int result = 0;
 
 	while (seconds > SEC_PER_MIN) {
@@ -46,9 +55,7 @@ int		get_number_min(time_t& seconds) {
 	return (result);
 }
 
-#define SEC_PER_LEAP_YEAR	31622400
-#define SEC_PER_YEAR		31536000
-int 	get_number_years(time_t &seconds, int& is_leap_year) {
+static int 		get_number_years(time_t &seconds, int& is_leap_year) {
 	int 	result;
 	int 	current_year;
 
@@ -68,11 +75,7 @@ int 	get_number_years(time_t &seconds, int& is_leap_year) {
 	return (result);
 }
 
-#define SEC_PER_31DAY		2678400
-#define SEC_PER_30DAY		2592000
-#define SEC_PER_29DAY		2505600
-#define SEC_PER_28DAY		2419200
-int 	get_number_months(time_t &seconds, int is_leap_year) {
+static int 		get_number_months(time_t &seconds, int is_leap_year) {
 	int		number_month;
 	int 	result;
 
@@ -98,7 +101,7 @@ int 	get_number_months(time_t &seconds, int is_leap_year) {
 	return (result);
 }
 
-int 	get_name_of_day(tm& datetime) {
+static int 		get_name_of_day(tm& datetime) {
 	int month_code;
 	int year_code;
 	int result;
@@ -125,7 +128,7 @@ int 	get_name_of_day(tm& datetime) {
 	return (result - 2 == -1 ? 6 : result - 2);
 }
 
-void	ft_localtime(tm& datetime, time_t seconds) {
+void			ft_localtime(tm& datetime, time_t seconds) {
 	int		is_leap_year = 1;
 
 	seconds += 2208988800;
