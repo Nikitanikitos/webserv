@@ -50,8 +50,8 @@ void			WebServ::sendResponse(Client* client) {
 	client->sendResponse();
 	if (response->getBuffer().empty()) {
 		if (response->findHeader("Connection") && response->getHeader("Connection") == "close") {
-			client->close_socket();
 			client->setStage(close_connection);
+			write(imaginary_pipe[1], "\0", 1);
 		}
 		else
 			client->setStage(parsing_request);

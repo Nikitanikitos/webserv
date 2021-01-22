@@ -10,22 +10,27 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
 #include "WebServ.hpp"
 
 int		WebServ::working = 1;
+int		WebServ::imaginary_pipe[2];
 
 void				WebServ::initSets(fd_set &writefd_set, fd_set &readfd_set, int &max_fd) {
 	max_fd = virtual_servers.back()->getSocket();
 	FD_ZERO(&readfd_set);
 	FD_ZERO(&writefd_set);
 
+	FD_SET(imaginary_pipe[0], &readfd_set);
 	for (size_t i = 0; i < virtual_servers.size(); ++i)
 		FD_SET(virtual_servers[i]->getSocket(), &readfd_set);
 }
 
 void				WebServ::addClientInTaskQueue(fd_set& readfd_set, fd_set& writefd_set) {
-	std::vector<Client*>::iterator it;
+	std::vector<Client*>::iterator	it;
+	char							buff[1];
 
+	(FD_ISSET(imaginary_pipe[0], &readfd_set)) ? read(imaginary_pipe[0], buff, 1) : 0;
 	for (it = clients.begin(); it != clients.end(); ++it) {
 		if (!(*it)->inTaskQueue() && ((*it)->getStage() == close_connection || (*it)->connectionTimedOut()))
 			deleteClient(it);
@@ -53,8 +58,7 @@ void				WebServ::addNewClient(fd_set& readfd_set) {
 	for (size_t i = 0; i < virtual_servers.size(); ++i) {
 		if (FD_ISSET(virtual_servers[i]->getSocket(), &readfd_set)) {
 			if ((client_socket = accept(virtual_servers[i]->getSocket(), 0, 0)) > 0)
-				clients.push_back(new Client(client_socket, virtual_servers[i]->getHost(),
-											 virtual_servers[i]->getPort()));
+				clients.push_back(new Client(client_socket, virtual_servers[i]->getHost(), virtual_servers[i]->getPort()));
 		}
 	}
 }
@@ -104,8 +108,8 @@ std::string			WebServ::getPathToTarget(HttpRequest *request, Location* location)
 
 void				WebServ::addVirtualServer(VirtualServer *virtual_server) {
 	for (size_t i = 0; i < virtual_servers.size(); ++i) {
-		if (virtual_server->getHost() == virtual_servers[i]->getHost() && virtual_server->getPort() ==
-																		  virtual_servers[i]->getPort()) {
+		if (virtual_server->getHost() == virtual_servers[i]->getHost() &&
+														virtual_server->getPort() == virtual_servers[i]->getPort()) {
 			virtual_server->setSocket(virtual_servers[i]->getSocket());
 			virtual_servers.push_back(virtual_server);
 			return ;
