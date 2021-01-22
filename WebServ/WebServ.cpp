@@ -127,10 +127,18 @@ void		WebServ::deleteClient(std::vector<Client*>::iterator& client) {
 }
 
 void		WebServ::setEnvForCgi(char **env, Client *client, const std::string &path_to_target) {
-	HttpRequest*	request = client->getRequest();
+	HttpRequest*	request = client->getRequest(); //TODO написать ft_strdup и добавить проверки на выделение памяти? надо чистить envp?
 
 	env[0] = strdup("AUTH_TYPE=basic");
-	env[1] = strdup(("CONTENT_LENGTH=" + std::string(request->getBody().size() ? ft_itoa(request->getBody().size()) : "")).c_str()); // TODO нужно добавить рр query и отчистить память
+	if (request->getQuery().empty()) { //TODO вроде поправил
+		char *body_size = ft_itoa(request->getBody().size());
+		env[1] = strdup(("CONTENT_LENGTH=" + std::string(request->getBody().size() ? body_size : "")).c_str());
+		free(body_size);
+	} else {
+		char *body_size = ft_itoa(request->getQuery().size());
+		env[1] = strdup(("CONTENT_LENGTH=" + std::string(body_size)).c_str());
+		free(body_size);
+	}
 	env[2] = strdup(("CONTENT_TYPE=" + (request->findHeader("content-type") ? request->getHeader("content-type") : "")).c_str());
 	env[3] = strdup("GATEWAY_INTERFACE=cgi/1.1");
 	env[4] = strdup(("PATH_INFO=" + request->getTarget()).c_str()); // TODO че за значение
