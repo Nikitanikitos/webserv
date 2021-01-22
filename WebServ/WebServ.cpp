@@ -99,7 +99,7 @@ std::string			WebServ::getPathToTarget(HttpRequest *request, Location* location)
 	std::string 	result = request->getTarget();
 
 	result.erase(0, location->getPath().size());
-	return (location->getRoot() + "/" + result);
+	return (location->getRoot() + result);
 }
 
 void				WebServ::addVirtualServer(VirtualServer *virtual_server) {

@@ -2,17 +2,11 @@
 
 static void		setEnvForCgi(char **env, Client *client, const std::string &path_to_target) {
 	HttpRequest*	request = client->getRequest();
+	char*			body_size;
 
+	body_size = (request->getQuery().empty()) ? ft_itoa(request->getBody().size()) : ft_itoa(request->getQuery().size()); //TODO вроде поправил
 	env[0] = strdup("AUTH_TYPE=basic");
-	if (request->getQuery().empty()) { //TODO вроде поправил
-		char *body_size = ft_itoa(request->getBody().size());
-		env[1] = strdup(("CONTENT_LENGTH=" + std::string(request->getBody().size() ? body_size : "")).c_str());
-		free(body_size);
-	} else {
-		char *body_size = ft_itoa(request->getQuery().size());
-		env[1] = strdup(("CONTENT_LENGTH=" + std::string(body_size)).c_str());
-		free(body_size);
-	}
+	env[1] = strdup(("CONTENT_LENGTH=" + std::string(body_size)).c_str());
 	env[2] = strdup(("CONTENT_TYPE=" + (request->findHeader("content-type") ? request->getHeader("content-type") : "")).c_str());
 	env[3] = strdup("GATEWAY_INTERFACE=cgi/1.1");
 	env[4] = strdup(("PATH_INFO=" + request->getTarget()).c_str());
@@ -30,6 +24,7 @@ static void		setEnvForCgi(char **env, Client *client, const std::string &path_to
 	env[16] = strdup("SERVER_SOFTWARE=webserv/0.1");
 	env[17] = strdup("HTTP_X_SECRET_HEADER_FOR_TEST=1");
 	env[18] = 0;
+	delete []body_size;
 }
 
 static void		run_cgi(int* pipe_fd, int file_fd, const std::string& path_to_target, Client* client, Location* location) {
@@ -65,30 +60,38 @@ static bytes	send_read_in_cgi(int* pipe_fd, int file_fd, HttpRequest* request) {
 	close(pipe_fd[1]);
 	wait(&status);
 
-	lseek(file_fd, 0, 0);
-	buff = new char[buffer_size + 1];
-	while ((read_bytes = (read(file_fd, buff, buffer_size))) > 0) {
-		buff[read_bytes] = 0;
-		data.add(buff, read_bytes);
+	if (!status) {
+		lseek(file_fd, 0, 0);
+		buff = new char[buffer_size + 1];
+		while ((read_bytes = (read(file_fd, buff, buffer_size))) > 0) {
+			buff[read_bytes] = 0;
+			data.add(buff, read_bytes);
+		}
+		close(file_fd);
+		delete [] buff;
 	}
-	close(file_fd);
-	delete [] buff;
+	else
+		data.add("Status: 500\r\n");
 	return (data);
 }
 
 void			WebServ::cgiHandler(Client *client, const std::string &path_to_target, Location *location) {
-	const char*		file_for_answer_cgi = "static_files/file";
+	const char*		file_for_answer_cgi = "RmlsZSBieSBjZ2k=";
 	const int		file_fd = open(file_for_answer_cgi, O_CREAT | O_RDWR | O_TRUNC, 0666);
 	HttpRequest*	request = client->getRequest();
 	bytes			data;
+	pid_t			pid;
 	int 			pipe_fd[2];
 
-	pipe(pipe_fd);
-	if (fork() == 0)
+	if (pipe(pipe_fd) == -1)
+		client->getResponse()->setStatusCode("500");
+	else if ((pid = fork()) == 0)
 		run_cgi(pipe_fd, file_fd, path_to_target, client, location);
+	else if (pid == -1)
+		client->getResponse()->setStatusCode("500");
 	else {
 		data = send_read_in_cgi(pipe_fd, file_fd, request);
 		parsingCgiResponse(client->getResponse(), data);
-		unlink(file_for_answer_cgi);
 	}
+	unlink(file_for_answer_cgi);
 }
