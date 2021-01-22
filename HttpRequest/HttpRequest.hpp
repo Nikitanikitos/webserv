@@ -45,10 +45,13 @@ public:
 	HttpRequest() : stage(0), chunk_size(-1) { }
 	virtual ~HttpRequest() { }
 
-	inline void							setTarget(const std::string& target_) { target = target_; }
+	inline void							setTarget(const std::string& target_) {
+		target = target_.substr(0, target_.find('?'));
+		query = (target_.find('?') != std::string::npos) ? target_.substr(target_.find('?') + 1) : "";
+	}
+
 	inline void							setMethod(const std::string& method_) { method = method_; }
 	inline void							setStage(int stage_) { stage = stage_; }
-	inline void 						setQuery(const std::string& query_) { query = query_; }
 
 	inline const std::string&			getMethod() const { return (method); }
 	inline const std::string&			getTarget() const { return (target); }
