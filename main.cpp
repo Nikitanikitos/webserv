@@ -16,11 +16,12 @@
 #include <algorithm>
 #include <iostream>
 
-__sighandler_t		exit_(int signum) {
+int		exit_(int signum) {
 	if (signum == SIGINT || signum == SIGTERM) {
 		std::cout << "See you soon!" << std::endl;
 		WebServ::working = 0;
 	}
+	write(WebServ::imaginary_pipe[1], "1", 1);
 	return (0);
 }
 
@@ -41,5 +42,5 @@ int		main(int ac, char **av) {
 	}
 	catch (ParseConfigFile::ParseConfigFileException& e)
 		{ std::cerr << e.what() << std::endl;}
-	return (0);
+	exit(0);
 }
