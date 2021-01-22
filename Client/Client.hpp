@@ -32,7 +32,6 @@ private:
 	int 					socket;
 	int 					stage;
 	bool 					in_proccessed;
-	bool					socket_closed;
 	std::string				host;
 	std::string				port;
 	HttpRequest*			request;
@@ -50,7 +49,6 @@ public:
 	inline HttpRequest*				getRequest() const { return (request); }
 	inline HttpResponse*			getResponse() const { return (response); }
 
-	inline void						setSocketClose() { socket_closed = true; }
 	inline void						setProcessed(bool processed) { in_proccessed = processed; }
 	inline void						setStage(int stage_) { stage = stage_; }
 
@@ -64,12 +62,6 @@ public:
 
 	inline void						sendResponse() { response->sendResponse(socket); }
 	inline void 					generateResponse() { response->generateResponse(); }
-
-	inline void						close_socket() {
-		if (!socket_closed)
-			close(socket);
-		setSocketClose();
-	}
 };
 
 #endif //WEBSERV_CLIENT_HPP
