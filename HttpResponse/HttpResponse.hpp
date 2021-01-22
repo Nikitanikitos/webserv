@@ -24,7 +24,7 @@
 # define CRLF			"\r\n"
 # define SP				" "
 
-enum { count_status_code = 12, };
+enum { count_status_code = 13, };
 
 class HttpResponse : public HttpObject {
 private:

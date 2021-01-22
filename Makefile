@@ -23,6 +23,7 @@ FUNC	=	bytes/bytes.cpp \
             WebServ/WebServ_handlers.cpp \
             WebServ/WebServ_page_generators.cpp \
             WebServ/WebServ_workers.cpp \
+            WebServ/WebServ_cgi.cpp \
             main.cpp
 
 

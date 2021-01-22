@@ -35,7 +35,7 @@ add_executable(webserv
 
 		Client/Client.cpp
 		ThreadPool/ThreadPool.cpp
-		)
+        WebServ/WebServ_cgi.cpp)
 
 include_directories(
 		includes

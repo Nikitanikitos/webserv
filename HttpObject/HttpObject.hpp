@@ -33,7 +33,7 @@ public:
 	inline void						addHeader(const std::string& key, const std::string& value)
 		{ headers.insert(std::make_pair(key, value)); }
 
-	inline void						setBody(const bytes& body_) { body.add(body_); }
+	inline void						setBody(const bytes& body_) { body = body_; }
 	inline void						addToBody(const bytes& data) { body.add(data); }
 	inline void						addToBody(const bytes& data, int size) { body.add(data.c_str(), size); }
 

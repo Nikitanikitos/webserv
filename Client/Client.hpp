@@ -40,7 +40,7 @@ private:
 	long					connection_time;
 
 public:
-	Client(int socket, const std::string &ip, const std::string &port);
+	Client(int socket, const std::string& ip, const std::string& port);
 	virtual ~Client();
 
 	inline const std::string&		getPort() const { return (port); }

@@ -16,8 +16,8 @@ ThreadPool::ThreadPool() {
 	queue_mutex = new pthread_mutex_t;
 	pthread_mutex_init(queue_mutex, 0);
 
-	parsing_stage_mutex = new pthread_mutex_t;
-	pthread_mutex_init(parsing_stage_mutex, 0);
+	read_stage_mutex = new pthread_mutex_t;
+	pthread_mutex_init(read_stage_mutex, 0);
 
 	generate_stage_mutex = new pthread_mutex_t;
 	pthread_mutex_init(generate_stage_mutex, 0);
@@ -30,14 +30,14 @@ ThreadPool::~ThreadPool() {
 	pthread_mutex_destroy(queue_mutex);
 	delete queue_mutex;
 
-	pthread_mutex_destroy(parsing_stage_mutex);
-	delete queue_mutex;
+	pthread_mutex_destroy(read_stage_mutex);
+	delete read_stage_mutex;
 
 	pthread_mutex_destroy(generate_stage_mutex);
-	delete queue_mutex;
+	delete generate_stage_mutex;
 
 	pthread_mutex_destroy(send_stage_mutex);
-	delete queue_mutex;
+	delete send_stage_mutex;
 }
 
 Client*		ThreadPool::popTask() {
@@ -47,7 +47,7 @@ Client*		ThreadPool::popTask() {
 	return (client);
 }
 
-void				ThreadPool::pushTask(Client* client) {
+void		ThreadPool::pushTask(Client* client) {
 	pthread_mutex_lock(queue_mutex);
 	client->setProcessed(true);
 	tasks_queue.push(client);

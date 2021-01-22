@@ -12,7 +12,7 @@
 
 #include "WebServ.hpp"
 
-bytes WebServ::autoindexGenerate(HttpRequest *request, const std::string& path_to_target) {
+bytes	WebServ::autoindexGenerate(HttpRequest *request, const std::string& path_to_target) {
 	bytes			body_response;
 	DIR*			directory;
 	dirent*			current_file;

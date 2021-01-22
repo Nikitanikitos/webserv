@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stddef.h>
+#include <cstddef>
 
 void*	ft_memset(void* dest, int symb, size_t byte_sizes)
 {

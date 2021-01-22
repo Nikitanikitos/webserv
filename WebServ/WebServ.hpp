@@ -35,7 +35,7 @@ private:
 
 	std::vector<Client*>			clients;
 	std::vector<VirtualServer*>		virtual_servers;
-
+	std::vector<pthread_t>			workers;
 	int 							number_workers;
 	ThreadPool						thread_pool;
 
@@ -69,17 +69,22 @@ private:
 	static void					getInfoOutHtaccess(int fd, std::string& realm, std::string& path_to_htpasswd);
 
 	inline bool					isErrorStatus(const std::string& status)  { return (status[0] == '4' || status[0] == '5'); }
-	std::string					isErrorRequest(Location* location, t_stat& info, Client* client);
-	void 						setEnvForCgi(char **env, Client *client, const std::string &path_to_target);
+	static std::string					isErrorRequest(Location* location, t_stat& info, Client* client);
+	static void 						setEnvForCgi(char **env, Client *client, const std::string &path_to_target);
 	static void					parsingCgiResponse(HttpResponse* response, bytes &data);
 
 public:
 	static int		working;
 
 	explicit WebServ(int number_of_workers) : number_workers(number_of_workers) { }
+
 	virtual ~WebServ() {
 		for (size_t i = 0; i < clients.size(); ++i)
 			delete clients[i];
+		for (size_t i = 0;  i < virtual_servers.size(); ++i)
+			delete virtual_servers[i];
+		for (size_t i = 0; i < workers.size(); ++i)
+			pthread_join(workers[i], 0);
 	};
 
 	void						runServer();

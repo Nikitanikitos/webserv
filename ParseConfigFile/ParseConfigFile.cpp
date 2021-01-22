@@ -16,7 +16,7 @@
 # define TAB			"    "
 # define TAB_SIZE		4
 
-std::string ParseConfigFile::server_current_fields[virtual_server_directive] = {
+std::string		ParseConfigFile::server_current_fields[virtual_server_directive] = {
 		"server_names",
 		"error_page",
 		"host",
@@ -24,7 +24,7 @@ std::string ParseConfigFile::server_current_fields[virtual_server_directive] = {
 		"location"
 };
 
-std::string ParseConfigFile::location_current_fields[location_directive] = {
+std::string		ParseConfigFile::location_current_fields[location_directive] = {
 		"allow_methods",
 		"root",
 		"autoindex",
@@ -47,14 +47,14 @@ std::vector<std::string>	ParseConfigFile::getArgsFromLine(std::string &input) co
 	return (result);
 }
 
-int 			ParseConfigFile::getIndexOfArg(std::string const &arg, std::string *arr, int size) const {
+int 						ParseConfigFile::getIndexOfArg(std::string const &arg, std::string *arr, int size) const {
 	for (int index = 0; index < size; ++index)
 		if (arr[index] == arg)
 			return index;
 	return (-1);
 }
 
-bool			ParseConfigFile::checkTabulation(const std::string &line, int expectedTabCount) const {
+bool						ParseConfigFile::checkTabulation(const std::string &line, int expectedTabCount) const {
 	for (int i = 0; i < expectedTabCount; ++i) {
 		if (line.compare(TAB_SIZE * i, TAB_SIZE, TAB))
 			return (false);
@@ -62,9 +62,7 @@ bool			ParseConfigFile::checkTabulation(const std::string &line, int expectedTab
 	return line[expectedTabCount * TAB_SIZE] != ' ';
 }
 
-bool			ParseConfigFile::checkPort(int port) const { return (port <= 262143 && port >= 1024); }
-
-VirtualServer*	ParseConfigFile::parseVsDirective() {
+VirtualServer*				ParseConfigFile::parseVsDirective() {
 	VirtualServer*	virtualServer = new VirtualServer();
 	std::string		line;
 
@@ -128,7 +126,8 @@ VirtualServer*	ParseConfigFile::parseVsDirective() {
 	return (virtualServer);
 }
 
-void				ParseConfigFile::addAllowMethodsToLocation(Location *location, const std::vector<std::string>& trimmedStr) {
+void						ParseConfigFile::addAllowMethodsToLocation(Location *location,
+													 				const std::vector<std::string>& trimmedStr) {
 	if (trimmedStr.size() == 1)
 		throw ParseConfigFileException("Allow methods must contain at least 1 parameter");
 	location->eraseAcceptedMethods();
@@ -146,7 +145,8 @@ void				ParseConfigFile::addAllowMethodsToLocation(Location *location, const std
 	}
 }
 
-void				ParseConfigFile::setAutoindexInLocation(Location *location, const std::vector<std::string>& trimmedStr) {
+void						ParseConfigFile::setAutoindexInLocation(Location *location,
+																	const std::vector<std::string>& trimmedStr) {
 	if (trimmedStr.size() != 2)
 		throw ParseConfigFileException("Autoindex has no parameter");
 	if (trimmedStr[1] == "on")
@@ -157,13 +157,15 @@ void				ParseConfigFile::setAutoindexInLocation(Location *location, const std::v
 		throw ParseConfigFileException("Unknown option to autoindex");
 }
 
-std::string&		ParseConfigFile::checkLocationPath(std::string &path) const {
+std::string&				ParseConfigFile::checkLocationPath(std::string &path) const {
 	if (path[0] != '/')
 		path.insert(path.begin(), '/');
+	else if (path.size() > 1 && path[path.size() - 1] == '/')
+		path.erase(--path.end());
 	return (path);
 }
 
-Location*			ParseConfigFile::parseLocationDirective(std::string &locationAttribute) {
+Location*					ParseConfigFile::parseLocationDirective(std::string &locationAttribute) {
 	Location*		location = new Location();
 	std::string		line;
 
@@ -212,7 +214,7 @@ Location*			ParseConfigFile::parseLocationDirective(std::string &locationAttribu
 	return (location);
 }
 
-std::vector<VirtualServer*>		ParseConfigFile::ParseFile(std::string& numberOfWorkers) {
+std::vector<VirtualServer*>	ParseConfigFile::ParseFile(std::string& numberOfWorkers) {
 	std::string					line;
 	std::vector<VirtualServer*>	virtualServers;
 
@@ -236,7 +238,8 @@ std::vector<VirtualServer*>		ParseConfigFile::ParseFile(std::string& numberOfWor
 	return (virtualServers);
 }
 
-void	ParseConfigFile::AddVirtualServer(const std::string& line, std::vector<VirtualServer*>& virtualServers) {
+void						ParseConfigFile::AddVirtualServer(const std::string& line,
+																	std::vector<VirtualServer*>& virtualServers) {
 	VirtualServer*	virtual_server = parseVsDirective();
 
 	virtual_server->sortServerNames();
@@ -246,8 +249,8 @@ void	ParseConfigFile::AddVirtualServer(const std::string& line, std::vector<Virt
 		throw ParseConfigFileException("Server already exists " + line);
 }
 
-bool	ParseConfigFile::checkCorrectVs(const VirtualServer *virtual_server,
-										const std::vector<VirtualServer*>& list_virtual_server) {
+bool						ParseConfigFile::checkCorrectVs(const VirtualServer *virtual_server,
+														const std::vector<VirtualServer*>& list_virtual_server) {
 	for (size_t i = 0; i < list_virtual_server.size(); ++i)
 		if (*virtual_server == *(list_virtual_server[i])) return (false);
 	return (true);

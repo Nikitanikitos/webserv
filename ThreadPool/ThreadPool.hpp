@@ -20,13 +20,13 @@
 class ThreadPool {
 private:
 	std::queue<Client*>		tasks_queue;
-	pthread_mutex_t*		queue_mutex;
 
-public:
-	pthread_mutex_t*		parsing_stage_mutex;
+	pthread_mutex_t*		queue_mutex;
+	pthread_mutex_t*		read_stage_mutex;
 	pthread_mutex_t*		generate_stage_mutex;
 	pthread_mutex_t*		send_stage_mutex;
 
+public:
 	ThreadPool();
 	~ThreadPool();
 
@@ -35,8 +35,8 @@ public:
 	inline void				lockQueueMutex() const { pthread_mutex_lock(queue_mutex); }
 	inline void				unlockQueueMutex() const { pthread_mutex_unlock(queue_mutex); }
 
-	inline void				lockReadStageMutex() const { pthread_mutex_lock(parsing_stage_mutex); }
-	inline void				unlockReadStageMutex() const { pthread_mutex_unlock(parsing_stage_mutex); }
+	inline void				lockReadStageMutex() const { pthread_mutex_lock(read_stage_mutex); }
+	inline void				unlockReadStageMutex() const { pthread_mutex_unlock(read_stage_mutex); }
 	inline void				lockGenerateStageMutex() const { pthread_mutex_lock(generate_stage_mutex); }
 	inline void				unlockGenerateStageMutex() const { pthread_mutex_unlock(generate_stage_mutex); }
 	inline void				lockSendStageMutex() const { pthread_mutex_lock(send_stage_mutex); }

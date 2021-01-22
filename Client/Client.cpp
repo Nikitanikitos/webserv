@@ -12,9 +12,8 @@
 
 #include "Client.hpp"
 
-Client::Client(int socket, const std::string &ip, const std::string &port)
-								: socket(socket), stage(parsing_request), in_proccessed(false), socket_closed(false),
-																								host(ip), port(port) {
+Client::Client(int socket, const std::string& ip, const std::string& port) : socket(socket), stage(parsing_request),
+													in_proccessed(false), socket_closed(false), host(ip), port(port) {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);
@@ -30,14 +29,14 @@ Client::~Client() {
 	close_socket();
 }
 
-bool					Client::connectionTimedOut() {
+bool	Client::connectionTimedOut() {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);
 	return ((tv.tv_sec - connection_time) > TimeOut);
 }
 
-void					Client::setNewConnectionTime() {
+void	Client::setNewConnectionTime() {
 	struct timeval	tv;
 
 	gettimeofday(&tv, 0);
