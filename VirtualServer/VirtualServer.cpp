@@ -49,10 +49,11 @@ bool		operator==(const VirtualServer& virtual_server_l, const VirtualServer& vir
 	if (virtual_server_l.getPort() == virtual_server_r.getPort() && virtual_server_l.getHost() == virtual_server_r.getHost()) {
 		if (virtual_server_l.getServerNames().empty() && virtual_server_r.getServerNames().empty())
 			return (true);
-		int	q = (virtual_server_l.getServerNames().size() < virtual_server_r.getServerNames().size()) ?
-									virtual_server_l.getServerNames().size() :virtual_server_r.getServerNames().size();
-		for (int i = 0; i < q; ++i)
-			if (virtual_server_l.getServerNames()[i] == virtual_server_r.getServerNames()[i]) return (true);
+		for (size_t i = 0; i < virtual_server_l.getServerNames().size(); ++i) {
+			for (size_t j = 0; j < virtual_server_r.getServerNames().size(); ++j) {
+				if (virtual_server_l.getServerNames()[i] == virtual_server_r.getServerNames()[j]) return (true);
+			}
+		}
 		return (false);
 	}
 	return (false);
