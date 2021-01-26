@@ -14,22 +14,33 @@
 #include "WebServ.hpp"
 #include "ParseConfigFile.hpp"
 #include <algorithm>
+#include <iostream>
 
-int		exit() {
-	WebServ::working = 0;
+int		exit_(int signum) {
+	if (signum == SIGINT || signum == SIGTERM) {
+		std::cout << "See you soon!" << std::endl;
+		WebServ::working = 0;
+	}
+	write(WebServ::imaginary_pipe[1], "1", 1);
 	return (0);
 }
 
-int		main(int ac, char **av, char **env) {
-	std::string					number_of_workers;
-	ParseConfigFile				parse(((ac == 2) ? av[1] : (char*)"default.conf"));
-	std::vector<VirtualServer*>	list_virtual_server = parse.ParseFile(number_of_workers);
-	WebServ						server(ft_atoi(number_of_workers.c_str()));
+int		main(int ac, char **av) {
+	signal(SIGINT, reinterpret_cast<__sighandler_t>(exit_));
+	signal(SIGTERM, reinterpret_cast<__sighandler_t>(exit_));
+	try {
+		std::string					number_of_workers;
+		ParseConfigFile				parse(((ac == 2) ? av[1] : (char*)"default.conf"));
+		std::vector<VirtualServer*>	list_virtual_server = parse.ParseFile(number_of_workers);
+		WebServ						server(ft_atoi(number_of_workers.c_str()));
 
-	for (int i = 0; i < list_virtual_server.size(); ++i)
-		server.addVirtualServer(list_virtual_server[i]);
+		for (size_t i = 0; i < list_virtual_server.size(); ++i)
+			server.addVirtualServer(list_virtual_server[i]);
 
-	signal(SIGINT, exit);
-	server.runServer();
-	return (0);
+		std::cout << "Webserv running!" << std::endl;
+		server.runServer();
+	}
+	catch (ParseConfigFile::ParseConfigFileException& e)
+		{ std::cerr << e.what() << std::endl;}
+	exit(0);
 }

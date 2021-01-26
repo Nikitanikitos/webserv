@@ -12,9 +12,9 @@
 
 #include "WebServ.hpp"
 
-void	WebServ::readRequest(Client* client) {
+void			WebServ::readRequest(Client* client) {
 	HttpRequest*	request = client->getRequest();
-	int				size_buff = (request->getChunkSize() == -1 ? 2048 : request->getChunkSize());
+	int				size_buff = (request->getChunkSize() > 0 ? request->getChunkSize() : 2048);
 	char			buff[size_buff + 1];
 	int 			read_bytes;
 
@@ -27,6 +27,8 @@ void	WebServ::readRequest(Client* client) {
 			if (request->getStage() == completed)
 				client->setStage(generate_response);
 		}
+		else if (read_bytes == -1)
+			throw "500";
 		else
 			client->setStage(close_connection);
 	}
@@ -42,13 +44,15 @@ void	WebServ::readRequest(Client* client) {
 	}
 }
 
-void	WebServ::sendResponse(Client* client) {
+void			WebServ::sendResponse(Client* client) {
 	HttpResponse*		response = client->getResponse();
 
 	client->sendResponse();
 	if (response->getBuffer().empty()) {
-		if (response->findHeader("Connection") && response->getHeader("Connection") == "close")
+		if (response->findHeader("Connection") && response->getHeader("Connection") == "close") {
 			client->setStage(close_connection);
+			write(imaginary_pipe[1], "\0", 1);
+		}
 		else
 			client->setStage(parsing_request);
 		client->clearResponse();
@@ -56,21 +60,44 @@ void	WebServ::sendResponse(Client* client) {
 	}
 }
 
-void	WebServ::setErrorPage(Client* client, Location* location, VirtualServer* virtual_server) {
-	HttpResponse*	response = client->getResponse();
-	std::string		path_to_target;
+void			WebServ::generateResponse(Client *client) {
+	VirtualServer*		virtual_server = getVirtualServer(client);
+	Location*			location = virtual_server->getLocation(client->getRequest());
+	HttpRequest*		request = client->getRequest();
+	HttpResponse*		response = client->getResponse();
+	std::string			path_to_target = (location) ? getPathToTarget(request, location) : "";
+	t_stat				info = {};
+	std::string			error_code;
+	int 				fd;
 
-	if (virtual_server->findErrorPage(response->getStatusCode())) {
-		path_to_target.append(location->getPath() + virtual_server->getErrorPage(response->getStatusCode()));
-		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() + path_to_target);
-		response->setStatusCode("302");
+	info.exists = stat(path_to_target.c_str(), &info.info);
+	if (!(error_code = isErrorRequest(location, info, client)).empty())
+		response->setStatusCode(error_code);
+	else {
+		if (S_ISDIR(info.info.st_mode) && (fd = open((path_to_target + "/" + location->getIndex()).c_str(), O_RDONLY)) != -1) {
+			path_to_target.append("/" + location->getIndex());
+			info.exists = stat(path_to_target.c_str(), &info.info);
+			close(fd);
+		}
+		if (location->findCgi(path_to_target) || (request->getMethod() == "POST" && S_ISDIR(info.info.st_mode) && location->findCgi(".bla")))
+			cgiHandler(client, path_to_target, location);
+		else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
+			DefaultHandler(client, location, &info, path_to_target);
+		else if (request->getMethod() == "PUT")
+			putMethodHandler(client, location, &info, path_to_target);
+		else
+			response->setStatusCode("405");
 	}
-	else
-		{ response->setBody(generateErrorPage(response->getStatusCode())); }
+
+	if (request->findHeader("connection") && request->getHeader("connection") == "close")
+		response->addHeader("Connection", "close");
+	if (isErrorStatus(response->getStatusCode()))
+		setErrorPage(client, location, virtual_server);
+	client->generateResponse();
+	client->setStage(send_response);
 }
 
-void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* virtual_server,  // TODO убрать virtual_server если в конце будет не нужен
-																		t_stat* info, std::string& path_to_target) {
+void			WebServ::DefaultHandler(Client* client, Location* location, t_stat* info, std::string& path_to_target) {
 	HttpRequest*		request = client->getRequest();
 	HttpResponse*		response = client->getResponse();
 	struct timeval		tv;
@@ -95,24 +122,24 @@ void	WebServ::DefaultHandler(Client* client, Location* location, VirtualServer* 
 		response->setBody(autoindexGenerate(request, path_to_target));
 }
 
-void	WebServ::putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server, t_stat* info, // TODO убрать virtual_server если в конце будет не нужен
-																						std::string& path_to_target) {
+void			WebServ::putMethodHandler(Client* client, Location* location, t_stat* info, std::string& path_to_target) {
 	int 			fd;
 	HttpRequest*	request = client->getRequest();
 	HttpResponse*	response = client->getResponse();
 
-	// TODO проверить права на запись - иначе 403
 	if (location->getLimitClientBodySize() < request->getBody().size())
 		response->setStatusCode("413");
-	else if (S_ISDIR(info->info.st_mode) || (fd = open(path_to_target.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
+	else if (S_ISDIR(info->info.st_mode))
 		response->setStatusCode("404");
+	else if ((fd = open(path_to_target.c_str(), O_WRONLY | O_CREAT | O_TRUNC, 0666)) < 0)
+		response->setStatusCode("500");
 	else {
 		write(fd, request->getBody().c_str(), request->getBody().size());
 		(info->exists == -1) ? response->setStatusCode("201") : response->setStatusCode("200");
 	}
 }
 
-void	WebServ::getInfoOutHtaccess(int fd, std::string& realm, std::string& path_to_htpasswd) {
+void			WebServ::getInfoOutHtaccess(int fd, std::string& realm, std::string& path_to_htpasswd) {
 	std::string		line;
 
 	while (ft_getline(fd, line) > 0) {
@@ -123,7 +150,7 @@ void	WebServ::getInfoOutHtaccess(int fd, std::string& realm, std::string& path_t
 	}
 }
 
-bool	WebServ::checkValidAuth(const std::string& login_password, const std::string& path_to_htpasswd) {
+bool			WebServ::checkValidAuth(const std::string& login_password, const std::string& path_to_htpasswd) {
 	int						fd;
 	std::string				line;
 	const std::string		decode_login_password = ft_decode64base(login_password.substr(login_password.find(' ') + 1));
@@ -135,7 +162,7 @@ bool	WebServ::checkValidAuth(const std::string& login_password, const std::strin
 	return (false);
 }
 
-bool	WebServ::checkAuth(Client* client, const std::string& root) {
+bool			WebServ::checkAuth(Client* client, const std::string& root) {
 	int					fd;
 	bool				result;
 	HttpRequest*		request = client->getRequest();
@@ -157,7 +184,49 @@ bool	WebServ::checkAuth(Client* client, const std::string& root) {
 	return (result);
 }
 
-std::string WebServ::isErrorRequest(Location* location, t_stat& info, Client* client) {
+void			WebServ::parsingCgiResponse(HttpResponse* response, bytes& data) {
+	int 	stage = 0;
+	int 	pos;
+
+	while (!data.empty()) {
+		pos = data.find("\r\n");
+		std::string		q = data.substr((size_t)pos).c_str();
+		switch (stage) {
+			case 0:
+				stage++;
+				if (!q.find("Status")) {
+					response->setStatusCode(q.substr(q.find(' ') + 1, 3));
+					break;
+				}
+				else
+					response->setStatusCode("200");
+			case 1:
+				if (q.empty())
+					stage++;
+				else
+					response->addHeader(q.substr(0, q.find(':')), q.substr(q.find(':') + 2));
+				break;
+			case 2:
+				response->setBody(q);
+		}
+		(pos == -1) ? data.clear() : data.erase(pos + 2);
+	}
+}
+
+void			WebServ::setErrorPage(Client* client, Location* location, VirtualServer* virtual_server) {
+	HttpResponse*	response = client->getResponse();
+	std::string		path_to_target;
+
+	if (virtual_server->findErrorPage(response->getStatusCode())) {
+		path_to_target.append(location->getPath() + virtual_server->getErrorPage(response->getStatusCode()));
+		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() + path_to_target);
+		response->setStatusCode("302");
+	}
+	else
+		response->setBody(generateErrorPage(response->getStatusCode()));
+}
+
+std::string		WebServ::isErrorRequest(Location* location, t_stat& info, Client* client) {
 	HttpRequest*		request = client->getRequest();
 
 	if (!location || (info.exists == -1 && (request->getMethod() != "PUT" && request->getMethod() != "POST")))
@@ -169,41 +238,4 @@ std::string WebServ::isErrorRequest(Location* location, t_stat& info, Client* cl
 	else if (request->getBody().size() > location->getLimitClientBodySize())
 		return ("413");
 	return ("");
-}
-
-void	WebServ::generateResponse(Client *client) {
-	VirtualServer*		virtual_server = getVirtualServer(client);
-	Location*			location = virtual_server->getLocation(client->getRequest());
-	HttpRequest*		request = client->getRequest();
-	HttpResponse*		response = client->getResponse();
-	std::string			path_to_target = (location) ? getPathToTarget(request, location) : "";
-	t_stat				info = {};
-	std::string			error_code;
-	int 				fd;
-
-	info.exists = stat(path_to_target.c_str(), &info.info);
-	if (!(error_code = isErrorRequest(location, info, client)).empty())
-		response->setStatusCode(error_code);
-	else {
-		if (S_ISDIR(info.info.st_mode) && (fd = open((path_to_target + "/" + location->getIndex()).c_str(), O_RDONLY)) != -1) {
-			path_to_target.append("/" + location->getIndex());
-			info.exists = stat(path_to_target.c_str(), &info.info);
-			close(fd);
-		}
-		if (location->findCgi(path_to_target) || (request->getMethod() == "POST" && S_ISDIR(info.info.st_mode) && location->findCgi(".bla")))
-			cgiHandler(client, path_to_target, location);
-		else if (request->getMethod() == "GET" || request->getMethod() == "HEAD")
-			DefaultHandler(client, location, virtual_server, &info, path_to_target);
-		else if (request->getMethod() == "PUT")
-			putMethodHandler(client, location, virtual_server, &info, path_to_target);
-		else
-			response->setStatusCode("405");
-	}
-
-	if (request->findHeader("connection") && request->getHeader("connection") == "close")
-		response->addHeader("Connection", "close");
-	if (isErrorStatus(response->getStatusCode()))
-		setErrorPage(client, location, virtual_server);
-	client->generateResponse();
-	client->setStage(send_response);
 }

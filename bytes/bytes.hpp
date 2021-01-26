@@ -24,6 +24,7 @@ private:
 	char*			buffer;
 
 	inline void		byte_init(const char* data) {
+		capacity = (capacity) ? capacity : 10;
 		buffer = new char[capacity];
 		ft_memcopy(data, buffer, size_);
 		buffer[size_] = 0;

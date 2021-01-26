@@ -4,3 +4,5 @@ solid/
 lagoona/
 default.conf
 static_files/file_should_exist_after
+static_files/multiple_same
+webserv

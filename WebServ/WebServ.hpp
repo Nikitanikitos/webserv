@@ -27,23 +27,21 @@
 # include "VirtualServer.hpp"
 # include "ThreadPool.hpp"
 
-enum { count_error_pages = 7, };
-
 class	WebServ {
 private:
 	friend void*	worker(void*);
+	friend int		exit_(int signum);
 
+	static int						imaginary_pipe[2];
 	std::vector<Client*>			clients;
 	std::vector<VirtualServer*>		virtual_servers;
-
+	std::vector<pthread_t>			workers;
 	int 							number_workers;
 	ThreadPool						thread_pool;
 
-	static void					DefaultHandler(Client* client, Location* location, VirtualServer* virtual_server,
-																		t_stat* info, std::string& path_to_target);
-	static void					putMethodHandler(Client* client, Location* location, VirtualServer* virtual_server,
-																			t_stat* info, std::string& path_to_target);
-	void cgiHandler(Client *client, const std::string &path_to_target, Location *location);
+	static void					DefaultHandler(Client* client, Location* location, t_stat* info, std::string& path_to_target);
+	static void					putMethodHandler(Client* client, Location* location, t_stat* info, std::string& path_to_target);
+	void						cgiHandler(Client *client, const std::string &path_to_target, Location *location);
 
 	static bytes				autoindexGenerate(HttpRequest *request, const std::string& path_to_target);
 
@@ -70,18 +68,24 @@ private:
 	static bool					checkValidAuth(const std::string& login_password, const std::string& path_to_htpasswd);
 	static void					getInfoOutHtaccess(int fd, std::string& realm, std::string& path_to_htpasswd);
 
-	inline bool					isErrorStatus(const std::string& status)  { return (status[0] == '4' || status[0] == '5'); }
-	std::string					isErrorRequest(Location* location, t_stat& info, Client* client);
-	void 						setEnvForCgi(char **env, Client *client, const std::string &path_to_target);
-	static void						parsingCgiResponse(HttpResponse* response, bytes &data);
+	static inline bool			isErrorStatus(const std::string& status) { return (status[0] == '4' || status[0] == '5'); }
+	static std::string			isErrorRequest(Location* location, t_stat& info, Client* client);
+	static void					parsingCgiResponse(HttpResponse* response, bytes &data);
 
 public:
 	static int		working;
 
-	explicit WebServ(int number_of_workers) : number_workers(number_of_workers) { }
+	explicit WebServ(int number_of_workers) : number_workers(number_of_workers) { pipe(WebServ::imaginary_pipe); }
+
 	virtual ~WebServ() {
-		for (int i = 0; i < clients.size(); ++i)
+		for (size_t i = 0; i < clients.size(); ++i)
 			delete clients[i];
+		for (size_t i = 0;  i < virtual_servers.size(); ++i)
+			delete virtual_servers[i];
+		for (size_t i = 0; i < workers.size(); ++i)
+			pthread_join(workers[i], 0);
+		close(WebServ::imaginary_pipe[0]);
+		close(WebServ::imaginary_pipe[1]);
 	};
 
 	void						runServer();

@@ -23,22 +23,21 @@ struct					t_stat {
 	int					exists;
 };
 
-char*					ft_itoa(int n);
 uint16_t				ft_htons(uint16_t);
-uint32_t				ft_htonl(uint32_t);
 int						ft_atoi(const char* nptr);
 int						ft_atoi_hex(const char* nptr);
 
 void					ft_tolower(char& c);
 void					ft_localtime(tm&, time_t);
+void*					worker(void* arg);
+void*					ft_memset(void*, int, size_t);
+
+char*					ft_itoa(int n);
 
 std::string				ft_getdate(struct timeval& tv);
 std::string				ft_decode64base(const std::string& data);
 
 bytes					ft_getfile(const char *path);
-
-void*					worker(void* arg);
-void*					ft_memset(void*, int, size_t);
 
 bool					ft_getline(int fd, std::string &line);
 

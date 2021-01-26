@@ -10,7 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
+#include <cstdlib>
+#include <iostream>
 #include "HttpResponse.hpp"
 
 const std::string	HttpResponse::message_phrases[count_status_code][2] = {
@@ -25,10 +26,11 @@ const std::string	HttpResponse::message_phrases[count_status_code][2] = {
 		{"405", "Method Not Allowed"},
 		{"411", "Length Required"},
 		{"413", "Payload Too Large"},
+		{"500", "Internal server error"},
 		{"501", "Not Implemented"}
 };
 
-std::string			HttpResponse::getMessagePhrase(const std::string& code) {
+std::string		HttpResponse::getMessagePhrase(const std::string& code) {
 	for (int i = 0; i < count_status_code; ++i) {
 		if (HttpResponse::message_phrases[i][0] == code)
 			return (HttpResponse::message_phrases[i][1]);
@@ -36,7 +38,7 @@ std::string			HttpResponse::getMessagePhrase(const std::string& code) {
 	return ("Unknown code");
 }
 
-void				HttpResponse::generateResponse() {
+void			HttpResponse::generateResponse() {
 	struct timeval											tv;
 	std::map<std::string, std::string>::const_iterator		it;
 
@@ -52,19 +54,23 @@ void				HttpResponse::generateResponse() {
 	for (it = headers.begin(); it != headers.end(); ++it)
 		buffer.add(it->first + ": " + it->second + CRLF);
 	buffer.add(CRLF);
-	if (body.size())
+	if (!body.empty())
 		buffer.add(body);
 }
 
-int					HttpResponse::sendResponse(int client_socket) {
+int				HttpResponse::sendResponse(int client_socket) {
 	int 	bytes;
 
-	bytes = send(client_socket, buffer.c_str(), buffer.size(), 0);
-	buffer.erase(bytes);
+	if ((bytes = send(client_socket, buffer.c_str(), buffer.size(), 0)) == -1) {
+		addHeader("Connection", "close");
+		buffer.clear();
+	}
+	else
+		buffer.erase(bytes);
 	return (bytes);
 }
 
-void	HttpResponse::clear() {
+void			HttpResponse::clear() {
 	HttpObject::clear();
 	status_code.clear();
 	message_phrase.clear();

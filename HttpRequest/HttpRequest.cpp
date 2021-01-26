@@ -57,7 +57,7 @@ void	HttpRequest::addDataToRequest(char* data, size_t size) {
 	}
 }
 
-void HttpRequest::parsingBodyByChunked() {
+void	HttpRequest::parsingBodyByChunked() {
 	while (!getBuffer().empty()) {
 		if (getBuffer().find("\r\n") != (size_t)-1) {
 			if (chunk_size == -1)
@@ -78,8 +78,8 @@ void HttpRequest::parsingBodyByChunked() {
 	}
 }
 
-void HttpRequest::parsingBodyByContentLength() {
-	const int&	content_length = ft_atoi(getHeader("content-length").c_str());
+void	HttpRequest::parsingBodyByContentLength() {
+	const size_t&	content_length = (size_t)ft_atoi(getHeader("content-length").c_str());
 
 	addToBody(getBuffer());
 	buffer.clear();
@@ -90,7 +90,7 @@ void HttpRequest::parsingBodyByContentLength() {
 	}
 }
 
-void		HttpRequest::parsingFirstLine(std::string line_request) {
+void	HttpRequest::parsingFirstLine(std::string line_request) {
 	if (std::count(line_request.begin(), line_request.end(), ' ') != 2)
 		throw std::string("400");
 
@@ -110,13 +110,7 @@ void		HttpRequest::parsingFirstLine(std::string line_request) {
 	setStage(parsing_headers);
 }
 
-bool		HttpRequest::isValidMethod(const std::string& method_) {
-	for (size_t i = 0; i < 4; ++i)
-		if (methods[i] == method_) return (true);
-	return (false);
-}
-
-void		HttpRequest::parseHeader(const std::string& line) {
+void	HttpRequest::parseHeader(const std::string& line) {
 	size_t		position;
 	std::string key;
 	std::string value;
@@ -131,7 +125,13 @@ void		HttpRequest::parseHeader(const std::string& line) {
 	addHeader(key, value);
 }
 
-void		HttpRequest::endOfHeaders() {
+bool	HttpRequest::isValidMethod(const std::string& method_) {
+	for (size_t i = 0; i < 4; ++i)
+		if (methods[i] == method_) return (true);
+	return (false);
+}
+
+void	HttpRequest::endOfHeaders() {
 	buffer.erase(2);
 	if (!findHeader("host"))
 		throw std::string("400");

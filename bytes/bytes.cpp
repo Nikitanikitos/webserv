@@ -12,11 +12,11 @@
 
 #include "bytes.hpp"
 
-void			bytes::add(const char* string, size_t i) {
+void		bytes::add(const char* string, size_t i) {
 	const char*		temp_buff = buffer;
 
-	if (size_ + i > capacity) {
-		capacity = (capacity < i ) ? i * 2 + 1: capacity * 2;
+	if (size_ + i >= capacity) {
+		capacity = (size_ + i) * 2;
 		buffer = new char[capacity];
 		ft_memcopy(temp_buff, buffer, size_);
 		delete []temp_buff;
@@ -26,20 +26,20 @@ void			bytes::add(const char* string, size_t i) {
 	buffer[size_] = 0;
 }
 
-void			bytes::clear() {
+void		bytes::clear() {
 	delete []buffer;
 	size_ = 0;
 	capacity = 10;
 	buffer = new char[capacity];
 }
 
-void			bytes::erase(size_t n) {
+void		bytes::erase(size_t n) {
 	char*	temp_buff = buffer;
 
 	if (n >= size_)
 		clear();
 	else {
-		capacity -= n + 1;
+		capacity = capacity - n + 10;
 		size_ -= n;
 		buffer = new char[capacity];
 		ft_memcopy(temp_buff + n, buffer, size_);
@@ -59,7 +59,7 @@ bytes&		bytes::operator=(const bytes& string) {
 }
 
 size_t		bytes::find(const char* needle) const {
-	for (int i = 0; i < size_; ++i) {
+	for (size_t i = 0; i < size_; ++i) {
 		if (buffer[i] == *needle) {
 			int 	j;
 			for (j = 0; needle[j]; ++j)
@@ -85,7 +85,7 @@ size_t		bytes::rfind(const char* needle) const {
 	return (-1);
 }
 
-void	bytes::rtrim(size_t n) {
+void		bytes::rtrim(size_t n) {
 	size_ -= n;
 	buffer[size_] = 0;
 }
