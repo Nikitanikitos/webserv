@@ -57,6 +57,8 @@ void			WebServ::sendResponse(Client* client) {
 		client->clearResponse();
 		client->clearRequest();
 	}
+	else
+		client->setNewConnectionTime();
 }
 
 void			WebServ::generateResponse(Client *client) {
