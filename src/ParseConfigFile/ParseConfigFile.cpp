@@ -227,8 +227,13 @@ std::vector<VirtualServer*>	ParseConfigFile::ParseFile(std::string& numberOfWork
 		}
 		if (line[0] == '#')
 			continue;
-		else if (!line.compare(0, 7, "worker "))
-			numberOfWorkers.append(&line[7]);
+		else if (!line.compare(0, 7, "worker ")) {
+			std::vector<std::string> tmp = getArgsFromLine(line);
+			if (tmp.size() == 2 && ONLY_DIGITS(tmp[1]))
+				numberOfWorkers.append(tmp[1]);
+			else
+				throw ParseConfigFileException("Bad number of workers");
+		}
 		else if (line == "server")
 			AddVirtualServer(line, virtualServers);
 		else if (line.length() > 0)
