@@ -225,7 +225,7 @@ void			WebServ::setErrorPage(Client* client, Location* location, VirtualServer* 
 	HttpResponse*	response = client->getResponse();
 	std::string		path_to_target;
 
-	if (virtual_server->findErrorPage(response->getStatusCode())) {
+	if (location && virtual_server->findErrorPage(response->getStatusCode())) {
 		path_to_target.append(location->getPath() + virtual_server->getErrorPage(response->getStatusCode()));
 		response->addHeader("Location", "http://" + client->getHost() + ":" + client->getPort() + path_to_target);
 		response->setStatusCode("302");
