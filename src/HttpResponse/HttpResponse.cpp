@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/25 02:03:04 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/22 16:27:49 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/26 19:23:53 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,11 +61,7 @@ void			HttpResponse::generateResponse() {
 int				HttpResponse::sendResponse(int client_socket) {
 	int 	bytes;
 
-	if ((bytes = send(client_socket, buffer.c_str(), buffer.size(), 0)) == -1) {
-		addHeader("Connection", "close");
-		buffer.clear();
-	}
-	else
+	if ((bytes = send(client_socket, buffer.c_str(), buffer.size(), 0)) > 0)
 		buffer.erase(bytes);
 	return (bytes);
 }

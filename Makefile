@@ -1,43 +1,43 @@
-NAME	=	WebServv
-FUNC	=	bytes/bytes.cpp \
-            Client/Client.cpp \
-            HttpObject/HttpObject.cpp \
-            HttpRequest/HttpRequest.cpp \
-            HttpResponse/HttpResponse.cpp \
-            libft/ft_atoi.cpp \
-            libft/ft_decode64base.cpp \
-            libft/ft_getdate.cpp \
-            libft/ft_getfile.cpp \
-            libft/ft_getline.cpp \
-            libft/ft_hton.cpp \
-            libft/ft_itoa.cpp \
-            libft/ft_localtime.cpp \
-            libft/ft_memcopy.cpp \
-            libft/ft_memset.cpp \
-            libft/ft_tolower.cpp \
-            Location/Location.cpp \
-            ParseConfigFile/ParseConfigFile.cpp \
-            ThreadPool/ThreadPool.cpp \
-            VirtualServer/VirtualServer.cpp \
-            WebServ/WebServ.cpp \
-            WebServ/WebServ_handlers.cpp \
-            WebServ/WebServ_page_generators.cpp \
-            WebServ/WebServ_workers.cpp \
-            WebServ/WebServ_cgi.cpp \
-            main.cpp
+NAME	=	webserv
+FUNC	=	src/bytes/bytes.cpp \
+            src/Client/Client.cpp \
+            src/HttpObject/HttpObject.cpp \
+            src/HttpRequest/HttpRequest.cpp \
+            src/HttpResponse/HttpResponse.cpp \
+            src/libft/ft_atoi.cpp \
+            src/libft/ft_decode64base.cpp \
+            src/libft/ft_getdate.cpp \
+            src/libft/ft_getfile.cpp \
+            src/libft/ft_getline.cpp \
+            src/libft/ft_hton.cpp \
+            src/libft/ft_itoa.cpp \
+            src/libft/ft_localtime.cpp \
+            src/libft/ft_memcopy.cpp \
+            src/libft/ft_memset.cpp \
+            src/libft/ft_tolower.cpp \
+            src/Location/Location.cpp \
+            src/ParseConfigFile/ParseConfigFile.cpp \
+            src/ThreadPool/ThreadPool.cpp \
+            src/VirtualServer/VirtualServer.cpp \
+            src/WebServ/WebServ.cpp \
+            src/WebServ/WebServ_handlers.cpp \
+            src/WebServ/WebServ_page_generators.cpp \
+            src/WebServ/WebServ_workers.cpp \
+            src/WebServ/WebServ_cgi.cpp \
+            src/main.cpp
 
 
-INC		=	-I./bytes/ \
-            -I./Client/ \
-            -I./HttpObject/ \
-            -I./HttpRequest/ \
-            -I./HttpResponse/ \
-            -I./includes/ \
-            -I./Location/ \
-            -I./ParseConfigFile/ \
-            -I./ThreadPool/ \
-            -I./VirtualServer/ \
-            -I./WebServ/
+INC		=	-I./src/bytes/ \
+            -I./src/Client/ \
+            -I./src/HttpObject/ \
+            -I./src/HttpRequest/ \
+            -I./src/HttpResponse/ \
+            -I./src/includes/ \
+            -I./src/Location/ \
+            -I./src/ParseConfigFile/ \
+            -I./src/ThreadPool/ \
+            -I./src/VirtualServer/ \
+            -I./src/WebServ/
 
 CC		=	clang++
 FLAGS	=	-Wall -Wextra -Werror -pthread
