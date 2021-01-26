@@ -106,8 +106,11 @@ VirtualServer*				ParseConfigFile::parseVsDirective() {
 					throw ParseConfigFileException("Wrong host parameter");
 				break;
 			case port_d:
-				if (trimmedStr.size() == 2 && checkPort(ft_atoi(trimmedStr[1].c_str())))
+				if (trimmedStr.size() == 2 && checkPort(ft_atoi(trimmedStr[1].c_str()))) {
+					if (!virtualServer->getPort().empty())
+						throw ParseConfigFileException("Wrong port parameter");
 					virtualServer->setPort(trimmedStr[1]);
+				}
 				else
 					throw ParseConfigFileException("Wrong port parameter");
 				break;
@@ -227,8 +230,13 @@ std::vector<VirtualServer*>	ParseConfigFile::ParseFile(std::string& numberOfWork
 		}
 		if (line[0] == '#')
 			continue;
-		else if (!line.compare(0, 7, "worker "))
-			numberOfWorkers.append(&line[7]);
+		else if (!line.compare(0, 7, "worker ")) {
+			std::vector<std::string> tmp = getArgsFromLine(line);
+			if (tmp.size() == 2 && ONLY_DIGITS(tmp[1]))
+				numberOfWorkers.append(tmp[1]);
+			else
+				throw ParseConfigFileException("Bad number of workers");
+		}
 		else if (line == "server")
 			AddVirtualServer(line, virtualServers);
 		else if (line.length() > 0)
