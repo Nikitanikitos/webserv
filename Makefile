@@ -1,4 +1,4 @@
-NAME	=	webserv
+NAME	=	WebServv
 FUNC	=	bytes/bytes.cpp \
             Client/Client.cpp \
             HttpObject/HttpObject.cpp \

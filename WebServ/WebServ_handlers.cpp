@@ -6,10 +6,11 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/24 18:09:42 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/26 15:16:19 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
 #include "WebServ.hpp"
 
 void			WebServ::readRequest(Client* client) {
@@ -27,12 +28,10 @@ void			WebServ::readRequest(Client* client) {
 			if (request->getStage() == completed)
 				client->setStage(generate_response);
 		}
-		else if (read_bytes == -1)
-			throw "500";
 		else
 			client->setStage(close_connection);
 	}
-	catch (std::string& status_code) {
+	catch (const char* status_code) {
 		VirtualServer*	virtual_server = getVirtualServer(client);
 		Location*		location = virtual_server->getLocation(request);
 

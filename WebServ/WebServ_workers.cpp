@@ -6,11 +6,10 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/02 14:46:29 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 23:44:40 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/26 15:15:26 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <iostream>
 #include "WebServ.hpp"
 
 void*	worker(void* arg) {
