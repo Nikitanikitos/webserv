@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:49:57 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/21 16:12:29 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/27 00:22:52 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ public:
 
 
 	inline const std::string&			getErrorPage(const std::string& status_code) const
-		{ return error_pages.at(status_code); }
+		{ return (error_pages.at(status_code)); }
 
 	inline void							addServerName(const std::string& server_name)
 		{ server_names.push_back(server_name); }

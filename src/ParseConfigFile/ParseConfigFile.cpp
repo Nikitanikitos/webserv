@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 14:17:15 by nikita            #+#    #+#             */
-/*   Updated: 2020/12/21 12:40:42 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/27 00:23:10 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ VirtualServer*				ParseConfigFile::parseVsDirective() {
 				break;
 			case error_page_d:
 				if (trimmedStr.size() == 3) {
-					if (!virtualServer->getErrorPage(trimmedStr[1]).empty())
+					if (virtualServer->findErrorPage(trimmedStr[1]))
 						throw ParseConfigFileException("Bad config, double error page");
 					virtualServer->addErrorPage(trimmedStr[1], trimmedStr[2]);
 				}
