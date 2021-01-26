@@ -16,18 +16,17 @@
 #include <algorithm>
 #include <iostream>
 
-int		exit_(int signum) {
+void	exit_(int signum) {
 	if (signum == SIGINT || signum == SIGTERM) {
 		std::cout << "See you soon!" << std::endl;
 		WebServ::working = 0;
 	}
 	write(WebServ::imaginary_pipe[1], "1", 1);
-	return (0);
 }
 
 int		main(int ac, char **av) {
-	signal(SIGINT, reinterpret_cast<__sighandler_t>(exit_));
-	signal(SIGTERM, reinterpret_cast<__sighandler_t>(exit_));
+	signal(SIGINT, exit_);
+	signal(SIGTERM, exit_);
 	try {
 		std::string					number_of_workers;
 		ParseConfigFile				parse(((ac == 2) ? av[1] : (char*)"default.conf"));

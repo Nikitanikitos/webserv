@@ -30,7 +30,7 @@
 class	WebServ {
 private:
 	friend void*	worker(void*);
-	friend int		exit_(int signum);
+	friend void exit_(int signum);
 
 	static int						imaginary_pipe[2];
 	std::vector<Client*>			clients;
