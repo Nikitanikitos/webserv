@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/12/12 08:06:21 by imicah            #+#    #+#             */
-/*   Updated: 2021/01/26 15:16:19 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/26 15:29:28 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -135,6 +135,7 @@ void			WebServ::putMethodHandler(Client* client, Location* location, t_stat* inf
 	else {
 		write(fd, request->getBody().c_str(), request->getBody().size());
 		(info->exists == -1) ? response->setStatusCode("201") : response->setStatusCode("200");
+		close(fd);
 	}
 }
 
@@ -151,14 +152,20 @@ void			WebServ::getInfoOutHtaccess(int fd, std::string& realm, std::string& path
 
 bool			WebServ::checkValidAuth(const std::string& login_password, const std::string& path_to_htpasswd) {
 	int						fd;
+	bool					result;
 	std::string				line;
 	const std::string		decode_login_password = ft_decode64base(login_password.substr(login_password.find(' ') + 1));
 
+	result = false;
 	if ((fd = open(path_to_htpasswd.c_str(), O_RDONLY)) > 0) {
 		while (ft_getline(fd, line) > 0)
-			if (line == decode_login_password) return (true);
+			if (line == decode_login_password) {
+				result = true;
+				break;
+			}
+		close(fd);
 	}
-	return (false);
+	return (result);
 }
 
 bool			WebServ::checkAuth(Client* client, const std::string& root) {

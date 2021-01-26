@@ -6,10 +6,11 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 15:13:01 by imicah            #+#    #+#             */
-/*   Updated: 2021/01/26 15:52:42 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/26 17:45:14 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <iostream>
 # include "WebServ.hpp"
 
 static void		setEnvForCgi(char **env, Client *client, const std::string &path_to_target) {
@@ -47,7 +48,7 @@ static void		run_cgi(int* pipe_fd, int file_fd, const std::string& path_to_targe
 		extension.append(path_to_target.substr(path_to_target.rfind('.')));
 	else
 		extension.append(".bla");
-//	close(pipe_fd[1]);
+	close(pipe_fd[1]);
 	dup2(pipe_fd[0], 0);
 	close(pipe_fd[0]);
 	dup2(file_fd, 1);
@@ -64,11 +65,13 @@ static bytes	send_read_in_cgi(int* pipe_fd, int file_fd, HttpRequest* request) {
 	char*	buff;
 	bytes	data;
 
-	close(pipe_fd[0]);
-	if (!request->getBody().empty())
+	if (!request->getBody().empty()) {
 		buffer_size = write(pipe_fd[1], request->getBody().c_str(), request->getBody().size());
+		std::cout << buffer_size << std::endl;
+	}
 	else
 		buffer_size = 2048;
+	close(pipe_fd[0]);
 	close(pipe_fd[1]);
 	wait(&status);
 

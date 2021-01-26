@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2021/01/26 14:56:18 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/26 17:31:10 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "WebServ.hpp"
 #include "ParseConfigFile.hpp"
 #include <algorithm>
+#include <iostream>
 
 void	exit_(int signum) {
 	if (signum == SIGINT || signum == SIGTERM) {
