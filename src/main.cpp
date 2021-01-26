@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2021/01/26 19:31:43 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/26 19:31:55 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ int		main(int ac, char **av) {
 	signal(SIGTERM, exit_);
 	try {
 		std::string					number_of_workers;
-		ParseConfigFile				parse(((ac == 2) ? av[1] : (char*)"../default.conf"));
+		ParseConfigFile				parse(((ac == 2) ? av[1] : (char*)"default.conf"));
 		std::vector<VirtualServer*>	list_virtual_server = parse.ParseFile(number_of_workers);
 		WebServ						server(ft_atoi(number_of_workers.c_str()));
 

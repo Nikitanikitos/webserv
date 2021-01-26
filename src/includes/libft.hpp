@@ -33,6 +33,7 @@ void*					worker(void* arg);
 void*					ft_memset(void*, int, size_t);
 
 char*					ft_itoa(int n);
+char*					ft_strdup(const char* src);
 
 std::string				ft_getdate(struct timeval& tv);
 std::string				ft_decode64base(const std::string& data);

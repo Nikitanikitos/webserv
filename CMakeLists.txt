@@ -18,6 +18,7 @@ add_executable(WebServ
 		src/libft/ft_tolower.cpp
 		src/libft/ft_decode64base.cpp
 		src/libft/ft_memcopy.cpp
+		src/libft/ft_strdup.cpp
 
         src/WebServ/WebServ.cpp
         src/WebServ/WebServ_workers.cpp
@@ -35,7 +36,8 @@ add_executable(WebServ
 
 		src/Client/Client.cpp
 		src/ThreadPool/ThreadPool.cpp
-        src/WebServ/WebServ_cgi.cpp)
+        src/WebServ/WebServ_cgi.cpp
+		)
 
 include_directories(
 		src/includes
