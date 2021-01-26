@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 14:17:15 by nikita            #+#    #+#             */
-/*   Updated: 2021/01/27 00:23:10 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/27 01:02:30 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ VirtualServer*				ParseConfigFile::parseVsDirective() {
 		}
 		std::vector<std::string> trimmedStr = getArgsFromLine(line);
 
-		switch (getIndexOfArg(trimmedStr[0], server_current_fields, virtual_server_directive)) { //TODO хуй знает про find
+		switch (getIndexOfArg(trimmedStr[0], server_current_fields, virtual_server_directive)) {
 			case server_names_d:
 				for (size_t i = 1; i < trimmedStr.size(); ++i) {
 					if (std::find(virtualServer->getServerNames().begin(), virtualServer->getServerNames().end(), trimmedStr[i]) != virtualServer->getServerNames().end())
@@ -196,7 +196,7 @@ Location*					ParseConfigFile::parseLocationDirective(std::string &locationAttri
 					throw ParseConfigFileException("Index has no parameter");
 				location->setIndex(trimmedStr[1]);
 				break;
-			case cgi_pass_d: // TODO изменить парсинг cgi вот здесь
+			case cgi_pass_d:
 				if (trimmedStr.size() != 3)
 					throw ParseConfigFileException("Cgi_pass has no parameter");
 				location->addCgi(trimmedStr[1], trimmedStr[2]);

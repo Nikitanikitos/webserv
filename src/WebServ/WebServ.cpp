@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/21 19:48:56 by nikita            #+#    #+#             */
-/*   Updated: 2021/01/26 22:53:13 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/27 00:26:32 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void				WebServ::addClientSocketInSet(fd_set& readfd_set, fd_set& writefd_set, i
 		const int&		client_socket = clients[i]->getSocket();
 		if (clients[i]->getStage() == parsing_request)
 			FD_SET(client_socket, &readfd_set);
-		else if (clients[i]->getStage() != parsing_request) // TODO если что то зависнит, посмотрите сюда
+		else if (clients[i]->getStage() != parsing_request)
 			FD_SET(client_socket, &writefd_set);
 		max_fd = (client_socket > max_fd) ? client_socket : max_fd;
 	}

@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/01/26 15:13:01 by imicah            #+#    #+#             */
-/*   Updated: 2021/01/26 19:49:51 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/26 20:33:46 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static void		setEnvForCgi(char **env, Client *client, const std::string &path_to
 	HttpRequest*	request = client->getRequest();
 	char*			body_size;
 
-	body_size = (request->getQuery().empty()) ? ft_itoa(request->getBody().size()) : ft_itoa(request->getQuery().size()); //TODO вроде поправил
+	body_size = (request->getQuery().empty()) ? ft_itoa(request->getBody().size()) : ft_itoa(request->getQuery().size());
 	env[0] = ft_strdup("AUTH_TYPE=basic");
 	env[1] = ft_strdup(("CONTENT_LENGTH=" + std::string(body_size)).c_str());
 	env[2] = ft_strdup(("CONTENT_TYPE=" + (request->findHeader("content-type") ? request->getHeader("content-type") : "")).c_str());

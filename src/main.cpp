@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2021/01/26 19:31:55 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/26 22:53:32 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,7 @@ int		main(int ac, char **av) {
 	}
 	catch (ParseConfigFile::ParseConfigFileException& e)
 		{ std::cerr << e.what() << std::endl;}
+	catch (const char* e)
+		{ std::cerr << e << std::endl;}
 	exit(0);
 }

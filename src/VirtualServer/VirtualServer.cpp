@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/22 15:36:05 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 12:59:06 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/27 01:00:24 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void		VirtualServer::initSocket() {
 
 	setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
 	if (bind(server_socket, (struct sockaddr*) &sock_addr, sizeof(sock_addr)) < 0)
-		throw std::exception();
+		throw "ports are busy";
 	fcntl(server_socket, F_SETFL, O_NONBLOCK);
 	listen(server_socket, 1000);
 }
