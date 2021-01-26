@@ -19,14 +19,17 @@
 void	exit_(int signum) {
 	if (signum == SIGINT || signum == SIGTERM) {
 		std::cout << "See you soon!" << std::endl;
-		WebServ::working = 0;
 	}
+	else if (signum == SIGPIPE)
+		std::cout << "Fatal error" << std::endl;
+	WebServ::working = 0;
 	write(WebServ::imaginary_pipe[1], "1", 1);
 }
 
 int		main(int ac, char **av) {
 	signal(SIGINT, exit_);
 	signal(SIGTERM, exit_);
+	signal(SIGPIPE, exit_);
 	try {
 		std::string					number_of_workers;
 		ParseConfigFile				parse(((ac == 2) ? av[1] : (char*)"default.conf"));

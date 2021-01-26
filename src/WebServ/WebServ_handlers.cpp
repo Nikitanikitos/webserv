@@ -28,7 +28,7 @@ void			WebServ::readRequest(Client* client) {
 			if (request->getStage() == completed)
 				client->setStage(generate_response);
 		}
-		else
+		else if (!read_bytes)
 			client->setStage(close_connection);
 	}
 	catch (const char* status_code) {
