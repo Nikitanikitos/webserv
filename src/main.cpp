@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/16 18:05:50 by imicah            #+#    #+#             */
-/*   Updated: 2021/01/26 22:53:32 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/27 01:09:59 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,11 +17,10 @@
 #include <iostream>
 
 void	exit_(int signum) {
-	if (signum == SIGINT || signum == SIGTERM) {
+	if (signum == SIGINT || signum == SIGTERM)
 		std::cout << "See you soon!" << std::endl;
-	}
 	else if (signum == SIGPIPE)
-		std::cout << "Fatal error" << std::endl;
+		std::cout << "Сlient closed the connection" << std::endl;
 	WebServ::working = 0;
 	write(WebServ::imaginary_pipe[1], "1", 1);
 }
@@ -43,8 +42,8 @@ int		main(int ac, char **av) {
 		server.runServer();
 	}
 	catch (ParseConfigFile::ParseConfigFileException& e)
-		{ std::cerr << e.what() << std::endl;}
+		{ std::cerr << e.what() << std::endl; }
 	catch (const char* e)
-		{ std::cerr << e << std::endl;}
+		{ std::cerr << e << std::endl; }
 	exit(0);
 }
