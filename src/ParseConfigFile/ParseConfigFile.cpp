@@ -107,8 +107,8 @@ VirtualServer*				ParseConfigFile::parseVsDirective() {
 				break;
 			case port_d:
 				if (trimmedStr.size() == 2 && checkPort(ft_atoi(trimmedStr[1].c_str()))) {
-					if (!virtualServer->getPort().empty())
-						throw ParseConfigFileException("Wrong port parameter");
+//					if (!virtualServer->getPort().empty())
+//						throw ParseConfigFileException("Wrong port parameter");
 					virtualServer->setPort(trimmedStr[1]);
 				}
 				else
