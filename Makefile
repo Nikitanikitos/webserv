@@ -16,6 +16,7 @@ FUNC	=	src/bytes/bytes.cpp \
             src/libft/ft_memset.cpp \
             src/libft/ft_tolower.cpp \
             src/libft/ft_strdup.cpp \
+            src/libft/ft_strlen.cpp \
             src/Location/Location.cpp \
             src/ParseConfigFile/ParseConfigFile.cpp \
             src/ThreadPool/ThreadPool.cpp \

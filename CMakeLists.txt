@@ -19,6 +19,7 @@ add_executable(WebServ
 		src/libft/ft_decode64base.cpp
 		src/libft/ft_memcopy.cpp
 		src/libft/ft_strdup.cpp
+		src/libft/ft_strlen.cpp
 
         src/WebServ/WebServ.cpp
         src/WebServ/WebServ_workers.cpp

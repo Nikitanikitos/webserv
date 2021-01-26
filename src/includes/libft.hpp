@@ -6,7 +6,7 @@
 /*   By: imicah <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/19 12:50:34 by imicah            #+#    #+#             */
-/*   Updated: 2020/12/21 14:47:35 by imicah           ###   ########.fr       */
+/*   Updated: 2021/01/26 20:33:46 by imicah           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@ struct					t_stat {
 uint16_t				ft_htons(uint16_t);
 int						ft_atoi(const char* nptr);
 int						ft_atoi_hex(const char* nptr);
+size_t					ft_strlen(const char* s);
 
 void					ft_tolower(char& c);
 void					ft_localtime(tm&, time_t);
